@@ -10,7 +10,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  dio: ^4.0.6
+  cryptography: ^2.0.5
+  bip39: ^1.0.6
+  sha3: ^0.2.0
+  buffer: ^1.1.1
+  ed25519_edwards: ^0.3.1
+  r_crypto: ^0.5.0
+  hex: ^0.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
