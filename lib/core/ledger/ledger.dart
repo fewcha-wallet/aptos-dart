@@ -1,13 +1,10 @@
 import 'package:aptosdart/network/decodable.dart';
 
 class Ledger extends Decoder<Ledger> {
-  int chainID;
-  String ledgerVersion, ledgerTimestamp;
+  int? chainID;
+  String? ledgerVersion, ledgerTimestamp;
 
-  Ledger(
-      {required this.chainID,
-      required this.ledgerVersion,
-      required this.ledgerTimestamp});
+  Ledger({this.chainID, this.ledgerVersion, this.ledgerTimestamp});
 
   @override
   Ledger decode(Map<String, dynamic> json) {
@@ -17,5 +14,5 @@ class Ledger extends Decoder<Ledger> {
     return this;
   }
 
-  String get version => ledgerVersion;
+  // String get version => ledgerVersion;
 }

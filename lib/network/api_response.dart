@@ -1,5 +1,6 @@
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/pagination/pagination.dart';
 import 'package:aptosdart/network/api_data_transformer.dart';
 import 'package:aptosdart/network/decodable.dart';
 import 'package:dio/dio.dart';
@@ -39,13 +40,42 @@ class APIResponse<T> extends BaseAPIResponseWrapper<Response, T> {
   void decode(Map<String, dynamic> formatResponse, {createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
-      decodedData = createObject.decode(formatResponse["data"]["data"] ?? {});
+      decodedData = createObject.decode(formatResponse["data"] ?? {});
     } else if (T == dynamic) {
-      decodedData = formatResponse["data"]["data"];
+      decodedData = formatResponse["data"];
     } else {
-      final data = formatResponse["data"]["data"];
+      final data = formatResponse["data"];
       if (data is T) decodedData = data;
     }
+  }
+}
+
+class APIListResponse<T> extends BaseAPIResponseWrapper<Response, List<T>> {
+  Pagination? pagination;
+
+  APIListResponse({T? createObject, Response? response})
+      : super(
+          originalResponse: response,
+        ) {
+    decode(extractJson(), createObject: createObject);
+  }
+
+  @override
+  void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
+    super.decode(formatResponse, createObject: createObject);
+    if (createObject is Decoder && !hasError) {
+      final data = formatResponse["data"];
+      if (data is List && data.isNotEmpty) {
+        decodedData ??= <T>[];
+        for (final e in data) {
+          (decodedData as List).add(createObject.decode(e));
+        }
+      }
+      decodedData ??= <T>[];
+    }
+    // if (formatResponse["data"]['pagination'] != null) {
+    //   pagination = Pagination.fromJson(formatResponse["data"]['pagination']);
+    // }
   }
 }
 

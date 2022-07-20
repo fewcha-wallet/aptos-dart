@@ -1,4 +1,5 @@
 import 'package:aptosdart/constant/api_method.dart';
+import 'package:aptosdart/constant/api_path.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:dio/dio.dart';
@@ -16,7 +17,11 @@ class APIRoute implements APIRouteConfigurable {
   APIRoute(this.apiType, {this.baseUrl, this.routeParams, this.method}) {
     routeParams ??= "";
   }
-
+  final String _accounts = 'accounts';
+  final String _resources = 'resources';
+  final String _resource = 'resource';
+  final String _modules = 'modules';
+  final String _module = 'module';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -25,7 +30,23 @@ class APIRoute implements APIRouteConfigurable {
 
     switch (apiType) {
       case APIType.getAccount:
-        path = 'accounts';
+        path = '/$_accounts/$routeParams';
+        break;
+      case APIType.getLedger:
+        break;
+      case APIType.getAccountResources:
+        path = '/$_accounts/$routeParams/$_resources';
+        break;
+      case APIType.getResourcesByType:
+        path = '/$_accounts/$routeParams/$_resource/';
+
+        break;
+      case APIType.getAccountModules:
+        path = '/$_accounts/$routeParams/$_modules';
+
+        break;
+      case APIType.getAccountModuleByID:
+        path = '/$_accounts/$routeParams/$_module/';
         break;
     }
     final options = Options(

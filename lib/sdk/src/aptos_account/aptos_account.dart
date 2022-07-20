@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:aptosdart/core/account/account.dart';
-import 'package:aptosdart/utils/extensions/extensions.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart';
 import 'package:sha3/sha3.dart';

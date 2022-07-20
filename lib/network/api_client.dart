@@ -5,6 +5,7 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
+import 'package:aptosdart/network/interceptors/logs_interceptor.dart';
 import 'package:dio/dio.dart';
 
 typedef GenericObject<T> = T Function(dynamic data);
@@ -25,7 +26,7 @@ abstract class BaseAPIClient {
 }
 
 class APIClient extends BaseAPIClient {
-  APIClient() {
+  APIClient({LogStatus? logStatus = LogStatus.show}) {
     options = BaseOptions(
       baseUrl: HostUrl.nodeUrl,
       headers: {"Content-Type": "application/json"},
@@ -36,6 +37,11 @@ class APIClient extends BaseAPIClient {
       },
     );
     instance = Dio(options);
+    if (logStatus == LogStatus.hide) {
+      instance.interceptors.remove(LogsInterceptor());
+    } else {
+      instance.interceptors.add(LogsInterceptor());
+    }
   }
 
   @override
