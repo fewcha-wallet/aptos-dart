@@ -7,6 +7,10 @@ enum APIType {
   getAccountModuleByID,
 }
 enum APIErrorType {
+  invalidLedger,
+  resourceNotFound,
+  moduleNotFound,
+  invalidAddress,
   unauthorized,
   badRequest,
   unknown,

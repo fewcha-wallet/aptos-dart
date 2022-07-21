@@ -1,4 +1,3 @@
-import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class Account extends Decoder<Account> {
@@ -18,7 +17,6 @@ class Account extends Decoder<Account> {
   String get address => accountAddress;
 
   Account accountInHex() {
-    final aptosAccount = AptosAccount();
     return Account(
         accountAddress: accountAddress,
         publicKey: publicKey,

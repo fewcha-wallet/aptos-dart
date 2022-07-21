@@ -1,5 +1,4 @@
 import 'package:aptosdart/constant/api_method.dart';
-import 'package:aptosdart/constant/api_path.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:dio/dio.dart';
@@ -29,10 +28,12 @@ class APIRoute implements APIRouteConfigurable {
     ResponseType responseType = ResponseType.json;
 
     switch (apiType) {
+      case APIType.getLedger:
+        break;
+
+      /// Account API
       case APIType.getAccount:
         path = '/$_accounts/$routeParams';
-        break;
-      case APIType.getLedger:
         break;
       case APIType.getAccountResources:
         path = '/$_accounts/$routeParams/$_resources';
@@ -48,8 +49,12 @@ class APIRoute implements APIRouteConfigurable {
       case APIType.getAccountModuleByID:
         path = '/$_accounts/$routeParams/$_module/';
         break;
+
+      ///
+      ///
     }
     final options = Options(
+            headers: HeadersApi.headers,
             extra: {ExtraKeys.authorize: authorize},
             responseType: responseType,
             method: this.method ?? method)

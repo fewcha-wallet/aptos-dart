@@ -11,4 +11,23 @@ class AppConstants {
   static const String rootAPIDataFormat = "data";
   static const String rootAPIStatusFormat = "status";
   static const String rootAPIStatusMessageFormat = "status_message";
+  static const String prefixOx = '0x';
+  static const String coinStore =
+      '0x1::Coin::CoinStore<0x1::TestCoin::TestCoin>';
+  static const String coinEvents = '0x1::Coin::CoinEvents';
+  static const String guidGenerator = '0x1::GUID::Generator';
+  static const String account = '0x1::Account::Account';
+}
+
+class ErrorMessages {
+  static const String invalidAddress = 'invalid parameter account address:';
+  static const String invalidLedger = 'invalid parameter ledger version:';
+  static const String resourceNotFound = 'Resource not found by';
+  static const String moduleNotFound = 'Module not found by';
+}
+
+class HeadersApi {
+  static Map<String, String> headers = {
+    "Content-Type": "application/json",
+  };
 }

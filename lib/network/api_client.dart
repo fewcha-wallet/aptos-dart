@@ -5,6 +5,7 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
+import 'package:aptosdart/network/interceptors/error_interceptor.dart';
 import 'package:aptosdart/network/interceptors/logs_interceptor.dart';
 import 'package:dio/dio.dart';
 
@@ -40,7 +41,10 @@ class APIClient extends BaseAPIClient {
     if (logStatus == LogStatus.hide) {
       instance.interceptors.remove(LogsInterceptor());
     } else {
-      instance.interceptors.add(LogsInterceptor());
+      instance.interceptors.addAll([
+        LogsInterceptor(),
+        ErrorInterceptor(),
+      ]);
     }
   }
 

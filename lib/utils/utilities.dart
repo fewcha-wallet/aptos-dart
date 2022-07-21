@@ -1,5 +1,3 @@
-import 'package:hex/hex.dart';
-
 class Utilities {
   static List<String> buffer(List<int> list) {
     List<String> listString = [];

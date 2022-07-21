@@ -1,6 +1,5 @@
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
-import 'package:aptosdart/network/api_client.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';

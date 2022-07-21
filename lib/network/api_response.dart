@@ -97,8 +97,8 @@ class ErrorResponse extends BaseAPIResponseWrapper<Response, dynamic>
     dynamic serverMessage = formatResponse["data"];
     if (serverMessage != null) {
       if (serverMessage is Map) {
-        statusMessage = serverMessage["error"]?["message"];
-        error = getErrorType(serverMessage["error"]?["code"]);
+        status = serverMessage["code"];
+        error = getErrorType(serverMessage["message"]);
       } /*else if (serverMessage is String) {
         statusMessage = serverMessage;
         error = getErrorType(status);
@@ -115,10 +115,19 @@ class ErrorResponse extends BaseAPIResponseWrapper<Response, dynamic>
   }
 
   APIErrorType getErrorType(dynamic error) {
-    if (error == "error.unauthorized") {
-      return APIErrorType.unauthorized;
+    if (error is String) {
+      if (error.contains(ErrorMessages.invalidAddress)) {
+        return APIErrorType.invalidAddress;
+      } else if (error.contains(ErrorMessages.invalidLedger)) {
+        return APIErrorType.invalidLedger;
+      } else if (error.contains(ErrorMessages.resourceNotFound)) {
+        return APIErrorType.resourceNotFound;
+      } else if (error.contains(ErrorMessages.moduleNotFound)) {
+        return APIErrorType.resourceNotFound;
+      } else {
+        return APIErrorType.unknown;
+      }
     }
-
     return APIErrorType.unknown;
   }
 
