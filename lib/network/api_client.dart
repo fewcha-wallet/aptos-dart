@@ -27,9 +27,9 @@ abstract class BaseAPIClient {
 }
 
 class APIClient extends BaseAPIClient {
-  APIClient({LogStatus? logStatus = LogStatus.show}) {
+  APIClient({LogStatus? logStatus = LogStatus.show, String? baseUrl}) {
     options = BaseOptions(
-      baseUrl: HostUrl.nodeUrl,
+      baseUrl: baseUrl ?? HostUrl.nodeUrl,
       headers: {"Content-Type": "application/json"},
       responseType: ResponseType.json,
       validateStatus: (code) {

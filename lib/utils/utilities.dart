@@ -1,3 +1,5 @@
+import 'package:ed25519_edwards/ed25519_edwards.dart';
+
 class Utilities {
   static List<String> buffer(List<int> list) {
     List<String> listString = [];
@@ -18,5 +20,9 @@ class Utilities {
       }
     }
     return listString;*/
+  }
+
+  static List<int> toUint8List(List<int> privateKey) {
+    return seed(PrivateKey(privateKey));
   }
 }

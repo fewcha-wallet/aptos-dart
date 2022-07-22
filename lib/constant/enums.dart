@@ -1,5 +1,6 @@
 enum APIType {
   getAccount,
+  mint,
   getLedger,
   getAccountResources,
   getResourcesByType,

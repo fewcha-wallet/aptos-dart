@@ -99,12 +99,12 @@ class ErrorResponse extends BaseAPIResponseWrapper<Response, dynamic>
       if (serverMessage is Map) {
         status = serverMessage["code"];
         error = getErrorType(serverMessage["message"]);
-      } /*else if (serverMessage is String) {
+      } else if (serverMessage is String) {
         statusMessage = serverMessage;
         error = getErrorType(status);
       } else {
         error = getErrorType(status);
-      }*/
+      }
     }
   }
 

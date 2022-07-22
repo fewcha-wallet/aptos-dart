@@ -21,6 +21,7 @@ class APIRoute implements APIRouteConfigurable {
   final String _resource = 'resource';
   final String _modules = 'modules';
   final String _module = 'module';
+  final String _mint = 'mint';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -48,6 +49,13 @@ class APIRoute implements APIRouteConfigurable {
         break;
       case APIType.getAccountModuleByID:
         path = '/$_accounts/$routeParams/$_module/';
+        break;
+
+      ///Faucet
+      case APIType.mint:
+        baseUrl = HostUrl.faucetUrl;
+        method = APIMethod.post;
+        path = '/$_mint';
         break;
 
       ///

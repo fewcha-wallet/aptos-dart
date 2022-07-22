@@ -23,6 +23,14 @@ extension HexString on String {
     return result;
   }
 
+  String trimPrefix() {
+    String temp = this;
+    if (startsWith(AppConstants.prefixOx)) {
+      temp = replaceFirst(AppConstants.prefixOx, '');
+    }
+    return temp;
+  }
+
   bool isValidMoveStructType() {
     if (Validator.validatorByRegex(
         regExp: Validator.moveStructType, data: this)) {
