@@ -1,11 +1,18 @@
 import 'dart:typed_data';
 
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:bip39/bip39.dart' as bip39;
 
 class MnemonicUtils {
-  static String generateMnemonicList() {
-    final listMnemonic = bip39.generateMnemonic();
-    return listMnemonic;
+  static List<String> generateMnemonicList() {
+    List<String> list = [];
+    final gen = bip39.generateMnemonic();
+    print('generateMnemonicList $gen');
+    final result = gen.split(' ').toList();
+    for (final item in result) {
+      list.add(item.capitalize());
+    }
+    return result;
   }
 
   static Uint8List convertMnemonicToSeed(String mnemonic) {

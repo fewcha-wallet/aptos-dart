@@ -40,6 +40,12 @@ extension HexString on String {
   }
 }
 
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1).toLowerCase()}";
+  }
+}
+
 extension Uint8ListExtension on Uint8List {
   String fromBytesToString() {
     /// Ascii: 30=> 0

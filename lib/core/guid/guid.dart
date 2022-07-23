@@ -18,6 +18,6 @@ class Guid extends Decoder<Guid> {
       creationNum = guidJson['creation_num'] ?? '0';
     }
 
-    lenBytes = json['len_bytes'] ?? '0';
+    lenBytes = json['len_bytes'] ?? 0;
   }
 }

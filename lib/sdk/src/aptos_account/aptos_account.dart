@@ -20,9 +20,9 @@ class AptosAccount {
     } else {
       privateKey = getKeyPair().privateKey.bytes;
     }
-    String authenKey = authKey(PublicKey(privateKey).bytes);
+    String authenKey = authKey(public(PrivateKey(privateKey)).bytes);
     String accountAddress = address ?? authenKey;
-    print(privateKey);
+    print('privateKey $privateKey');
     return AptosAccount._(
       privateKey,
       accountAddress,
@@ -44,6 +44,7 @@ class AptosAccount {
 
   /// Also use to create Address
   static String authKey(List<int> publicKey) {
+    print('publicKey $publicKey');
     SHA3 sh3 = SHA3(256, SHA3_PADDING, 256);
     sh3.update(publicKey);
     final result1 = sh3.update(utf8.encode('\x00'));
