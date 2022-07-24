@@ -29,6 +29,12 @@ class AptosAccount {
       authenKey,
     );
   }
+  factory AptosAccount.fromPrivateKey(String privateKeyHex) {
+    final privateKey = HEX.decode(privateKeyHex);
+
+    final list = Utilities.toUint8List(privateKey);
+    return AptosAccount(privateKeyBytes: list);
+  }
 
   String address() {
     return _accountAddress;
@@ -54,7 +60,8 @@ class AptosAccount {
 
   /// Get public key in Hex
   String publicKeyInHex() {
-    final buffer = Utilities.buffer(PublicKey(_privateKey).bytes).join('');
+    final buffer =
+        Utilities.buffer(public(PrivateKey(_privateKey)).bytes).join('');
     return buffer.toHexString();
   }
 

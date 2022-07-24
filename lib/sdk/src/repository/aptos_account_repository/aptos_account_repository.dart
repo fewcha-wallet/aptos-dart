@@ -90,18 +90,18 @@ class AptosAccountRepository with AptosSDKMixin {
     DataModel dataModel = DataModel();
 
     for (var element in list) {
-      if (element.type == AppConstants.coinStore) {
+      if (element.type?.toLowerCase() == AppConstants.coinStore.toLowerCase()) {
         dataModel.coin = element.data?.coin;
         dataModel.depositEvents = element.data?.depositEvents;
         dataModel.withdrawEvents = element.data?.withdrawEvents;
-      }
-      if (element.type == AppConstants.coinEvents) {
+      } else if (element.type?.toLowerCase() ==
+          AppConstants.coinEvents.toLowerCase()) {
         dataModel.registerEvents = element.data?.registerEvents;
-      }
-      if (element.type == AppConstants.guidGenerator) {
+      } else if (element.type?.toLowerCase() ==
+          AppConstants.guidGenerator.toLowerCase()) {
         dataModel.counter = element.data?.counter;
-      }
-      if (element.type == AppConstants.account) {
+      } else if (element.type?.toLowerCase() ==
+          AppConstants.account.toLowerCase()) {
         dataModel.authenticationKey = element.data?.authenticationKey;
         dataModel.selfAddress = element.data?.selfAddress;
         dataModel.sequenceNumber = element.data?.sequenceNumber;

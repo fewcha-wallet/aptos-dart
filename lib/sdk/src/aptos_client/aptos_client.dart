@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/core/data_model/data_model.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 
 class AptosClient {
   late AptosAccountRepository _accountRepository;
@@ -12,10 +13,18 @@ class AptosClient {
     _faucetClient = FaucetClient();
   }
 
-  Future<AptosAccount?> createWallet({Uint8List? privateKeyBytes}) async {
+  Future<AptosAccount?> createWallet(
+      {Uint8List? privateKeyBytes,
+      String? privateKeyHex,
+      bool isImport = false}) async {
     try {
-      AptosAccount aptosAccount =
-          AptosAccount(privateKeyBytes: privateKeyBytes);
+      AptosAccount aptosAccount;
+      if (privateKeyBytes != null) {
+        aptosAccount = AptosAccount(privateKeyBytes: privateKeyBytes);
+      } else {
+        aptosAccount = AptosAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
+      }
+      if (isImport) return aptosAccount;
 
       final result = await _faucetClient.funcAccount(aptosAccount.address(), 0);
       if (result.isNotEmpty) {

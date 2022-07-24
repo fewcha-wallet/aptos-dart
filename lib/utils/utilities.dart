@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:ed25519_edwards/ed25519_edwards.dart';
 
 class Utilities {
@@ -5,8 +7,11 @@ class Utilities {
     List<String> listString = [];
     for (int item in list) {
       final temp = item.toRadixString(16);
-
-      listString.add(temp);
+      if (temp.length == 1) {
+        listString.add('0$temp');
+      } else {
+        listString.add(temp);
+      }
     }
     return listString;
     /* List<int> listString = [];
@@ -22,7 +27,7 @@ class Utilities {
     return listString;*/
   }
 
-  static List<int> toUint8List(List<int> privateKey) {
+  static Uint8List toUint8List(List<int> privateKey) {
     return seed(PrivateKey(privateKey));
   }
 }

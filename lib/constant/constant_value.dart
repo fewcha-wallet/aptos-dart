@@ -13,10 +13,10 @@ class AppConstants {
   static const String rootAPIStatusMessageFormat = "status_message";
   static const String prefixOx = '0x';
   static const String coinStore =
-      '0x1::Coin::CoinStore<0x1::TestCoin::TestCoin>';
-  static const String coinEvents = '0x1::Coin::CoinEvents';
-  static const String guidGenerator = '0x1::GUID::Generator';
-  static const String account = '0x1::Account::Account';
+      '0x1::coin::CoinStore<0x1::test_coin::TestCoin>';
+  static const String coinEvents = '0x1::coin::CoinEvents';
+  static const String guidGenerator = '0x1::guid::Generator';
+  static const String account = '0x1::account::Account';
 }
 
 class ErrorMessages {
