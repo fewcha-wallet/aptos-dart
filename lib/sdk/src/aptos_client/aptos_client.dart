@@ -6,17 +6,14 @@ import 'package:aptosdart/utils/extensions/hex_string.dart';
 
 class AptosClient {
   late AptosAccountRepository _accountRepository;
-  late FaucetClient _faucetClient;
 
   AptosClient() {
     _accountRepository = AptosAccountRepository();
-    _faucetClient = FaucetClient();
   }
-
-  Future<AptosAccount?> createWallet(
-      {Uint8List? privateKeyBytes,
-      String? privateKeyHex,
-      bool isImport = false}) async {
+  Future<AptosAccount> createAccount({
+    Uint8List? privateKeyBytes,
+    String? privateKeyHex,
+  }) async {
     try {
       AptosAccount aptosAccount;
       if (privateKeyBytes != null) {
@@ -24,13 +21,7 @@ class AptosClient {
       } else {
         aptosAccount = AptosAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
       }
-      if (isImport) return aptosAccount;
-
-      final result = await _faucetClient.funcAccount(aptosAccount.address(), 0);
-      if (result.isNotEmpty) {
-        return aptosAccount;
-      }
-      return null;
+      return aptosAccount;
     } catch (e) {
       rethrow;
     }
@@ -41,6 +32,20 @@ class AptosClient {
       final result = await _accountRepository.getAccountResources(address);
       if (result != null) {
         return result;
+      }
+      return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<DataModel?> getResourcesByType(
+      {required String address, required String resourceType}) async {
+    try {
+      final result =
+          await _accountRepository.getResourcesByType(address, resourceType);
+      if (result != null) {
+        return result.data;
       }
       return null;
     } catch (e) {
