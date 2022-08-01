@@ -6,6 +6,11 @@ enum APIType {
   getResourcesByType,
   getAccountModules,
   getAccountModuleByID,
+  getTransactions,
+  submitTransaction,
+  simulateTransaction,
+  getTransaction,
+  signingMessage,
 }
 enum APIErrorType {
   invalidLedger,

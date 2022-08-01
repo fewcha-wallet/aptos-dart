@@ -22,6 +22,9 @@ class APIRoute implements APIRouteConfigurable {
   final String _modules = 'modules';
   final String _module = 'module';
   final String _mint = 'mint';
+  final String _transactions = 'transactions';
+  final String _simulate = 'simulate';
+  final String _signingMessage = 'signing_message';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -59,7 +62,24 @@ class APIRoute implements APIRouteConfigurable {
         break;
 
       ///
-      ///
+      case APIType.getTransactions:
+        path = '/$_transactions';
+        break;
+      case APIType.submitTransaction:
+        method = APIMethod.post;
+        path = '/$_transactions';
+        break;
+      case APIType.simulateTransaction:
+        method = APIMethod.post;
+        path = '/$_transactions/$_simulate';
+        break;
+      case APIType.getTransaction:
+        path = '/$_transactions/';
+        break;
+      case APIType.signingMessage:
+        method = APIMethod.post;
+        path = '/$_transactions/$_signingMessage';
+        break;
     }
     final options = Options(
             headers: HeadersApi.headers,

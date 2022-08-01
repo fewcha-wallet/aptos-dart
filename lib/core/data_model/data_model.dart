@@ -10,7 +10,7 @@ class DataModel extends Decoder<DataModel> {
 
   Coin? coin;
   Event? depositEvents, withdrawEvents, registerEvents;
-  String? counter, authenticationKey, selfAddress, sequenceNumber;
+  String? counter, authenticationKey, selfAddress, sequenceNumber, amount;
 
   DataModel(
       {this.coin,
@@ -20,6 +20,7 @@ class DataModel extends Decoder<DataModel> {
       this.counter,
       this.authenticationKey,
       this.selfAddress,
+      this.amount,
       this.sequenceNumber});
 
   DataModel.fromJson(Map<String, dynamic> json) {
@@ -37,5 +38,6 @@ class DataModel extends Decoder<DataModel> {
     authenticationKey = json['authentication_key'];
     selfAddress = json['self_address'];
     sequenceNumber = json['sequence_number'];
+    amount = json['amount'];
   }
 }

@@ -44,10 +44,8 @@ class AptosClient {
     try {
       final result =
           await _accountRepository.getResourcesByType(address, resourceType);
-      if (result != null) {
-        return result.data;
-      }
-      return null;
+
+      return result.data;
     } catch (e) {
       rethrow;
     }

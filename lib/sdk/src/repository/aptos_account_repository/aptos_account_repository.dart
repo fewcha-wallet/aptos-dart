@@ -38,7 +38,7 @@ class AptosAccountRepository with AptosSDKMixin {
     }
   }
 
-  Future<Resource?> getResourcesByType(
+  Future<Resource> getResourcesByType(
       String address, String resourceType) async {
     try {
       final response = await apiClient.request(
