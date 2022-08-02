@@ -74,7 +74,10 @@ class APIRoute implements APIRouteConfigurable {
         path = '/$_transactions/$_simulate';
         break;
       case APIType.getTransaction:
-        path = '/$_transactions/';
+        path = '/$_transactions/$routeParams';
+        break;
+      case APIType.getAccountTransactions:
+        path = '/$_accounts/$routeParams/$_transactions';
         break;
       case APIType.signingMessage:
         method = APIMethod.post;

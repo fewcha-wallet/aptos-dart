@@ -7,7 +7,8 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 
 class TransactionRepository with AptosSDKMixin {
   TransactionRepository();
-  Future<List<Transaction>> getTransactions({int? start, int? limit}) async {
+  Future<List<Transaction>> getTransactions(
+      {int start = 1, int limit = 25}) async {
     try {
       final param = {'start': start.toString(), 'limit': limit.toString()};
       final response = await apiClient.request(
@@ -43,7 +44,7 @@ class TransactionRepository with AptosSDKMixin {
       final response = await apiClient.request(
           body: transaction.toJson(),
           route: APIRoute(
-            APIType.submitTransaction,
+            APIType.simulateTransaction,
           ),
           create: (response) =>
               APIResponse(createObject: Transaction(), response: response));
@@ -54,14 +55,14 @@ class TransactionRepository with AptosSDKMixin {
   }
 
   Future<List<Transaction>> getAccountTransactions(String address,
-      {int? start, int? limit}) async {
+      {int start = 1, int limit = 25}) async {
     try {
       final param = {'start': start.toString(), 'limit': limit.toString()};
 
       final response = await apiClient.request(
           params: param,
           route: APIRoute(
-            APIType.submitTransaction,
+            APIType.getAccountTransactions,
             routeParams: address.trimPrefixAndZeros(),
           ),
           create: (response) =>
@@ -78,7 +79,7 @@ class TransactionRepository with AptosSDKMixin {
     try {
       final response = await apiClient.request(
           route: APIRoute(
-            APIType.submitTransaction,
+            APIType.getTransaction,
             routeParams: txnHashOrVersion,
           ),
           create: (response) =>
@@ -91,11 +92,13 @@ class TransactionRepository with AptosSDKMixin {
 
   Future<Transaction> createSigningMessage(
     String txnHashOrVersion,
+    Transaction transaction,
   ) async {
     try {
       final response = await apiClient.request(
+          body: transaction.toJson(),
           route: APIRoute(
-            APIType.submitTransaction,
+            APIType.signingMessage,
             routeParams: txnHashOrVersion,
           ),
           create: (response) =>

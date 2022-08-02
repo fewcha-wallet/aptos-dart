@@ -10,6 +10,7 @@ enum APIType {
   submitTransaction,
   simulateTransaction,
   getTransaction,
+  getAccountTransactions,
   signingMessage,
 }
 enum APIErrorType {
