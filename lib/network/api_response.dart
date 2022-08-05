@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/pagination/pagination.dart';
@@ -25,7 +28,8 @@ class BaseAPIResponseWrapper<R, E> {
 
   void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
     status = formatResponse[AppConstants.rootAPIStatusFormat];
-    hasError = formatResponse[AppConstants.rootAPIStatusFormat] != 200;
+    hasError = formatResponse[AppConstants.rootAPIStatusFormat] != 200 &&
+        formatResponse[AppConstants.rootAPIStatusFormat] != 202;
     statusMessage = formatResponse[AppConstants.rootAPIStatusMessageFormat];
   }
 }
@@ -40,6 +44,13 @@ class APIResponse<T> extends BaseAPIResponseWrapper<Response, T> {
   void decode(Map<String, dynamic> formatResponse, {createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
+      // if (formatResponse["data"] is List) {
+      //   List<dynamic> data = formatResponse["data"];
+      //   if (data.isNotEmpty) {
+      //     decodedData = createObject.decode(data[0] ?? {});
+      //   }
+      // } else {
+      // }
       decodedData = createObject.decode(formatResponse["data"] ?? {});
     } else if (T == dynamic) {
       decodedData = formatResponse["data"];

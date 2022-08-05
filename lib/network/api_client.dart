@@ -105,7 +105,9 @@ class APIClient extends BaseAPIClient {
           response = await instance.fetch(requestOptions);
         }
         T apiWrapper = create(response);
-        if (response.statusCode == 200 || response.statusCode == 201) {
+        if (response.statusCode == 200 ||
+            response.statusCode == 201 ||
+            response.statusCode == 202) {
           if (apiWrapper is BaseAPIResponseWrapper) {
             if (apiWrapper.hasError) throw ErrorResponse.fromAPI(response);
             return apiWrapper;
@@ -121,7 +123,20 @@ class APIClient extends BaseAPIClient {
         }
         throw ErrorResponse.fromAPI(response);
       } on DioError catch (e) {
-        throw ErrorResponse.fromAPI(e.response);
+        if (e.response?.statusCode == 202) {
+          if (e.response?.data != null) {
+            T apiWrapper = create(e.response);
+            if (apiWrapper is BaseAPIResponseWrapper) {
+              if (apiWrapper.hasError) throw ErrorResponse.fromAPI(e.response);
+              return apiWrapper;
+            }
+            return e.response!.data;
+          } else {
+            throw ErrorResponse.fromAPI(e.response);
+          }
+        } else {
+          throw ErrorResponse.fromAPI(e.response);
+        }
       }
     } else {
       throw ErrorResponse.fromSystem(

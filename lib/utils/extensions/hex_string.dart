@@ -38,6 +38,10 @@ extension HexString on String {
     }
     return false;
   }
+
+  List<int> stringToListInt() {
+    return HEX.decode(this);
+  }
 }
 
 extension StringExtension on String {
@@ -52,9 +56,9 @@ extension Uint8ListExtension on Uint8List {
     ///        78=>x
     ///        we need to trim 0x if exist
     Uint8List temp = this;
-    if (this[0] == 30 && this[1] == 78) {
-      temp = sublist(2);
-    }
-    return HEX.encode(temp).toHexString();
+    // if (this[0] == 30 && this[1] == 78) {
+    //   temp = sublist(2);
+    // }
+    return HEX.encode(temp);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:aptosdart/core/changes/changes.dart';
 import 'package:aptosdart/core/payload/payload.dart';
-import 'package:aptosdart/core/signature/signature.dart';
+import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/transaction_event/transaction_event.dart';
 import 'package:aptosdart/network/decodable.dart';
 
@@ -22,7 +22,7 @@ class Transaction extends Decoder<Transaction> {
   String? expirationTimestampSecs;
   String? gasCurrencyCode;
   Payload? payload;
-  Signature? signature;
+  TransactionSignature? signature;
   List<TransactionEvent>? events;
   String? timestamp;
 
@@ -59,7 +59,7 @@ class Transaction extends Decoder<Transaction> {
     stateRootHash = json['state_root_hash'];
     eventRootHash = json['event_root_hash'];
     gasUsed = json['gas_used'];
-    success = json['success'];
+    success = json['success'] ?? false;
     vmStatus = json['vm_status'];
     accumulatorRootHash = json['accumulator_root_hash'];
     if (json['changes'] != null) {
@@ -76,7 +76,7 @@ class Transaction extends Decoder<Transaction> {
     payload =
         json['payload'] != null ? Payload.fromJson(json['payload']) : null;
     signature = json['signature'] != null
-        ? Signature.fromJson(json['signature'])
+        ? TransactionSignature.fromJson(json['signature'])
         : null;
     if (json['events'] != null) {
       events = <TransactionEvent>[];
@@ -101,5 +101,14 @@ class Transaction extends Decoder<Transaction> {
       data['signature'] = signature!.toJson();
     }
     return data;
+  }
+
+  String tokenAmount() {
+    if (payload?.arguments != null) {
+      if (payload!.arguments!.isNotEmpty) {
+        return payload!.arguments!.last;
+      }
+    }
+    return '';
   }
 }

@@ -12,7 +12,7 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 class AptosAccountRepository with AptosSDKMixin {
   AptosAccountRepository();
 
-  Future<AccountCore?> getAccount(String address) async {
+  Future<AccountCore> getAccount(String address) async {
     try {
       final response = await apiClient.request(
           route: APIRoute(APIType.getAccount,

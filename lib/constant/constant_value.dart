@@ -17,6 +17,7 @@ class AppConstants {
   static const String coinEvents = '0x1::coin::CoinEvents';
   static const String guidGenerator = '0x1::guid::Generator';
   static const String account = '0x1::account::Account';
+  static const String pendingTransaction = 'pending_transaction';
 }
 
 class ErrorMessages {
@@ -27,7 +28,9 @@ class ErrorMessages {
 }
 
 class HeadersApi {
-  static Map<String, String> headers = {
-    "Content-Type": "application/json",
+  static Map<String, String> headers = {"Content-Type": "application/json"};
+  static Map<String, String> transactionHeaders = {
+    "Content-Type": "application/x.aptos.signed_transaction+bcs",
+    "Accept": "application/json; application/x-bcs;",
   };
 }

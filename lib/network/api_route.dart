@@ -12,8 +12,9 @@ class APIRoute implements APIRouteConfigurable {
   String? baseUrl;
   String? routeParams;
   String? method;
-
-  APIRoute(this.apiType, {this.baseUrl, this.routeParams, this.method}) {
+  Map<String, String>? headers;
+  APIRoute(this.apiType,
+      {this.baseUrl, this.routeParams, this.method, this.headers}) {
     routeParams ??= "";
   }
   final String _accounts = 'accounts';
@@ -70,6 +71,7 @@ class APIRoute implements APIRouteConfigurable {
         path = '/$_transactions';
         break;
       case APIType.simulateTransaction:
+        // headers = HeadersApi.transactionHeaders;
         method = APIMethod.post;
         path = '/$_transactions/$_simulate';
         break;

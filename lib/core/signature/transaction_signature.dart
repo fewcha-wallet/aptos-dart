@@ -1,17 +1,17 @@
 import 'package:aptosdart/network/decodable.dart';
 
-class Signature extends Decoder<Signature> {
+class TransactionSignature extends Decoder<TransactionSignature> {
   String? type;
   String? publicKey;
   String? signature;
 
-  Signature({this.type, this.publicKey, this.signature});
+  TransactionSignature({this.type, this.publicKey, this.signature});
   @override
-  Signature decode(Map<String, dynamic> json) {
-    return Signature.fromJson(json);
+  TransactionSignature decode(Map<String, dynamic> json) {
+    return TransactionSignature.fromJson(json);
   }
 
-  Signature.fromJson(Map<String, dynamic> json) {
+  TransactionSignature.fromJson(Map<String, dynamic> json) {
     type = json['type'];
     publicKey = json['public_key'];
     signature = json['signature'];

@@ -1,4 +1,5 @@
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
@@ -8,7 +9,7 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 class TransactionRepository with AptosSDKMixin {
   TransactionRepository();
   Future<List<Transaction>> getTransactions(
-      {int start = 1, int limit = 25}) async {
+      {int start = 0, int limit = 10}) async {
     try {
       final param = {'start': start.toString(), 'limit': limit.toString()};
       final response = await apiClient.request(
@@ -39,7 +40,7 @@ class TransactionRepository with AptosSDKMixin {
     }
   }
 
-  Future<Transaction> simulateTransaction(Transaction transaction) async {
+  Future<List<Transaction>> simulateTransaction(Transaction transaction) async {
     try {
       final response = await apiClient.request(
           body: transaction.toJson(),
@@ -47,7 +48,7 @@ class TransactionRepository with AptosSDKMixin {
             APIType.simulateTransaction,
           ),
           create: (response) =>
-              APIResponse(createObject: Transaction(), response: response));
+              APIListResponse(createObject: Transaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
@@ -55,7 +56,7 @@ class TransactionRepository with AptosSDKMixin {
   }
 
   Future<List<Transaction>> getAccountTransactions(String address,
-      {int start = 1, int limit = 25}) async {
+      {int start = 0, int limit = 10}) async {
     try {
       final param = {'start': start.toString(), 'limit': limit.toString()};
 
@@ -90,8 +91,7 @@ class TransactionRepository with AptosSDKMixin {
     }
   }
 
-  Future<Transaction> createSigningMessage(
-    String txnHashOrVersion,
+  Future<SigningMessage> createSigningMessage(
     Transaction transaction,
   ) async {
     try {
@@ -99,10 +99,9 @@ class TransactionRepository with AptosSDKMixin {
           body: transaction.toJson(),
           route: APIRoute(
             APIType.signingMessage,
-            routeParams: txnHashOrVersion,
           ),
           create: (response) =>
-              APIResponse(createObject: Transaction(), response: response));
+              APIResponse(createObject: SigningMessage(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;

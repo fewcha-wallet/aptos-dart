@@ -74,6 +74,12 @@ class AptosAccount {
 
   String signBuffer(Uint8List buffer) {
     final signed = sign(PrivateKey(_privateKey), buffer);
-    return signed.fromBytesToString().substring(0, 128);
+    return signed.fromBytesToString().substring(0, 128).toHexString();
+  }
+
+  String signatureHex(String hexString) {
+    final listInt = hexString.stringToListInt();
+    final toUInt8List = Uint8List.fromList(listInt);
+    return signBuffer(toUInt8List);
   }
 }
