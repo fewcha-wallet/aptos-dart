@@ -23,7 +23,7 @@ class Utilities {
 
   static String getExpirationTimeStamp() {
     final timeStamp = (DateTime.now().toUtc().millisecondsSinceEpoch) / 1000;
-    final result = timeStamp.floor() + 10;
+    final result = timeStamp.floor() + 20;
     return result.toString();
   }
 
