@@ -111,4 +111,13 @@ class Transaction extends Decoder<Transaction> {
     }
     return '';
   }
+
+  String toAddress() {
+    if (payload?.arguments != null) {
+      if (payload!.arguments!.isNotEmpty) {
+        return payload!.arguments!.first;
+      }
+    }
+    return '';
+  }
 }
