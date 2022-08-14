@@ -103,7 +103,6 @@ class AptosAccountRepository with AptosSDKMixin {
       } else if (element.type?.toLowerCase() ==
           AppConstants.account.toLowerCase()) {
         dataModel.authenticationKey = element.data?.authenticationKey;
-        dataModel.selfAddress = element.data?.selfAddress;
         dataModel.sequenceNumber = element.data?.sequenceNumber;
       }
     }

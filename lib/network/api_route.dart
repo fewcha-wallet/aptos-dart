@@ -26,6 +26,7 @@ class APIRoute implements APIRouteConfigurable {
   final String _transactions = 'transactions';
   final String _simulate = 'simulate';
   final String _signingMessage = 'signing_message';
+  final String _event = 'events';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -84,6 +85,12 @@ class APIRoute implements APIRouteConfigurable {
       case APIType.signingMessage:
         method = APIMethod.post;
         path = '/$_transactions/$_signingMessage';
+        break;
+      case APIType.getEventsByEventKey:
+        path = '/$_event/$routeParams';
+        break;
+      case APIType.getEventsByEventHandle:
+        path = '/$_accounts/$routeParams';
         break;
     }
     final options = Options(

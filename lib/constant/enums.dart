@@ -12,6 +12,8 @@ enum APIType {
   getTransaction,
   getAccountTransactions,
   signingMessage,
+  getEventsByEventKey,
+  getEventsByEventHandle,
 }
 enum APIErrorType {
   invalidLedger,

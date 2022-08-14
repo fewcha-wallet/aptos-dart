@@ -5,10 +5,12 @@ import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/account_core.dart';
 import 'package:aptosdart/core/data_model/data_model.dart';
+import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
 import 'package:aptosdart/sdk/src/repository/transaction_repository/transaction_repository.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
@@ -16,10 +18,12 @@ import 'package:aptosdart/utils/utilities.dart';
 class AptosClient {
   late AptosAccountRepository _accountRepository;
   late TransactionRepository _transactionRepository;
+  late EventRepository _eventRepository;
 
   AptosClient() {
     _accountRepository = AptosAccountRepository();
     _transactionRepository = TransactionRepository();
+    _eventRepository = EventRepository();
   }
   //region Account
 
@@ -79,7 +83,8 @@ class AptosClient {
     try {
       final result =
           await _transactionRepository.getTransaction(txnHashOrVersion);
-      if (result.type == AppConstants.pendingTransaction) {
+      if (result.type == AppConstants.pendingTransaction ||
+          result.success == false) {
         print('transactionPending ${result.type}');
         return true;
       }
@@ -89,24 +94,35 @@ class AptosClient {
     }
   }
 
-  Future waitForTransaction(String txnHashOrVersion) async {
-    late Timer timer;
+  Future<bool> waitForTransaction(String txnHashOrVersion) async {
+    bool isSucceed = false;
+    int count = 0;
+
     try {
-      int count = 0;
-      timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-        if (count >= 10) {
-          timer.cancel();
-          throw Exception();
-        }
-        if (await transactionPending(txnHashOrVersion)) {
-          count += 1;
+      while (count < 10) {
+        print('count $count');
+        final isPending = await transactionPending(txnHashOrVersion);
+        if (isPending) {
+          count++;
         } else {
-          timer.cancel();
+          count = 10;
+          isSucceed = true;
         }
-      });
+      }
+      // timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      //   if (count >= 10) {
+      //     timer.cancel();
+      //     throw Exception();
+      //   }
+      //   if (await transactionPending(txnHashOrVersion)) {
+      //     count += 1;
+      //   } else {
+      //     timer.cancel();
+      //   }
+      // });
+      return isSucceed;
     } catch (e) {
-      timer.cancel();
-      rethrow;
+      return false;
     }
   }
 
@@ -205,6 +221,37 @@ class AptosClient {
           type: 'ed25519_signature',
           publicKey: aptosAccount.publicKeyInHex(),
           signature: signatureHex);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+//endregion
+//region Event
+  Future<List<Event>> getEventsByEventHandle({
+    required String address,
+    required String eventHandleStruct,
+    required String fieldName,
+  }) async {
+    try {
+      final response = await _eventRepository.getEventsByEventHandle(
+          address: address,
+          eventHandleStruct: eventHandleStruct,
+          fieldName: fieldName);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Event>> getEventsByEventKey({
+    required String eventKey,
+  }) async {
+    try {
+      final response = await _eventRepository.getEventsByEventKey(
+        eventKey: eventKey,
+      );
+      return response;
     } catch (e) {
       rethrow;
     }

@@ -12,7 +12,7 @@ class Guid extends Decoder<Guid> {
   }
 
   Guid.fromJson(Map<String, dynamic> json) {
-    final guidJson = json['guid']?['id'];
+    final guidJson = json['id'];
     if (guidJson != null) {
       address = guidJson['addr'] ?? '0x0';
       creationNum = guidJson['creation_num'] ?? '0';

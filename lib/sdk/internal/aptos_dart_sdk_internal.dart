@@ -16,8 +16,10 @@ class AptosDartSDKInternal {
     _apiClient = APIClient(logStatus: logStatus);
   }
   Future<DataModel> connect(String address) async {
-    if (_aptosCurrentConfig.currentAccount?.selfAddress != null &&
-        _aptosCurrentConfig.currentAccount?.selfAddress == address) {
+    if (_aptosCurrentConfig.currentAccount?.depositEvents?.guid?.address !=
+            null &&
+        _aptosCurrentConfig.currentAccount?.depositEvents?.guid?.address ==
+            address) {
       return _aptosCurrentConfig.currentAccount!;
     }
     final result = await connectAptosAccount(address);

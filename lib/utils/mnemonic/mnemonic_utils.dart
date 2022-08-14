@@ -19,6 +19,10 @@ class MnemonicUtils {
     return bip39.mnemonicToSeed(mnemonic);
   }
 
+  static String convertPrivateKeyHexToMnemonic(String privateKeyHex) {
+    return bip39.entropyToMnemonic(privateKeyHex.trimPrefix());
+  }
+
   static List<int> sliceMnemonic(Uint8List data,
       {int start = 0, int end = 32}) {
     if (start >= 0 && start <= end && end < 32) {
