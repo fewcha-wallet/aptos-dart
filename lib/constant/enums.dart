@@ -14,6 +14,7 @@ enum APIType {
   signingMessage,
   getEventsByEventKey,
   getEventsByEventHandle,
+  getTableItem,
 }
 enum APIErrorType {
   invalidLedger,

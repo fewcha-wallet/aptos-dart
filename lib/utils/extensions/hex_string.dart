@@ -12,16 +12,16 @@ extension HexString on String {
     return '${AppConstants.prefixOx}$this';
   }
 
-  String trimPrefixAndZeros() {
-    String temp = '';
-    if (startsWith(AppConstants.prefixOx)) {
-      temp = replaceFirst(AppConstants.prefixOx, '');
-    } else {
-      temp = this;
-    }
-    final result = temp.replaceFirst(Validator.removeLeadingZeros, '');
-    return result;
-  }
+  // String trimPrefixAndZeros() {
+  //   String temp = '';
+  //   if (startsWith(AppConstants.prefixOx)) {
+  //     temp = replaceFirst(AppConstants.prefixOx, '');
+  //   } else {
+  //     temp = this;
+  //   }
+  //   final result = temp.replaceFirst(Validator.removeLeadingZeros, '');
+  //   return result;
+  // }
 
   String trimPrefix() {
     String temp = this;

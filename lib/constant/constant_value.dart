@@ -1,5 +1,5 @@
 class HostUrl {
-  static const nodeUrl = 'https://fullnode.devnet.aptoslabs.com';
+  static const nodeUrl = 'https://fullnode.devnet.aptoslabs.com/v1/';
   static const faucetUrl = 'https://faucet.devnet.aptoslabs.com';
 }
 

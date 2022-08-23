@@ -86,6 +86,7 @@ class Transaction extends Decoder<Transaction> {
     }
     timestamp = json['timestamp'];
   }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['sender'] = sender;

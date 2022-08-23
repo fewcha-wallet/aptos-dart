@@ -15,8 +15,8 @@ class AptosAccountRepository with AptosSDKMixin {
   Future<AccountCore> getAccount(String address) async {
     try {
       final response = await apiClient.request(
-          route: APIRoute(APIType.getAccount,
-              routeParams: address.trimPrefixAndZeros()),
+          route:
+              APIRoute(APIType.getAccount, routeParams: address.trimPrefix()),
           create: (response) =>
               APIResponse(createObject: AccountCore(), response: response));
       return response.decodedData!;
@@ -29,7 +29,7 @@ class AptosAccountRepository with AptosSDKMixin {
     try {
       final response = await apiClient.request(
           route: APIRoute(APIType.getAccountResources,
-              routeParams: address.trimPrefixAndZeros()),
+              routeParams: address.trimPrefix()),
           create: (response) =>
               APIListResponse(createObject: Resource(), response: response));
       return configListResource(response.decodedData ?? []);
@@ -43,7 +43,7 @@ class AptosAccountRepository with AptosSDKMixin {
     try {
       final response = await apiClient.request(
           route: APIRoute(APIType.getResourcesByType,
-              routeParams: address.trimPrefixAndZeros()),
+              routeParams: address.trimPrefix()),
           extraPath: resourceType,
           create: (response) =>
               APIResponse(createObject: Resource(), response: response));
@@ -58,7 +58,7 @@ class AptosAccountRepository with AptosSDKMixin {
       final response = await apiClient.request(
           route: APIRoute(
             APIType.getAccountModules,
-            routeParams: address.trimPrefixAndZeros(),
+            routeParams: address.trimPrefix(),
           ),
           create: (response) => APIListResponse(
               createObject: AccountModule(), response: response));
@@ -74,7 +74,7 @@ class AptosAccountRepository with AptosSDKMixin {
       final response = await apiClient.request(
           route: APIRoute(
             APIType.getAccountModuleByID,
-            routeParams: address.trimPrefixAndZeros(),
+            routeParams: address.trimPrefix(),
           ),
           extraPath: moduleName,
           create: (response) =>

@@ -27,6 +27,8 @@ class APIRoute implements APIRouteConfigurable {
   final String _simulate = 'simulate';
   final String _signingMessage = 'signing_message';
   final String _event = 'events';
+  final String _tables = 'tables';
+  final String _item = 'item';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -91,6 +93,10 @@ class APIRoute implements APIRouteConfigurable {
         break;
       case APIType.getEventsByEventHandle:
         path = '/$_accounts/$routeParams';
+        break;
+      case APIType.getTableItem:
+        method = APIMethod.post;
+        path = '/$_tables/$routeParams/$_item';
         break;
     }
     final options = Options(

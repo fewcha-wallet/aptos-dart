@@ -64,7 +64,7 @@ class TransactionRepository with AptosSDKMixin {
           params: param,
           route: APIRoute(
             APIType.getAccountTransactions,
-            routeParams: address.trimPrefixAndZeros(),
+            routeParams: address.trimPrefix(),
           ),
           create: (response) =>
               APIListResponse(createObject: Transaction(), response: response));

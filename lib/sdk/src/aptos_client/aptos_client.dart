@@ -200,7 +200,7 @@ class AptosClient {
       return Transaction(
         sender: address.toHexString(),
         sequenceNumber: account.sequenceNumber,
-        maxGasAmount: '73',
+        maxGasAmount: '2000',
         gasUnitPrice: '1',
         gasCurrencyCode: 'APT',
         expirationTimestampSecs: Utilities.getExpirationTimeStamp(),
