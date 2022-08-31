@@ -10,7 +10,6 @@ class Account extends Decoder<Account> {
       required this.privateKey});
   @override
   Account decode(Map<String, dynamic> json) {
-    // TODO: implement decode
     throw UnimplementedError();
   }
 

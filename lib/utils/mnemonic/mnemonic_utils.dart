@@ -7,7 +7,6 @@ class MnemonicUtils {
   static List<String> generateMnemonicList() {
     List<String> list = [];
     final gen = bip39.generateMnemonic();
-    print('generateMnemonicList $gen');
     final result = gen.split(' ').toList();
     for (final item in result) {
       list.add(item.capitalize());

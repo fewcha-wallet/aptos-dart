@@ -9,6 +9,8 @@ class ExtraKeys {
 
 class AppConstants {
   static const String rootAPIDataFormat = "data";
+  static const String defaultGasUnitPrice = '1';
+  static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";
   static const String rootAPIStatusMessageFormat = "status_message";
   static const String prefixOx = '0x';
@@ -31,6 +33,5 @@ class HeadersApi {
   static Map<String, String> headers = {"Content-Type": "application/json"};
   static Map<String, String> transactionHeaders = {
     "Content-Type": "application/x.aptos.signed_transaction+bcs",
-    // "Accept": "application/json",
   };
 }

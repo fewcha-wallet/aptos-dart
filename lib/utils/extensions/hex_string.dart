@@ -12,17 +12,6 @@ extension HexString on String {
     return '${AppConstants.prefixOx}$this';
   }
 
-  // String trimPrefixAndZeros() {
-  //   String temp = '';
-  //   if (startsWith(AppConstants.prefixOx)) {
-  //     temp = replaceFirst(AppConstants.prefixOx, '');
-  //   } else {
-  //     temp = this;
-  //   }
-  //   final result = temp.replaceFirst(Validator.removeLeadingZeros, '');
-  //   return result;
-  // }
-
   String trimPrefix() {
     String temp = this;
     if (startsWith(AppConstants.prefixOx)) {
@@ -56,9 +45,6 @@ extension Uint8ListExtension on Uint8List {
     ///        78=>x
     ///        we need to trim 0x if exist
     Uint8List temp = this;
-    // if (this[0] == 30 && this[1] == 78) {
-    //   temp = sublist(2);
-    // }
     return HEX.encode(temp);
   }
 }

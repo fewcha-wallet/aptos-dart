@@ -13,6 +13,4 @@ class Ledger extends Decoder<Ledger> {
     ledgerTimestamp = json['ledger_timestamp'] ?? '';
     return this;
   }
-
-  // String get version => ledgerVersion;
 }

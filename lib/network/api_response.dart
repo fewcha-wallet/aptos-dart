@@ -44,13 +44,6 @@ class APIResponse<T> extends BaseAPIResponseWrapper<Response, T> {
   void decode(Map<String, dynamic> formatResponse, {createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
-      // if (formatResponse["data"] is List) {
-      //   List<dynamic> data = formatResponse["data"];
-      //   if (data.isNotEmpty) {
-      //     decodedData = createObject.decode(data[0] ?? {});
-      //   }
-      // } else {
-      // }
       decodedData = createObject.decode(formatResponse["data"] ?? {});
     } else if (T == dynamic) {
       decodedData = formatResponse["data"];
@@ -84,9 +77,6 @@ class APIListResponse<T> extends BaseAPIResponseWrapper<Response, List<T>> {
       }
       decodedData ??= <T>[];
     }
-    // if (formatResponse["data"]['pagination'] != null) {
-    //   pagination = Pagination.fromJson(formatResponse["data"]['pagination']);
-    // }
   }
 }
 

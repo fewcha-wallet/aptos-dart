@@ -85,7 +85,6 @@ class AptosClient {
           await _transactionRepository.getTransactionByHash(txnHashOrVersion);
       if (result.type == AppConstants.pendingTransaction ||
           result.success == false) {
-        print('transactionPending ${result.type}');
         return true;
       }
       return false;
@@ -100,7 +99,6 @@ class AptosClient {
 
     try {
       while (count < 10) {
-        print('count $count');
         final isPending = await transactionPending(txnHashOrVersion);
         if (isPending) {
           count++;
@@ -109,17 +107,6 @@ class AptosClient {
           isSucceed = true;
         }
       }
-      // timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
-      //   if (count >= 10) {
-      //     timer.cancel();
-      //     throw Exception();
-      //   }
-      //   if (await transactionPending(txnHashOrVersion)) {
-      //     count += 1;
-      //   } else {
-      //     timer.cancel();
-      //   }
-      // });
       return isSucceed;
     } catch (e) {
       return false;
@@ -182,7 +169,7 @@ class AptosClient {
       AptosAccount aptosAccount, Transaction transaction) async {
     try {
       final transactionSignature = TransactionSignature(
-          type: 'ed25519_signature',
+          type: AppConstants.ed25519Signature,
           publicKey: aptosAccount.publicKeyInHex(),
           signature: Utilities.generateStringFromUInt8List());
       final result = await _transactionRepository
@@ -213,14 +200,18 @@ class AptosClient {
   }
 
   Future<Transaction> generateTransaction(
-      String address, Payload payload, int maximumUserBalanvce) async {
+    String address,
+    Payload payload,
+    String maximumUserBalance,
+    String? gasUnitPrice,
+  ) async {
     try {
       final account = await getAccount(address);
       return Transaction(
         sender: address.toHexString(),
         sequenceNumber: account.sequenceNumber,
-        maxGasAmount: maximumUserBalanvce.toString(),
-        gasUnitPrice: '1',
+        maxGasAmount: maximumUserBalance,
+        gasUnitPrice: gasUnitPrice ?? AppConstants.defaultGasUnitPrice,
         expirationTimestampSecs: Utilities.getExpirationTimeStamp(),
         payload: payload,
       );
@@ -233,11 +224,9 @@ class AptosClient {
       AptosAccount aptosAccount, Transaction transaction) async {
     try {
       final signMessage = await encodeSubmission(transaction);
-      // final d = signMessage.stringToListInt();
       final d = aptosAccount.signatureHex(signMessage.trimPrefix());
-      // final signatureHex = aptosAccount.signatureHex(signMessage.trimPrefix());
       return TransactionSignature(
-          type: 'ed25519_signature',
+          type: AppConstants.ed25519Signature,
           publicKey: aptosAccount.publicKeyInHex(),
           signature: d.trimPrefix());
     } catch (e) {

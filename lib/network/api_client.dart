@@ -21,7 +21,6 @@ abstract class BaseAPIClient {
       Map<String, dynamic>? params,
       String? extraPath,
       bool noEncode = false,
-      // bool ignoreNavigateWhenUnAuthorize = false,
       Map<String, dynamic> header,
       Map<String, dynamic>? body});
 }
@@ -54,7 +53,6 @@ class APIClient extends BaseAPIClient {
       required GenericObject<T> create,
       Map<String, dynamic>? params,
       bool noEncode = false,
-      // bool ignoreNavigateWhenUnAuthorize = false,
       Map<String, dynamic>? header,
       String? extraPath,
       Map<String, dynamic>? body,
@@ -72,8 +70,6 @@ class APIClient extends BaseAPIClient {
         });
       }
       if (extraPath != null) requestOptions.path += extraPath;
-      // requestOptions.extra[AppConstants.ignoreNavigateWhenUnAuthorize] =
-      //     ignoreNavigateWhenUnAuthorize;
       if (header != null) requestOptions.headers.addAll(header);
       if (body != null) {
         requestOptions.data = body;

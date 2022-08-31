@@ -28,7 +28,7 @@ class APIRoute implements APIRouteConfigurable {
   final String _byVersion = 'by_version';
   final String _simulate = 'simulate';
   final String _signingMessage = 'signing_message';
-  final String _encode_submission = 'encode_submission';
+  final String _encodeSubmission = 'encode_submission';
   final String _event = 'events';
   final String _tables = 'tables';
   final String _item = 'item';
@@ -95,7 +95,7 @@ class APIRoute implements APIRouteConfigurable {
         break;
       case APIType.encodeSubmission:
         method = APIMethod.post;
-        path = '/$_transactions/$_encode_submission';
+        path = '/$_transactions/$_encodeSubmission';
         break;
       case APIType.getEventsByEventKey:
         path = '/$_event/$routeParams';
