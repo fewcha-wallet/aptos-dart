@@ -1,5 +1,5 @@
 class HostUrl {
-  static const nodeUrl = 'https://fullnode.devnet.aptoslabs.com/v1/';
+  static const nodeUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
   static const faucetUrl = 'https://faucet.devnet.aptoslabs.com';
 }
 
@@ -31,6 +31,6 @@ class HeadersApi {
   static Map<String, String> headers = {"Content-Type": "application/json"};
   static Map<String, String> transactionHeaders = {
     "Content-Type": "application/x.aptos.signed_transaction+bcs",
-    "Accept": "application/json; application/x-bcs;",
+    // "Accept": "application/json",
   };
 }

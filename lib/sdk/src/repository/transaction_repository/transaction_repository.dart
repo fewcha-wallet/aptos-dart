@@ -74,13 +74,30 @@ class TransactionRepository with AptosSDKMixin {
     }
   }
 
-  Future<Transaction> getTransaction(
+  Future<Transaction> getTransactionByHash(
     String txnHashOrVersion,
   ) async {
     try {
       final response = await apiClient.request(
           route: APIRoute(
-            APIType.getTransaction,
+            APIType.getTransactionByHash,
+            routeParams: txnHashOrVersion,
+          ),
+          create: (response) =>
+              APIResponse(createObject: Transaction(), response: response));
+      return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Transaction> getTransactionByVersion(
+    String txnHashOrVersion,
+  ) async {
+    try {
+      final response = await apiClient.request(
+          route: APIRoute(
+            APIType.getTransactionByVersion,
             routeParams: txnHashOrVersion,
           ),
           create: (response) =>
@@ -102,6 +119,22 @@ class TransactionRepository with AptosSDKMixin {
           ),
           create: (response) =>
               APIResponse(createObject: SigningMessage(), response: response));
+      return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> encodeSubmission(
+    Transaction transaction,
+  ) async {
+    try {
+      final response = await apiClient.request(
+          body: transaction.toJson(),
+          route: APIRoute(
+            APIType.encodeSubmission,
+          ),
+          create: (response) => APIResponse<String>(response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;

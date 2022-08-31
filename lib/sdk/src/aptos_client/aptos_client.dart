@@ -82,7 +82,7 @@ class AptosClient {
   Future<bool> transactionPending(String txnHashOrVersion) async {
     try {
       final result =
-          await _transactionRepository.getTransaction(txnHashOrVersion);
+          await _transactionRepository.getTransactionByHash(txnHashOrVersion);
       if (result.type == AppConstants.pendingTransaction ||
           result.success == false) {
         print('transactionPending ${result.type}');
@@ -137,10 +137,20 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> getTransaction(String txnHashOrVersion) async {
+  Future<Transaction> getTransactionByHash(String txnHashOrVersion) async {
     try {
       final result =
-          await _transactionRepository.getTransaction(txnHashOrVersion);
+          await _transactionRepository.getTransactionByHash(txnHashOrVersion);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Transaction> getTransactionByVersion(String txnHashOrVersion) async {
+    try {
+      final result = await _transactionRepository
+          .getTransactionByVersion(txnHashOrVersion);
       return result;
     } catch (e) {
       rethrow;
@@ -193,16 +203,24 @@ class AptosClient {
     }
   }
 
+  Future<String> encodeSubmission(Transaction transaction) async {
+    try {
+      final result = await _transactionRepository.encodeSubmission(transaction);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Transaction> generateTransaction(
-      String address, Payload payload) async {
+      String address, Payload payload, int maximumUserBalanvce) async {
     try {
       final account = await getAccount(address);
       return Transaction(
         sender: address.toHexString(),
         sequenceNumber: account.sequenceNumber,
-        maxGasAmount: '2000',
+        maxGasAmount: maximumUserBalanvce.toString(),
         gasUnitPrice: '1',
-        gasCurrencyCode: 'APT',
         expirationTimestampSecs: Utilities.getExpirationTimeStamp(),
         payload: payload,
       );
@@ -214,13 +232,14 @@ class AptosClient {
   Future<TransactionSignature> signTransaction(
       AptosAccount aptosAccount, Transaction transaction) async {
     try {
-      final signMessage = await createSigningMessage(transaction);
-      final signatureHex =
-          aptosAccount.signatureHex(signMessage.message!.trimPrefix());
+      final signMessage = await encodeSubmission(transaction);
+      // final d = signMessage.stringToListInt();
+      final d = aptosAccount.signatureHex(signMessage.trimPrefix());
+      // final signatureHex = aptosAccount.signatureHex(signMessage.trimPrefix());
       return TransactionSignature(
           type: 'ed25519_signature',
           publicKey: aptosAccount.publicKeyInHex(),
-          signature: signatureHex);
+          signature: d.trimPrefix());
     } catch (e) {
       rethrow;
     }

@@ -25,28 +25,31 @@ class Transaction extends Decoder<Transaction> {
   TransactionSignature? signature;
   List<TransactionEvent>? events;
   String? timestamp;
+  List<String>? secondarySigners;
 
-  Transaction(
-      {this.type,
-      this.version,
-      this.hash,
-      this.stateRootHash,
-      this.eventRootHash,
-      this.gasUsed,
-      this.success,
-      this.vmStatus,
-      this.accumulatorRootHash,
-      this.changes,
-      this.sender,
-      this.sequenceNumber,
-      this.maxGasAmount,
-      this.gasCurrencyCode,
-      this.gasUnitPrice,
-      this.expirationTimestampSecs,
-      this.payload,
-      this.signature,
-      this.events,
-      this.timestamp});
+  Transaction({
+    this.type,
+    this.version,
+    this.hash,
+    this.stateRootHash,
+    this.eventRootHash,
+    this.gasUsed,
+    this.success,
+    this.vmStatus,
+    this.accumulatorRootHash,
+    this.changes,
+    this.sender,
+    this.sequenceNumber,
+    this.maxGasAmount,
+    this.gasCurrencyCode,
+    this.gasUnitPrice,
+    this.expirationTimestampSecs,
+    this.payload,
+    this.signature,
+    this.events,
+    this.timestamp,
+    this.secondarySigners,
+  });
   @override
   Transaction decode(Map<String, dynamic> json) {
     return Transaction.fromJson(json);
@@ -101,6 +104,10 @@ class Transaction extends Decoder<Transaction> {
     if (signature != null) {
       data['signature'] = signature!.toJson();
     }
+    if (secondarySigners != null) {
+      data['secondary_signers'] = secondarySigners;
+    }
+
     return data;
   }
 

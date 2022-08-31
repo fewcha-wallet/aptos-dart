@@ -24,8 +24,11 @@ class APIRoute implements APIRouteConfigurable {
   final String _module = 'module';
   final String _mint = 'mint';
   final String _transactions = 'transactions';
+  final String _byHash = 'by_hash';
+  final String _byVersion = 'by_version';
   final String _simulate = 'simulate';
   final String _signingMessage = 'signing_message';
+  final String _encode_submission = 'encode_submission';
   final String _event = 'events';
   final String _tables = 'tables';
   final String _item = 'item';
@@ -74,12 +77,14 @@ class APIRoute implements APIRouteConfigurable {
         path = '/$_transactions';
         break;
       case APIType.simulateTransaction:
-        // headers = HeadersApi.transactionHeaders;
         method = APIMethod.post;
         path = '/$_transactions/$_simulate';
         break;
-      case APIType.getTransaction:
-        path = '/$_transactions/$routeParams';
+      case APIType.getTransactionByHash:
+        path = '/$_transactions/$_byHash/$routeParams';
+        break;
+      case APIType.getTransactionByVersion:
+        path = '/$_transactions/$_byVersion/$routeParams';
         break;
       case APIType.getAccountTransactions:
         path = '/$_accounts/$routeParams/$_transactions';
@@ -87,6 +92,10 @@ class APIRoute implements APIRouteConfigurable {
       case APIType.signingMessage:
         method = APIMethod.post;
         path = '/$_transactions/$_signingMessage';
+        break;
+      case APIType.encodeSubmission:
+        method = APIMethod.post;
+        path = '/$_transactions/$_encode_submission';
         break;
       case APIType.getEventsByEventKey:
         path = '/$_event/$routeParams';
@@ -100,7 +109,7 @@ class APIRoute implements APIRouteConfigurable {
         break;
     }
     final options = Options(
-            headers: HeadersApi.headers,
+            headers: headers ?? HeadersApi.headers,
             extra: {ExtraKeys.authorize: authorize},
             responseType: responseType,
             method: this.method ?? method)
