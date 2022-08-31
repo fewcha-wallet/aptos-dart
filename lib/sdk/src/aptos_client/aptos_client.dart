@@ -202,9 +202,9 @@ class AptosClient {
   Future<Transaction> generateTransaction(
     String address,
     Payload payload,
-    String maximumUserBalance,
+    String maximumUserBalance, {
     String? gasUnitPrice,
-  ) async {
+  }) async {
     try {
       final account = await getAccount(address);
       return Transaction(
