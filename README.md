@@ -3,7 +3,7 @@
 This package provide functions base on [typescript SDK](https://github.com/aptos-labs/aptos-core/blob/main/ecosystem/typescript/sdk) and written by Dart.
 
 ## Table of contents
-1. [Installation](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#installation)
+1. [Installation](https://github.com/fewcha-wallet/aptos-dart/edit/develop#installation)
 2. [Requirements](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#requirements)
 
 3. [Features](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#features)
