@@ -12,7 +12,7 @@ This package provide functions base on [typescript SDK](https://github.com/aptos
     - [State](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#state)
     - [Faucet](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#faucet)
     - [Event](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#event)
-    - [Ledger](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#ledger)
+    - [Ledger](#ledger)
 4. [Aptos API Docs](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
 5. [Support](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
 
