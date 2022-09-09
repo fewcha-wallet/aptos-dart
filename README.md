@@ -1,39 +1,52 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# APTOS DART SDK
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+This package provide functions base on [typescript SDK](https://github.com/aptos-labs/aptos-core/blob/main/ecosystem/typescript/sdk) and written in Dart.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+## Table of contents
+1. [Installation](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#installation)
+2. [Requirements](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#requirements)
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+3. [Features](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#features)
+    - [Account](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#account)
+    - [Transaction](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#transaction)
+    - [State](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#state)
+    - [Faucet](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#faucet)
+    - [Event](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#event)
+    - [Ledger](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#ledger)
+4. [Aptos API Docs](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
+5. [Support](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
 
-## Features
+## Requirements
+> __Warning__
+> This package is running on Flutter 2.10.3, so please notice when install it.
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
+## Installation
 ```dart
-const like = 'sample';
+import 'package:aptosdart/sdk/aptos_dart_sdk.dart';
+
+AptosDartSDK sdk=  AptosDartSDK(logStatus: LogStatus.show);
 ```
+We also provide Log when calling API( include cURL, API request and response), this will help you to track the requests. If you don't want it, disable by:
+```dart
 
-## Additional information
+enum LogStatus { hide, show }
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+AptosDartSDK sdk=  AptosDartSDK(logStatus: LogStatus.hide);
+```
+![image](https://user-images.githubusercontent.com/87870359/189259761-f8783112-0d0e-478b-b8f1-a474e1b04e7d.png)
+
+This package using [Flutter Dio](https://pub.dev/packages/dio) to handle API request.
+
+## Account
+
+## Transaction
+
+## State
+
+## Faucet
+
+## Event
+
+## Ledger
+
+## Support
