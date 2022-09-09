@@ -3,18 +3,17 @@
 This package provide functions base on [typescript SDK](https://github.com/aptos-labs/aptos-core/blob/main/ecosystem/typescript/sdk) and written by Dart.
 
 ## Table of contents
-1. [Installation](https://github.com/fewcha-wallet/aptos-dart/edit/develop#installation)
-2. [Requirements](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#requirements)
+1. [Installation](#installation)
+2. [Requirements](#requirements)
 
-3. [Features](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#features)
-    - [Account](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#account)
-    - [Transaction](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#transaction)
-    - [State](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#state)
-    - [Faucet](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#faucet)
-    - [Event](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#event)
+3. [Features](#features)
+    - [Account](#account)
+    - [Transaction](#transaction)
+    - [State](#state)
+    - [Faucet](#faucet)
+    - [Event](#event)
     - [Ledger](#ledger)
-4. [Aptos API Docs](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
-5. [Support](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
+4. [Support](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
 
 ## Requirements
 > __Warning__
