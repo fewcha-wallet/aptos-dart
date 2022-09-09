@@ -9,7 +9,7 @@ This package provide functions base on [typescript SDK](https://github.com/aptos
 3. [Features](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#features)
     - [Account](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#account)
     - [Transaction](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#transaction)
-    <!-- - [State](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#state)-->
+    - [State](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#state)
     - [Faucet](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#faucet)
     - [Event](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#event)
     - [Ledger](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#ledger)
@@ -125,8 +125,11 @@ This package using [Flutter Dio](https://pub.dev/packages/dio) to handle API req
      // Sign Transaction
         await AptosClient().signTransaction(AptosAccount aptosAccount, Transaction transaction);
 ```  
-<!--## State -->
+## State
+```dart
+    await AptosClient().getTableItem({required String tableHandle,required String eventHandleStruct,required String fieldName,});
 
+```   
 ## Faucet
 ```dart
     final aptosAccount =AptosAccount();
@@ -142,7 +145,9 @@ This package using [Flutter Dio](https://pub.dev/packages/dio) to handle API req
       await AptosClient().getEventsByEventKey({required String eventKey});
         
 ```  
-
 ## Ledger
+```dart
+      await AptosClient().getLedgerInformation();
+```  
 
 ## Support
