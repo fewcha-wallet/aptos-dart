@@ -5,7 +5,6 @@ import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 
 class StateRepository with AptosSDKMixin {
-  StateRepository();
   Future<Event> getTableItem({
     required String tableHandle,
     required String eventHandleStruct,

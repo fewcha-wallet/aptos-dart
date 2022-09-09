@@ -6,11 +6,14 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/account_core.dart';
 import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/event/event.dart';
+import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
+import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
+import 'package:aptosdart/sdk/src/repository/state_repository/state_repository.dart';
 import 'package:aptosdart/sdk/src/repository/transaction_repository/transaction_repository.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
@@ -19,11 +22,15 @@ class AptosClient {
   late AptosAccountRepository _accountRepository;
   late TransactionRepository _transactionRepository;
   late EventRepository _eventRepository;
+  late StateRepository _stateRepository;
+  late LedgerRepository _ledgerRepository;
 
   AptosClient() {
     _accountRepository = AptosAccountRepository();
     _transactionRepository = TransactionRepository();
     _eventRepository = EventRepository();
+    _stateRepository = StateRepository();
+    _ledgerRepository = LedgerRepository();
   }
   //region Account
 
@@ -259,6 +266,36 @@ class AptosClient {
       final response = await _eventRepository.getEventsByEventKey(
         eventKey: eventKey,
       );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+//endregion
+//region State
+  Future<Event> getTableItem({
+    required String tableHandle,
+    required String eventHandleStruct,
+    required String fieldName,
+  }) async {
+    try {
+      final response = await _stateRepository.getTableItem(
+        tableHandle: tableHandle,
+        eventHandleStruct: eventHandleStruct,
+        fieldName: fieldName,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+//endregion
+//region Ledge
+
+  Future<Ledger?> getLedgerInformation() async {
+    try {
+      final response = await _ledgerRepository.getLedgerInformation();
       return response;
     } catch (e) {
       rethrow;

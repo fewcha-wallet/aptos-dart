@@ -24,7 +24,9 @@ class Payload extends Decoder<Payload> {
     if (json['arguments'] != null) {
       arguments = <String>[];
       json['arguments'].forEach((v) {
-        arguments!.add(v);
+        if (v is String) {
+          arguments!.add(v);
+        }
       });
     }
   }
