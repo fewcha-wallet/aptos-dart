@@ -13,7 +13,8 @@ This package provide functions base on [typescript SDK](https://github.com/aptos
     - [Faucet](#faucet)
     - [Event](#event)
     - [Ledger](#ledger)
-4. [Support](https://github.com/fewcha-wallet/aptos-dart/edit/develop/README.md#support)
+4. [Mnemonic](#mnemonic)
+5. [Utilities](#utilities)
 
 ## Requirements
 > __Warning__
@@ -149,4 +150,27 @@ This package using [Flutter Dio](https://pub.dev/packages/dio) to handle API req
       await AptosClient().getLedgerInformation();
 ```  
 
-## Support
+## Mnemonic
+We create this class to create Mnemonic and convert Private key to Mnemonic
+```dart
+     // Generate a Random Mnemonic list
+     List<String> listMnemonic= MnemonicUtils.generateMnemonicList();
+     
+     // Convert Private Key in Hex To Mnemonic
+     String mnemonic= MnemonicUtils.convertPrivateKeyHexToMnemonic(String privateKeyHex);
+     
+```  
+
+## Utilities
+This Utilities will help you to create Buffer, get Expiration TimeStamp for a transaction, generate an invalid Signature to simulate a Transaction
+```dart
+     // Create Buffer
+     List<String> listBuffer=Utilities.buffer(List<int> list)
+     
+     // Get Expiration TimeStamp for a transaction
+     String timeStamp= Utilities.getExpirationTimeStamp();
+     
+      // Generate an invalid Signature to simulate a Transaction
+     String timeStamp= Utilities.generateStringFromUInt8List();
+```  
+
