@@ -1,5 +1,6 @@
 import 'package:aptosdart/core/coin/coin.dart';
 import 'package:aptosdart/core/event_handle_struct/event_handle_struct.dart';
+import 'package:aptosdart/core/token/token.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class DataModel extends Decoder<DataModel> {
@@ -11,6 +12,7 @@ class DataModel extends Decoder<DataModel> {
   Coin? coin;
   EventHandleStruct? depositEvents, withdrawEvents, registerEvents;
   String? counter, authenticationKey, sequenceNumber, amount;
+  Token? token;
 
   DataModel(
       {this.coin,
@@ -20,6 +22,7 @@ class DataModel extends Decoder<DataModel> {
       this.counter,
       this.authenticationKey,
       this.amount,
+      this.token,
       this.sequenceNumber});
 
   DataModel.fromJson(Map<String, dynamic> json) {

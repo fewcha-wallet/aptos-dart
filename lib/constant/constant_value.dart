@@ -18,6 +18,8 @@ class AppConstants {
       '0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>';
   static const String coinEvents = '0x1::coin::CoinEvents';
   static const String guidGenerator = '0x1::guid::Generator';
+  static const String coinInfo = '0x1::coin::CoinInfo';
+
   static const String account = '0x1::account::Account';
   static const String pendingTransaction = 'pending_transaction';
 }

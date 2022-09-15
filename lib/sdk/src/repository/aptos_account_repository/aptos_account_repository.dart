@@ -38,6 +38,21 @@ class AptosAccountRepository with AptosSDKMixin {
     }
   }
 
+  Future<UserResources?> getAccountResourcesNew(String address) async {
+    try {
+      final response = await apiClient.request(
+          route: APIRoute(APIType.getAccountResources,
+              routeParams: address.trimPrefix()),
+          create: (response) =>
+              APIListResponse(createObject: ResourceNew(), response: response));
+      final userResource =
+          configListUserResources(response.decodedData as List<ResourceNew>);
+      return userResource;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Resource> getResourcesByType(
       String address, String resourceType) async {
     try {
@@ -107,5 +122,36 @@ class AptosAccountRepository with AptosSDKMixin {
       }
     }
     return dataModel;
+  }
+
+  UserResources? configListUserResources(List<ResourceNew> list) {
+    if (list.isEmpty) return null;
+    UserResources userResource = UserResources();
+
+    for (var element in list) {
+      if (element.type?.toLowerCase() == AppConstants.coinStore.toLowerCase()) {
+        userResource.aptosCoin = element;
+      } else if (element.type
+          .toString()
+          .toLowerCase()
+          .contains(AppConstants.coinInfo.toLowerCase())) {
+        userResource.token = element;
+      } else if (element.type.toString().toLowerCase() ==
+          AppConstants.account.toLowerCase()) {
+        userResource.aptosAccountData = element;
+      }
+      /* else if (element.type?.toLowerCase() ==
+          AppConstants.coinEvents.toLowerCase()) {
+        userResource.registerEvents = element.data?.registerEvents;
+      } else if (element.type?.toLowerCase() ==
+          AppConstants.guidGenerator.toLowerCase()) {
+        userResource.counter = element.data?.counter;
+      } else if (element.type?.toLowerCase() ==
+          AppConstants.account.toLowerCase()) {
+        userResource.authenticationKey = element.data?.authenticationKey;
+        userResource.sequenceNumber = element.data?.sequenceNumber;
+      }*/
+    }
+    return userResource;
   }
 }

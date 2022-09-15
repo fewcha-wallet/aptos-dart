@@ -8,6 +8,7 @@ import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
+import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
@@ -67,6 +68,15 @@ class AptosClient {
         return result;
       }
       return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserResources?> getAccountResourcesNew(String address) async {
+    try {
+      final result = await _accountRepository.getAccountResourcesNew(address);
+      return result;
     } catch (e) {
       rethrow;
     }
@@ -231,11 +241,11 @@ class AptosClient {
       AptosAccount aptosAccount, Transaction transaction) async {
     try {
       final signMessage = await encodeSubmission(transaction);
-      final d = aptosAccount.signatureHex(signMessage.trimPrefix());
+      final signature = aptosAccount.signatureHex(signMessage.trimPrefix());
       return TransactionSignature(
           type: AppConstants.ed25519Signature,
           publicKey: aptosAccount.publicKeyInHex(),
-          signature: d.trimPrefix());
+          signature: signature.trimPrefix());
     } catch (e) {
       rethrow;
     }

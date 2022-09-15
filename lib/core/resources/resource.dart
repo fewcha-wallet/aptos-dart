@@ -1,4 +1,8 @@
+import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/core/coin/coin.dart';
 import 'package:aptosdart/core/data_model/data_model.dart';
+import 'package:aptosdart/core/event_handle_struct/event_handle_struct.dart';
+import 'package:aptosdart/core/supply/supply.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class Resource extends Decoder<Resource> {
@@ -16,4 +20,128 @@ class Resource extends Decoder<Resource> {
     type = json['type'];
     data = json['data'] != null ? DataModel?.fromJson(json['data']) : null;
   }
+}
+
+class ResourceNew extends Decoder<ResourceNew> {
+  String? type;
+  DataModelAbstract? data;
+
+  ResourceNew({this.type, this.data});
+
+  @override
+  ResourceNew decode(Map<String, dynamic> json) {
+    return ResourceNew.fromJson(json);
+  }
+
+  ResourceNew.fromJson(Map<String, dynamic> json) {
+    type = json['type'];
+    data =
+        json['data'] != null ? getDataByType(json['type'], json['data']) : null;
+  }
+  DataModelAbstract getDataByType(String type, Map<String, dynamic> json) {
+    if (type.toString().toLowerCase() == AppConstants.coinStore.toLowerCase()) {
+      return AptosCoin.fromJson(json);
+    } else if (type
+        .toString()
+        .toLowerCase()
+        .contains(AppConstants.coinInfo.toLowerCase())) {
+      return Token.fromJson(json);
+    } else if (type
+        .toString()
+        .toLowerCase()
+        .contains(AppConstants.account.toLowerCase())) {
+      return AptosAccountData.fromJson(json);
+    }
+    return Token.fromJson(json);
+  }
+}
+
+abstract class DataModelAbstract extends Decoder<DataModelAbstract> {}
+
+class Token extends DataModelAbstract {
+  int? decimals;
+  String? name;
+  Supply? supply;
+  String? symbol;
+
+  Token({this.decimals, this.name, this.supply, this.symbol});
+
+  Token.fromJson(Map<String, dynamic> json) {
+    decimals = json['decimals'];
+    name = json['name'];
+    supply = json['supply'] != null ? Supply.fromJson(json['supply']) : null;
+    symbol = json['symbol'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['decimals'] = decimals;
+    data['name'] = name;
+    if (supply != null) {
+      data['supply'] = supply!.toJson();
+    }
+    data['symbol'] = symbol;
+    return data;
+  }
+
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return Token.fromJson(json);
+  }
+}
+
+class AptosCoin extends DataModelAbstract {
+  Coin? coin;
+  EventHandleStruct? depositEvents, withdrawEvents;
+  AptosCoin({
+    this.coin,
+    this.depositEvents,
+    this.withdrawEvents,
+  });
+
+  AptosCoin.fromJson(Map<String, dynamic> json) {
+    coin = json['coin'] != null ? Coin?.fromJson(json['coin']) : null;
+    depositEvents = json['deposit_events'] != null
+        ? EventHandleStruct?.fromJson(json['deposit_events'])
+        : null;
+    withdrawEvents = json['withdraw_events'] != null
+        ? EventHandleStruct?.fromJson(json['withdraw_events'])
+        : null;
+  }
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return AptosCoin.fromJson(json);
+  }
+}
+
+class AptosAccountData extends DataModelAbstract {
+  EventHandleStruct? keyRotationEvents, coinRegisterEvents;
+  String? authenticationKey, sequenceNumber;
+
+  AptosAccountData(
+      {this.keyRotationEvents,
+      this.coinRegisterEvents,
+      this.authenticationKey,
+      this.sequenceNumber});
+
+  AptosAccountData.fromJson(Map<String, dynamic> json) {
+    keyRotationEvents = json['key_rotation_events'] != null
+        ? EventHandleStruct?.fromJson(json['key_rotation_events'])
+        : null;
+    coinRegisterEvents = json['coin_register_events'] != null
+        ? EventHandleStruct?.fromJson(json['coin_register_events'])
+        : null;
+    authenticationKey = json['authentication_key'];
+    sequenceNumber = json['sequence_number'];
+  }
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return AptosAccountData.fromJson(json);
+  }
+}
+
+class UserResources {
+  ResourceNew? token, aptosCoin, aptosAccountData;
+
+  UserResources({this.token, this.aptosCoin, this.aptosAccountData});
 }
