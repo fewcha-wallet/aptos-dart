@@ -14,8 +14,9 @@ class AppConstants {
   static const String rootAPIStatusFormat = "status";
   static const String rootAPIStatusMessageFormat = "status_message";
   static const String prefixOx = '0x';
-  static const String coinStore =
+  static const String aptosCoin =
       '0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>';
+  static const String coinStore = '0x1::coin::CoinStore';
   static const String coinEvents = '0x1::coin::CoinEvents';
   static const String guidGenerator = '0x1::guid::Generator';
   static const String coinInfo = '0x1::coin::CoinInfo';

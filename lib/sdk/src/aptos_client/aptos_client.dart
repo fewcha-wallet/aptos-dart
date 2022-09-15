@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/account_core.dart';
-import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
@@ -61,18 +60,6 @@ class AptosClient {
     }
   }
 
-  Future<DataModel?> getAccountResources(String address) async {
-    try {
-      final result = await _accountRepository.getAccountResources(address);
-      if (result != null) {
-        return result;
-      }
-      return null;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<UserResources?> getAccountResourcesNew(String address) async {
     try {
       final result = await _accountRepository.getAccountResourcesNew(address);
@@ -82,13 +69,13 @@ class AptosClient {
     }
   }
 
-  Future<DataModel?> getResourcesByType(
+  Future<ResourceNew?> getResourcesByType(
       {required String address, required String resourceType}) async {
     try {
       final result =
           await _accountRepository.getResourcesByType(address, resourceType);
 
-      return result.data;
+      return result;
     } catch (e) {
       rethrow;
     }

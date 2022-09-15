@@ -6,7 +6,7 @@ import 'package:aptosdart/core/ledger/ledger.dart';
 class AptosCurrentConfig {
   LogStatus? logStatus;
   Ledger? ledger;
-  DataModel? currentAccount;
+  // DataModel? currentAccount;
   AccountCore? accountCore;
   AptosCurrentConfig();
 

@@ -2,12 +2,12 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/account/account_core.dart';
 import 'package:aptosdart/core/account_module/account_module.dart';
-import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
+import 'package:aptosdart/utils/validator/validator.dart';
 
 class AptosAccountRepository with AptosSDKMixin {
   AptosAccountRepository();
@@ -20,19 +20,6 @@ class AptosAccountRepository with AptosSDKMixin {
           create: (response) =>
               APIResponse(createObject: AccountCore(), response: response));
       return response.decodedData!;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<DataModel?> getAccountResources(String address) async {
-    try {
-      final response = await apiClient.request(
-          route: APIRoute(APIType.getAccountResources,
-              routeParams: address.trimPrefix()),
-          create: (response) =>
-              APIListResponse(createObject: Resource(), response: response));
-      return configListResource(response.decodedData ?? []);
     } catch (e) {
       rethrow;
     }
@@ -53,7 +40,7 @@ class AptosAccountRepository with AptosSDKMixin {
     }
   }
 
-  Future<Resource> getResourcesByType(
+  Future<ResourceNew> getResourcesByType(
       String address, String resourceType) async {
     try {
       final response = await apiClient.request(
@@ -61,7 +48,7 @@ class AptosAccountRepository with AptosSDKMixin {
               routeParams: address.trimPrefix()),
           extraPath: resourceType,
           create: (response) =>
-              APIResponse(createObject: Resource(), response: response));
+              APIResponse(createObject: ResourceNew(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
@@ -100,57 +87,30 @@ class AptosAccountRepository with AptosSDKMixin {
     }
   }
 
-  DataModel? configListResource(List<Resource> list) {
-    if (list.isEmpty) return null;
-    DataModel dataModel = DataModel();
-
-    for (var element in list) {
-      if (element.type?.toLowerCase() == AppConstants.coinStore.toLowerCase()) {
-        dataModel.coin = element.data?.coin;
-        dataModel.depositEvents = element.data?.depositEvents;
-        dataModel.withdrawEvents = element.data?.withdrawEvents;
-      } else if (element.type?.toLowerCase() ==
-          AppConstants.coinEvents.toLowerCase()) {
-        dataModel.registerEvents = element.data?.registerEvents;
-      } else if (element.type?.toLowerCase() ==
-          AppConstants.guidGenerator.toLowerCase()) {
-        dataModel.counter = element.data?.counter;
-      } else if (element.type?.toLowerCase() ==
-          AppConstants.account.toLowerCase()) {
-        dataModel.authenticationKey = element.data?.authenticationKey;
-        dataModel.sequenceNumber = element.data?.sequenceNumber;
-      }
-    }
-    return dataModel;
-  }
-
   UserResources? configListUserResources(List<ResourceNew> list) {
     if (list.isEmpty) return null;
-    UserResources userResource = UserResources();
+    UserResources userResource = UserResources()..listToken = [];
 
     for (var element in list) {
-      if (element.type?.toLowerCase() == AppConstants.coinStore.toLowerCase()) {
+      if (element.type?.toLowerCase() == AppConstants.aptosCoin.toLowerCase()) {
         userResource.aptosCoin = element;
       } else if (element.type
           .toString()
           .toLowerCase()
-          .contains(AppConstants.coinInfo.toLowerCase())) {
-        userResource.token = element;
+          .startsWith(AppConstants.coinStore.toLowerCase())) {
+        if (Validator.validatorByRegex(
+            regExp: Validator.coinStructType, data: element.type)) {
+          userResource.listToken!.add(element);
+        }
       } else if (element.type.toString().toLowerCase() ==
           AppConstants.account.toLowerCase()) {
         userResource.aptosAccountData = element;
+      } else if (element.type
+          .toString()
+          .toLowerCase()
+          .startsWith(AppConstants.coinInfo.toLowerCase())) {
+        userResource.tokenInfo = element;
       }
-      /* else if (element.type?.toLowerCase() ==
-          AppConstants.coinEvents.toLowerCase()) {
-        userResource.registerEvents = element.data?.registerEvents;
-      } else if (element.type?.toLowerCase() ==
-          AppConstants.guidGenerator.toLowerCase()) {
-        userResource.counter = element.data?.counter;
-      } else if (element.type?.toLowerCase() ==
-          AppConstants.account.toLowerCase()) {
-        userResource.authenticationKey = element.data?.authenticationKey;
-        userResource.sequenceNumber = element.data?.sequenceNumber;
-      }*/
     }
     return userResource;
   }

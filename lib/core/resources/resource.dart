@@ -4,23 +4,24 @@ import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/event_handle_struct/event_handle_struct.dart';
 import 'package:aptosdart/core/supply/supply.dart';
 import 'package:aptosdart/network/decodable.dart';
+import 'package:aptosdart/utils/validator/validator.dart';
 
-class Resource extends Decoder<Resource> {
-  String? type;
-  DataModel? data;
-
-  Resource({this.type, this.data});
-
-  @override
-  Resource decode(Map<String, dynamic> json) {
-    return Resource.fromJson(json);
-  }
-
-  Resource.fromJson(Map<String, dynamic> json) {
-    type = json['type'];
-    data = json['data'] != null ? DataModel?.fromJson(json['data']) : null;
-  }
-}
+// class Resource extends Decoder<Resource> {
+//   String? type;
+//   DataModel? data;
+//
+//   Resource({this.type, this.data});
+//
+//   @override
+//   Resource decode(Map<String, dynamic> json) {
+//     return Resource.fromJson(json);
+//   }
+//
+//   Resource.fromJson(Map<String, dynamic> json) {
+//     type = json['type'];
+//     data = json['data'] != null ? DataModel?.fromJson(json['data']) : null;
+//   }
+// }
 
 class ResourceNew extends Decoder<ResourceNew> {
   String? type;
@@ -39,12 +40,13 @@ class ResourceNew extends Decoder<ResourceNew> {
         json['data'] != null ? getDataByType(json['type'], json['data']) : null;
   }
   DataModelAbstract getDataByType(String type, Map<String, dynamic> json) {
-    if (type.toString().toLowerCase() == AppConstants.coinStore.toLowerCase()) {
+    if (Validator.validatorByRegex(
+        regExp: Validator.coinStructType, data: type.toString())) {
       return AptosCoin.fromJson(json);
     } else if (type
         .toString()
         .toLowerCase()
-        .contains(AppConstants.coinInfo.toLowerCase())) {
+        .startsWith(AppConstants.coinInfo.toLowerCase())) {
       return Token.fromJson(json);
     } else if (type
         .toString()
@@ -112,6 +114,29 @@ class AptosCoin extends DataModelAbstract {
   DataModelAbstract decode(Map<String, dynamic> json) {
     return AptosCoin.fromJson(json);
   }
+
+  AptosName toAptosName(String name, String symbol) {
+    return AptosName(
+        name: name,
+        symbol: symbol,
+        coin: coin,
+        depositEvents: depositEvents,
+        withdrawEvents: withdrawEvents);
+  }
+}
+
+class AptosName extends AptosCoin {
+  String? name, symbol;
+  AptosName(
+      {this.name,
+      this.symbol,
+      Coin? coin,
+      EventHandleStruct? depositEvents,
+      withdrawEvents})
+      : super(
+            coin: coin,
+            depositEvents: depositEvents,
+            withdrawEvents: withdrawEvents);
 }
 
 class AptosAccountData extends DataModelAbstract {
@@ -141,7 +166,9 @@ class AptosAccountData extends DataModelAbstract {
 }
 
 class UserResources {
-  ResourceNew? token, aptosCoin, aptosAccountData;
+  ResourceNew? aptosCoin, aptosAccountData, tokenInfo;
+  List<ResourceNew>? listToken;
 
-  UserResources({this.token, this.aptosCoin, this.aptosAccountData});
+  UserResources(
+      {this.listToken, this.aptosCoin, this.aptosAccountData, this.tokenInfo});
 }

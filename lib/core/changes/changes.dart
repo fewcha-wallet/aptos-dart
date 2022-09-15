@@ -1,11 +1,12 @@
 import 'package:aptosdart/core/data_model/data_model.dart';
+import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class Changes extends Decoder<Changes> {
   String? type;
   String? address;
   String? stateKeyHash;
-  DataModel? data;
+  AptosAccountData? data;
 
   Changes({this.type, this.address, this.stateKeyHash, this.data});
   @override
@@ -17,6 +18,7 @@ class Changes extends Decoder<Changes> {
     type = json['type'];
     address = json['address'];
     stateKeyHash = json['state_key_hash'];
-    data = json['data'] != null ? DataModel.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? AptosAccountData.fromJson(json['data']) : null;
   }
 }
