@@ -9,6 +9,7 @@ class ExtraKeys {
 
 class AppConstants {
   static const String rootAPIDataFormat = "data";
+  static const String aptosDefaultCurrency = "APT";
   static const String defaultGasUnitPrice = '1';
   static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";

@@ -1,3 +1,4 @@
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/changes/changes.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
@@ -107,7 +108,7 @@ class Transaction extends Decoder<Transaction> {
     if (secondarySigners != null) {
       data['secondary_signers'] = secondarySigners;
     }
-
+    data.removeWhere((key, value) => value == null);
     return data;
   }
 
@@ -127,5 +128,10 @@ class Transaction extends Decoder<Transaction> {
       }
     }
     return '';
+  }
+
+  String getTokenCurrency() {
+    if (gasCurrencyCode == null) return AppConstants.aptosDefaultCurrency;
+    return gasCurrencyCode!;
   }
 }
