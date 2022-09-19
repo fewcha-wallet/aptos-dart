@@ -71,7 +71,7 @@ class Token extends DataModelAbstract {
   Token.fromJson(Map<String, dynamic> json) {
     decimals = json['decimals'];
     name = json['name'];
-    supply = json['supply'] != null ? Supply.fromJson(json['supply']) : null;
+    // supply = json['supply'] != null ? Supply.fromJson(json['supply']) : null;
     symbol = json['symbol'];
   }
 
@@ -79,9 +79,6 @@ class Token extends DataModelAbstract {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['decimals'] = decimals;
     data['name'] = name;
-    if (supply != null) {
-      data['supply'] = supply!.toJson();
-    }
     data['symbol'] = symbol;
     return data;
   }
