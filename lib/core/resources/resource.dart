@@ -53,6 +53,11 @@ class ResourceNew extends Decoder<ResourceNew> {
         .toLowerCase()
         .contains(AppConstants.account.toLowerCase())) {
       return AptosAccountData.fromJson(json);
+    } else if (type
+        .toString()
+        .toLowerCase()
+        .contains(AppConstants.ansProfile.toLowerCase())) {
+      return ANS.fromJson(json);
     }
     return Token.fromJson(json);
   }
@@ -86,6 +91,63 @@ class Token extends DataModelAbstract {
   @override
   DataModelAbstract decode(Map<String, dynamic> json) {
     return Token.fromJson(json);
+  }
+}
+
+class ANS extends DataModelAbstract {
+  String? name, profile, ansAvatar;
+
+  ANS({this.profile, this.name, this.ansAvatar});
+
+  ANS.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    profile = json['profile'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['profile'] = profile;
+    return data;
+  }
+
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return ANS.fromJson(json);
+  }
+}
+
+class ANSProfile extends Decoder<ANSProfile> {
+  String? avatar, businessName, country, gender, birthday;
+
+  ANSProfile(
+      {this.avatar,
+      this.businessName,
+      this.country,
+      this.gender,
+      this.birthday});
+
+  ANSProfile.fromJson(Map<String, dynamic> json) {
+    avatar = json['avatar'];
+    businessName = json['business_name'];
+    country = json['country'];
+    gender = json['gender'];
+    birthday = json['birthday'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['avatar'] = avatar;
+    data['business_name'] = businessName;
+    data['country'] = country;
+    data['gender'] = gender;
+    data['birthday'] = birthday;
+    return data;
+  }
+
+  @override
+  ANSProfile decode(Map<String, dynamic> json) {
+    return ANSProfile.fromJson(json);
   }
 }
 
@@ -163,9 +225,13 @@ class AptosAccountData extends DataModelAbstract {
 }
 
 class UserResources {
-  ResourceNew? aptosCoin, aptosAccountData, tokenInfo;
+  ResourceNew? aptosCoin, aptosAccountData, tokenInfo, ans;
   List<ResourceNew>? listToken;
 
   UserResources(
-      {this.listToken, this.aptosCoin, this.aptosAccountData, this.tokenInfo});
+      {this.listToken,
+      this.aptosCoin,
+      this.aptosAccountData,
+      this.tokenInfo,
+      this.ans});
 }

@@ -4,6 +4,7 @@ import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/transaction_event/transaction_event.dart';
 import 'package:aptosdart/network/decodable.dart';
+import 'package:aptosdart/utils/validator/validator.dart';
 
 class Transaction extends Decoder<Transaction> {
   String? type;
@@ -118,13 +119,16 @@ class Transaction extends Decoder<Transaction> {
         return payload!.arguments!.last;
       }
     }
-    return '';
+    return '0';
   }
 
   String toAddress() {
     if (payload?.arguments != null) {
       if (payload!.arguments!.isNotEmpty) {
-        return payload!.arguments!.first;
+        return payload!.arguments!.firstWhere(
+            (element) => Validator.validatorByRegex(
+                regExp: Validator.addressFormat, data: element),
+            orElse: () => '');
       }
     }
     return '';

@@ -3,4 +3,5 @@ import 'package:aptosdart/sdk/aptos_dart_sdk.dart';
 
 mixin AptosSDKMixin {
   APIClient get apiClient => AptosDartSDK().getAptosInternal.api;
+  IPFSClient get ipfsClient => AptosDartSDK().getAptosInternal.ipfsClient;
 }

@@ -107,6 +107,10 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
         path = '/$_tables/$routeParams/$_item';
         break;
+      case APIType.getIPFSProfile:
+        method = APIMethod.get;
+        path = '$routeParams';
+        break;
     }
     final options = Options(
             headers: headers ?? HeadersApi.headers,

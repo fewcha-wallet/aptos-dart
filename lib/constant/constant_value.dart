@@ -1,6 +1,7 @@
 class HostUrl {
   static const nodeUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
   static const faucetUrl = 'https://faucet.devnet.aptoslabs.com';
+  static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
 }
 
 class ExtraKeys {
@@ -23,6 +24,7 @@ class AppConstants {
   static const String coinInfo = '0x1::coin::CoinInfo';
 
   static const String account = '0x1::account::Account';
+  static const String ansProfile = 'Ans::AnsProfile';
   static const String pendingTransaction = 'pending_transaction';
 }
 

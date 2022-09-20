@@ -5,13 +5,16 @@ import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository
 
 class AptosDartSDKInternal {
   late APIClient _apiClient;
+  late IPFSClient _ipfsClient;
   final AptosCurrentConfig _aptosCurrentConfig = AptosCurrentConfig();
   APIClient get api => _apiClient;
+  IPFSClient get ipfsClient => _ipfsClient;
   AptosCurrentConfig get aptosCurrentConfig => _aptosCurrentConfig;
   LedgerRepository? _ledgerRepository;
   AptosDartSDKInternal({LogStatus? logStatus}) {
     _aptosCurrentConfig.logStatus = logStatus;
     _apiClient = APIClient(logStatus: logStatus);
+    _ipfsClient = IPFSClient(logStatus: logStatus);
   }
 
   Future<void> initSDK() async {

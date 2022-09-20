@@ -110,6 +110,11 @@ class AptosAccountRepository with AptosSDKMixin {
           .toLowerCase()
           .startsWith(AppConstants.coinInfo.toLowerCase())) {
         userResource.tokenInfo = element;
+      } else if (element.type
+          .toString()
+          .toLowerCase()
+          .contains(AppConstants.ansProfile.toLowerCase())) {
+        userResource.ans = element;
       }
     }
     return userResource;
