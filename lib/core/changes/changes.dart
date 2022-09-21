@@ -1,4 +1,3 @@
-import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/decodable.dart';
 

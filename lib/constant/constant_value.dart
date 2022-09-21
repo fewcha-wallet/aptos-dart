@@ -1,7 +1,16 @@
 class HostUrl {
-  static const nodeUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
+  static const aptosDevnet = 'Aptos Devnet';
+  static const aptosTestnet = 'Aptos Testnet';
+
+  static const devUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
+  static const testNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
+
   static const faucetUrl = 'https://faucet.devnet.aptoslabs.com';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
+  static const Map<String, String> hostUrlMap = {
+    aptosDevnet: devUrl,
+    aptosTestnet: testNetUrl,
+  };
 }
 
 class ExtraKeys {
@@ -26,6 +35,9 @@ class AppConstants {
   static const String account = '0x1::account::Account';
   static const String ansProfile = 'Ans::AnsProfile';
   static const String pendingTransaction = 'pending_transaction';
+  static const String tokenCollections = '0x3::token::Collections';
+  static const String tokenTokenDataId = '0x3::token::TokenDataId';
+  static const String tokenTokenData = '0x3::token::TokenData';
 }
 
 class ErrorMessages {

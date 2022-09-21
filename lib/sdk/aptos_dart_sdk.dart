@@ -19,4 +19,15 @@ class AptosDartSDK {
 
     return _instance;
   }
+  void setNetwork(String network) {
+    _internal.setNetWork(network);
+  }
+
+  Map<String, String> getCurrentNetwork() {
+    return _internal.getCurrentNetWork();
+  }
+
+  Map<String, String> getListNetworks() {
+    return _internal.getListNetwork();
+  }
 }

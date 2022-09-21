@@ -4,16 +4,18 @@ import 'dart:typed_data';
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/account_core.dart';
+import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
+import 'package:aptosdart/core/table_item/table_item.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
 import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
-import 'package:aptosdart/sdk/src/repository/state_repository/state_repository.dart';
+import 'package:aptosdart/sdk/src/repository/table_repository/table_repository.dart';
 import 'package:aptosdart/sdk/src/repository/transaction_repository/transaction_repository.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
@@ -22,14 +24,14 @@ class AptosClient {
   late AptosAccountRepository _accountRepository;
   late TransactionRepository _transactionRepository;
   late EventRepository _eventRepository;
-  late StateRepository _stateRepository;
+  late TableRepository _stateRepository;
   late LedgerRepository _ledgerRepository;
 
   AptosClient() {
     _accountRepository = AptosAccountRepository();
     _transactionRepository = TransactionRepository();
     _eventRepository = EventRepository();
-    _stateRepository = StateRepository();
+    _stateRepository = TableRepository();
     _ledgerRepository = LedgerRepository();
   }
   //region Account
@@ -271,16 +273,14 @@ class AptosClient {
 
 //endregion
 //region State
-  Future<Event> getTableItem({
+  Future<CollectionsItemProperties> getTableItem({
     required String tableHandle,
-    required String eventHandleStruct,
-    required String fieldName,
+    required TableItem tableItem,
   }) async {
     try {
       final response = await _stateRepository.getTableItem(
         tableHandle: tableHandle,
-        eventHandleStruct: eventHandleStruct,
-        fieldName: fieldName,
+        tableItem: tableItem,
       );
       return response;
     } catch (e) {

@@ -1,27 +1,9 @@
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/coin/coin.dart';
-import 'package:aptosdart/core/data_model/data_model.dart';
 import 'package:aptosdart/core/event_handle_struct/event_handle_struct.dart';
 import 'package:aptosdart/core/supply/supply.dart';
 import 'package:aptosdart/network/decodable.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
-
-// class Resource extends Decoder<Resource> {
-//   String? type;
-//   DataModel? data;
-//
-//   Resource({this.type, this.data});
-//
-//   @override
-//   Resource decode(Map<String, dynamic> json) {
-//     return Resource.fromJson(json);
-//   }
-//
-//   Resource.fromJson(Map<String, dynamic> json) {
-//     type = json['type'];
-//     data = json['data'] != null ? DataModel?.fromJson(json['data']) : null;
-//   }
-// }
 
 class ResourceNew extends Decoder<ResourceNew> {
   String? type;
@@ -58,6 +40,11 @@ class ResourceNew extends Decoder<ResourceNew> {
         .toLowerCase()
         .contains(AppConstants.ansProfile.toLowerCase())) {
       return ANS.fromJson(json);
+    } else if (type
+        .toString()
+        .toLowerCase()
+        .contains(AppConstants.tokenCollections.toLowerCase())) {
+      return Collections.fromJson(json);
     }
     return Token.fromJson(json);
   }
@@ -221,6 +208,36 @@ class AptosAccountData extends DataModelAbstract {
   @override
   DataModelAbstract decode(Map<String, dynamic> json) {
     return AptosAccountData.fromJson(json);
+  }
+}
+
+class Collections extends DataModelAbstract {
+  Handles? tokenData;
+
+  Collections({this.tokenData});
+
+  Collections.fromJson(Map<String, dynamic> json) {
+    tokenData = json['token_data'] != null
+        ? Handles.fromJson(json['token_data'])
+        : null;
+  }
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return Collections.fromJson(json);
+  }
+}
+
+class Handles extends DataModelAbstract {
+  String? handle;
+
+  Handles({this.handle});
+
+  Handles.fromJson(Map<String, dynamic> json) {
+    handle = json['handle'];
+  }
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return Handles.fromJson(json);
   }
 }
 
