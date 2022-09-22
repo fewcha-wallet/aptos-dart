@@ -5,11 +5,16 @@ class HostUrl {
   static const devUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
   static const testNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
 
-  static const faucetUrl = 'https://faucet.devnet.aptoslabs.com';
+  static const faucetDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
+  static const faucetTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: devUrl,
     aptosTestnet: testNetUrl,
+  };
+  static const Map<String, String> faucetUrlMap = {
+    aptosDevnet: faucetDevnetUrl,
+    aptosTestnet: faucetTestnetUrl,
   };
 }
 

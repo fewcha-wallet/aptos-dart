@@ -8,14 +8,18 @@ class AptosDartSDKInternal {
   late APIClient _apiClient;
   late IPFSClient _ipfsClient;
   late String _network;
-  final AptosCurrentConfig _aptosCurrentConfig = AptosCurrentConfig();
+  late String _faucetUrl;
+  final AptosCurrentConfig _aptosCurrentConfig = AptosCurrentConfig.shared;
   APIClient get api => _apiClient;
   IPFSClient get ipfsClient => _ipfsClient;
   AptosCurrentConfig get aptosCurrentConfig => _aptosCurrentConfig;
   LedgerRepository? _ledgerRepository;
-  AptosDartSDKInternal({LogStatus? logStatus, String? network}) {
+  AptosDartSDKInternal(
+      {LogStatus? logStatus, String? network, String? faucet}) {
     _network = network ?? HostUrl.hostUrlMap[HostUrl.aptosDevnet]!;
+    _faucetUrl = faucet ?? HostUrl.faucetUrlMap[HostUrl.aptosDevnet]!;
     _aptosCurrentConfig.logStatus = logStatus;
+    _aptosCurrentConfig.faucetUrl = _faucetUrl;
     _apiClient = APIClient(logStatus: logStatus, baseUrl: _network);
     _ipfsClient = IPFSClient(logStatus: logStatus);
   }
@@ -33,12 +37,20 @@ class AptosDartSDKInternal {
   void setNetWork(String network) {
     _network = network;
     _apiClient.options.baseUrl = _network;
+    final networkName = getNetworkNameByAddress();
+    _aptosCurrentConfig.faucetUrl = HostUrl.faucetUrlMap[networkName]!;
   }
 
   Map<String, String> getCurrentNetWork() {
     final result = HostUrl.hostUrlMap.entries
         .firstWhere((element) => element.value == _network);
     return Map.fromEntries([result]);
+  }
+
+  String getNetworkNameByAddress() {
+    final result = HostUrl.hostUrlMap.entries
+        .firstWhere((element) => element.value == _network);
+    return result.key;
   }
 
   Map<String, String> getListNetwork() {

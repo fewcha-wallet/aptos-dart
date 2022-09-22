@@ -1,6 +1,7 @@
 import 'package:aptosdart/constant/api_method.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/aptos_current_config/aptos_current_config.dart';
 import 'package:dio/dio.dart';
 
 abstract class APIRouteConfigurable {
@@ -63,7 +64,7 @@ class APIRoute implements APIRouteConfigurable {
 
       ///Faucet
       case APIType.mint:
-        baseUrl = HostUrl.faucetUrl;
+        baseUrl =AptosCurrentConfig.shared.faucetUrl?? HostUrl.faucetDevnetUrl;
         method = APIMethod.post;
         path = '/$_mint';
         break;
