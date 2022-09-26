@@ -56,9 +56,10 @@ class TransactionRepository with AptosSDKMixin {
   }
 
   Future<List<Transaction>> getAccountTransactions(String address,
-      {int start = 0, int limit = 10}) async {
+      {int start = 0, int? limit}) async {
     try {
-      final param = {'start': start.toString(), 'limit': limit.toString()};
+      final param = {'start': start.toString(), 'limit': limit.toString()}
+        ..removeWhere((key, value) => value == 'null');
 
       final response = await apiClient.request(
           params: param,

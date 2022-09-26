@@ -1,6 +1,7 @@
 class HostUrl {
   static const aptosDevnet = 'Aptos Devnet';
   static const aptosTestnet = 'Aptos Testnet';
+  static const suiDevnet = "SUI Devnet";
 
   static const devUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
   static const testNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
@@ -8,9 +9,12 @@ class HostUrl {
   static const faucetDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
   static const faucetTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
+
+  static const suiDevnetUrl = "https://gateway.devnet.sui.io";
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: devUrl,
     aptosTestnet: testNetUrl,
+    suiDevnet: suiDevnetUrl,
   };
   static const Map<String, String> faucetUrlMap = {
     aptosDevnet: faucetDevnetUrl,

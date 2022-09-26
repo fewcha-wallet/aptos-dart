@@ -151,7 +151,7 @@ class AptosClient {
   }
 
   Future<List<Transaction>> getAccountTransactions(String address,
-      {int start = 0, int limit = 10}) async {
+      {int start = 0, int? limit}) async {
     try {
       final result = await _transactionRepository
           .getAccountTransactions(address, start: start, limit: limit);
