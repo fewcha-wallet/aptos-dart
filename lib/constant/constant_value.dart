@@ -14,7 +14,7 @@ class HostUrl {
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: devUrl,
     aptosTestnet: testNetUrl,
-    suiDevnet: suiDevnetUrl,
+    // suiDevnet: suiDevnetUrl,
   };
   static const Map<String, String> faucetUrlMap = {
     aptosDevnet: faucetDevnetUrl,

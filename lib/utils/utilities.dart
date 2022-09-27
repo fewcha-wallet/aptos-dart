@@ -33,4 +33,8 @@ class Utilities {
     final d = generateList.fromBytesToString().toHexString();
     return d;
   }
+
+  static bool isNumeric(String s) {
+    return double.tryParse(s) != null;
+  }
 }

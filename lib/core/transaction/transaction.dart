@@ -4,6 +4,7 @@ import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/transaction_event/transaction_event.dart';
 import 'package:aptosdart/network/decodable.dart';
+import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
 class Transaction extends Decoder<Transaction> {
@@ -116,7 +117,10 @@ class Transaction extends Decoder<Transaction> {
   String tokenAmount() {
     if (payload?.arguments != null) {
       if (payload!.arguments!.isNotEmpty) {
-        return payload!.arguments!.last;
+        final s = payload!.arguments!.firstWhere(
+            (element) => Utilities.isNumeric(element),
+            orElse: () => '0');
+        return s;
       }
     }
     return '0';
