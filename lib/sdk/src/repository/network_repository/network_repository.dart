@@ -1,13 +1,33 @@
 import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/network_type/network_type.dart';
 
 class NetWorkRepository {
-  Future<List<String>> getListNetWork() async {
+  List<NetworkType> getListNetWork() {
     try {
-      List<String> listNetWork = [
-        HostUrl.devUrl,
-        HostUrl.testNetUrl,
-      ];
-      return listNetWork;
+      final aptosDevNet = NetworkType(
+        networkURL: HostUrl.aptosDevUrl,
+        networkName: HostUrl.aptosDevnet,
+        faucetURL: HostUrl.faucetAptosDevnetUrl,
+        coinCurrency: AppConstants.aptosDefaultCurrency,
+        coinType: CoinType.aptos,
+      );
+      final aptosTestNet = NetworkType(
+        networkURL: HostUrl.aptosTestNetUrl,
+        networkName: HostUrl.aptosTestnet,
+        faucetURL: HostUrl.faucetAptosTestnetUrl,
+        coinCurrency: AppConstants.aptosDefaultCurrency,
+        coinType: CoinType.aptos,
+      );
+      final suiDevNet = NetworkType(
+        networkURL: HostUrl.suiDevnetUrl,
+        networkName: HostUrl.suiDevnet,
+        faucetURL: HostUrl.faucetSUIDevnetUrl,
+        coinCurrency: AppConstants.suiDefaultCurrency,
+        coinType: CoinType.sui,
+      );
+
+      return [aptosDevNet, aptosTestNet, suiDevNet];
     } catch (e) {
       rethrow;
     }

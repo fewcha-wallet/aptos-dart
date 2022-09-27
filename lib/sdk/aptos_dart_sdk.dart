@@ -1,4 +1,5 @@
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/network_type/network_type.dart';
 import 'package:aptosdart/sdk/internal/aptos_dart_sdk_internal.dart';
 
 class AptosDartSDK {
@@ -19,15 +20,15 @@ class AptosDartSDK {
 
     return _instance;
   }
-  void setNetwork(String network) {
-    _internal.setNetWork(network);
+  void setNetwork(NetworkType networkType) {
+    _internal.setNetWork(networkType);
   }
 
-  Map<String, String> getCurrentNetwork() {
+  NetworkType getCurrentNetwork() {
     return _internal.getCurrentNetWork();
   }
 
-  Map<String, String> getListNetworks() {
+  List<NetworkType> getListNetworks() {
     return _internal.getListNetwork();
   }
 }

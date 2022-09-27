@@ -53,6 +53,23 @@ class AptosClient {
     }
   }
 
+  Future<SUIAccount> createSUIAccount({
+    Uint8List? privateKeyBytes,
+    String? privateKeyHex,
+  }) async {
+    try {
+      SUIAccount suiAccount;
+      if (privateKeyBytes != null) {
+        suiAccount = SUIAccount(privateKeyBytes: privateKeyBytes);
+      } else {
+        suiAccount = SUIAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
+      }
+      return suiAccount;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<AccountCore> getAccount(String address) async {
     try {
       final result = await _accountRepository.getAccount(address);

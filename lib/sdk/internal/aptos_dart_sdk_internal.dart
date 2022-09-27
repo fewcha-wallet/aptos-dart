@@ -1,8 +1,10 @@
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/aptos_current_config/aptos_current_config.dart';
+import 'package:aptosdart/core/network_type/network_type.dart';
 import 'package:aptosdart/network/api_client.dart';
 import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
+import 'package:aptosdart/sdk/src/repository/network_repository/network_repository.dart';
 
 class AptosDartSDKInternal {
   late APIClient _apiClient;
@@ -14,8 +16,11 @@ class AptosDartSDKInternal {
   IPFSClient get ipfsClient => _ipfsClient;
   AptosCurrentConfig get aptosCurrentConfig => _aptosCurrentConfig;
   LedgerRepository? _ledgerRepository;
+  late NetWorkRepository _netWorkRepository;
   AptosDartSDKInternal(
       {LogStatus? logStatus, String? network, String? faucet}) {
+    _netWorkRepository = NetWorkRepository();
+    _aptosCurrentConfig.listNetwork = _netWorkRepository.getListNetWork();
     _network = network ?? HostUrl.hostUrlMap[HostUrl.aptosDevnet]!;
     _faucetUrl = faucet ?? HostUrl.faucetUrlMap[HostUrl.aptosDevnet]!;
     _aptosCurrentConfig.logStatus = logStatus;
@@ -34,27 +39,26 @@ class AptosDartSDKInternal {
     }
   }
 
-  void setNetWork(String network) {
-    _network = network;
+  void setNetWork(NetworkType networkType) {
+    _network = networkType.networkURL;
     _apiClient.options.baseUrl = _network;
-    final networkName = getNetworkNameByAddress();
-    _aptosCurrentConfig.faucetUrl = HostUrl.faucetUrlMap[networkName]!;
+    _aptosCurrentConfig.faucetUrl = networkType.faucetURL;
   }
 
-  Map<String, String> getCurrentNetWork() {
-    final result = HostUrl.hostUrlMap.entries
-        .firstWhere((element) => element.value == _network);
-    return Map.fromEntries([result]);
+  NetworkType getCurrentNetWork() {
+    final result = _aptosCurrentConfig.listNetwork!
+        .firstWhere((element) => element.networkURL == _network);
+    return result;
   }
 
   String getNetworkNameByAddress() {
-    final result = HostUrl.hostUrlMap.entries
-        .firstWhere((element) => element.value == _network);
-    return result.key;
+    final result = _aptosCurrentConfig.listNetwork!
+        .firstWhere((element) => element.networkURL == _network);
+    return result.networkName;
   }
 
-  Map<String, String> getListNetwork() {
-    return HostUrl.hostUrlMap;
+  List<NetworkType> getListNetwork() {
+    return _aptosCurrentConfig.listNetwork!;
   }
 
   Future<void> logout() async {

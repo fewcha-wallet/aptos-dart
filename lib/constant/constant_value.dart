@@ -3,22 +3,25 @@ class HostUrl {
   static const aptosTestnet = 'Aptos Testnet';
   static const suiDevnet = "SUI Devnet";
 
-  static const devUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
-  static const testNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
+  static const aptosDevUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
+  static const aptosTestNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
 
-  static const faucetDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
-  static const faucetTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
+  static const faucetAptosDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
+  static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
+  static const faucetSUIDevnetUrl =
+      'https://discord.com/channels/916379725201563759/971488439931392130';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
 
   static const suiDevnetUrl = "https://gateway.devnet.sui.io";
   static const Map<String, String> hostUrlMap = {
-    aptosDevnet: devUrl,
-    aptosTestnet: testNetUrl,
-    // suiDevnet: suiDevnetUrl,
+    aptosDevnet: aptosDevUrl,
+    aptosTestnet: aptosTestNetUrl,
+    suiDevnet: suiDevnetUrl,
   };
   static const Map<String, String> faucetUrlMap = {
-    aptosDevnet: faucetDevnetUrl,
-    aptosTestnet: faucetTestnetUrl,
+    aptosDevnet: faucetAptosDevnetUrl,
+    aptosTestnet: faucetAptosTestnetUrl,
+    suiDevnet: faucetSUIDevnetUrl,
   };
 }
 
@@ -29,6 +32,7 @@ class ExtraKeys {
 class AppConstants {
   static const String rootAPIDataFormat = "data";
   static const String aptosDefaultCurrency = "APT";
+  static const String suiDefaultCurrency = "SUI";
   static const String defaultGasUnitPrice = '100';
   static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";

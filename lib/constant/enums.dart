@@ -29,3 +29,4 @@ enum APIErrorType {
   unknown,
 }
 enum LogStatus { hide, show }
+enum CoinType { aptos, sui }

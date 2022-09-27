@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
@@ -8,13 +9,13 @@ import 'package:sha3/sha3.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 import 'package:hex/hex.dart';
 
-class AptosAccount implements AbstractAccount {
+class SUIAccount implements AbstractAccount {
   List<int> _privateKey;
   String _accountAddress, _authenKey;
 
-  AptosAccount._(this._privateKey, this._accountAddress, this._authenKey);
+  SUIAccount._(this._privateKey, this._accountAddress, this._authenKey);
 
-  factory AptosAccount({Uint8List? privateKeyBytes, String? address}) {
+  factory SUIAccount({Uint8List? privateKeyBytes, String? address}) {
     List<int> privateKey = [];
     if (privateKeyBytes != null) {
       privateKey = ed.newKeyFromSeed(privateKeyBytes.sublist(0, 32)).bytes;
@@ -23,17 +24,17 @@ class AptosAccount implements AbstractAccount {
     }
     String authenKey = authKey(public(PrivateKey(privateKey)).bytes);
     String accountAddress = address ?? authenKey;
-    return AptosAccount._(
+    return SUIAccount._(
       privateKey,
       accountAddress,
       authenKey,
     );
   }
-  factory AptosAccount.fromPrivateKey(String privateKeyHex) {
+  factory SUIAccount.fromPrivateKey(String privateKeyHex) {
     final privateKey = HEX.decode(privateKeyHex.trimPrefix());
 
     final list = Utilities.toUint8List(privateKey);
-    return AptosAccount(privateKeyBytes: list);
+    return SUIAccount(privateKeyBytes: list);
   }
 
   @override
@@ -53,10 +54,10 @@ class AptosAccount implements AbstractAccount {
   /// Also use to create Address
   static String authKey(List<int> publicKey) {
     SHA3 sh3 = SHA3(256, SHA3_PADDING, 256);
-    sh3.update(publicKey);
-    final result1 = sh3.update(utf8.encode('\x00'));
+    sh3.update(utf8.encode('\x00'));
+    final result1 = sh3.update(publicKey);
     var hash = result1.digest();
-    return HEX.encode(hash).toHexString();
+    return HEX.encode(hash.getRange(0, 20).toList()).toHexString();
   }
 
   /// Get public key in Hex
