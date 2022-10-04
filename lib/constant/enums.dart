@@ -28,5 +28,8 @@ enum APIErrorType {
   badRequest,
   unknown,
 }
+enum RPCFunction {
+  suiGetObjectsOwnedByAddress,
+}
 enum LogStatus { hide, show }
 enum CoinType { aptos, sui }

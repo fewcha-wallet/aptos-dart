@@ -25,6 +25,22 @@ abstract class BaseAPIClient {
       Map<String, dynamic>? body});
 }
 
+abstract class BaseRPCClient {
+  late BaseOptions options;
+  late Dio instance;
+
+  Future<T> request<T>(
+      {required APIRouteConfigurable route,
+      required GenericObject<T> create,
+      required String function,
+      dynamic arg,
+      Map<String, dynamic>? params,
+      String? extraPath,
+      bool noEncode = false,
+      Map<String, dynamic> header,
+      Map<String, dynamic>? body});
+}
+
 class APIClient extends BaseAPIClient {
   APIClient({LogStatus? logStatus = LogStatus.show, required String baseUrl}) {
     options = BaseOptions(

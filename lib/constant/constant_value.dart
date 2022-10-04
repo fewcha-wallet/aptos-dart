@@ -12,7 +12,7 @@ class HostUrl {
       'https://discord.com/channels/916379725201563759/971488439931392130';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
 
-  static const suiDevnetUrl = "https://gateway.devnet.sui.io";
+  static const String suiDevnetUrl = "https://gateway.devnet.sui.io";
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: aptosDevUrl,
     aptosTestnet: aptosTestNetUrl,
