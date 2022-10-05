@@ -82,7 +82,7 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
       if (isBatch) {
         BatchServerProxyBase batchServerProxyBase = BatchServerProxyBase();
         batchServerProxyBase.proxy = this;
-        final data = batchServerProxyBase.call(function, arg);
+        batchServerProxyBase.call(function, arg);
         result = await batchServerProxyBase.send();
       } else {
         result = await call(function, arg);

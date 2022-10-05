@@ -21,8 +21,8 @@ dependencies:
   web_socket_channel: ^2.2.0
   jsonrpc2:
     git:
-      url: https://github.com/jwashin/jsonrpc2-dart.git
-      ref: master
+      url: https://github.com/beobanhbo/jsonrpc2-folk.git
+      ref: main
   http: ^0.13.5
 dev_dependencies:
   flutter_test:
