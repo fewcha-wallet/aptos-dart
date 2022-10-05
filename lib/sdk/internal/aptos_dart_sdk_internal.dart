@@ -3,16 +3,19 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/aptos_current_config/aptos_current_config.dart';
 import 'package:aptosdart/core/network_type/network_type.dart';
 import 'package:aptosdart/network/api_client.dart';
+import 'package:aptosdart/network/rpc/rpc_client.dart';
 import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
 import 'package:aptosdart/sdk/src/repository/network_repository/network_repository.dart';
 
 class AptosDartSDKInternal {
   late APIClient _apiClient;
+  late RPCClient _rpcClient;
   late IPFSClient _ipfsClient;
   late String _network;
   late String _faucetUrl;
   final AptosCurrentConfig _aptosCurrentConfig = AptosCurrentConfig.shared;
   APIClient get api => _apiClient;
+  RPCClient get rpc => _rpcClient;
   IPFSClient get ipfsClient => _ipfsClient;
   AptosCurrentConfig get aptosCurrentConfig => _aptosCurrentConfig;
   LedgerRepository? _ledgerRepository;
@@ -27,6 +30,7 @@ class AptosDartSDKInternal {
     _aptosCurrentConfig.faucetUrl = _faucetUrl;
     _apiClient = APIClient(logStatus: logStatus, baseUrl: _network);
     _ipfsClient = IPFSClient(logStatus: logStatus);
+    _rpcClient = RPCClient(_network);
   }
 
   Future<void> initSDK() async {
@@ -43,6 +47,8 @@ class AptosDartSDKInternal {
     _network = networkType.networkURL;
     _apiClient.options.baseUrl = _network;
     _aptosCurrentConfig.faucetUrl = networkType.faucetURL;
+
+    _rpcClient = RPCClient(_network);
   }
 
   NetworkType getCurrentNetWork() {

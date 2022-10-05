@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:aptosdart/constant/api_method.dart';
 import 'package:aptosdart/constant/enums.dart';
@@ -10,8 +9,6 @@ import 'package:aptosdart/network/interceptors/error_interceptor.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:dio/dio.dart';
 import 'package:jsonrpc2/jsonrpc2.dart';
-
-import '../constant/constant_value.dart';
 
 class RPCClient extends ServerProxyBase implements BaseRPCClient {
   RequestOptions? _requestOptions;
@@ -71,6 +68,7 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
       Map<String, dynamic>? params,
       String? extraPath,
       bool noEncode = false,
+      bool isBatch = false,
       Map<String, dynamic>? header,
       Map<String, dynamic>? body}) async {
     _requestOptions = null;
@@ -80,7 +78,15 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
     if (header != null) requestOptions!.headers.addAll(header);
     _requestOptions = requestOptions;
     try {
-      final result = await call(function, arg);
+      dynamic result;
+      if (isBatch) {
+        BatchServerProxyBase batchServerProxyBase = BatchServerProxyBase();
+        batchServerProxyBase.proxy = this;
+        final data = batchServerProxyBase.call(function, arg);
+        result = await batchServerProxyBase.send();
+      } else {
+        result = await call(function, arg);
+      }
 
       T apiWrapper = create(result);
 
@@ -90,12 +96,12 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
       }
 
       ///If you want to use another object type such as primitive type, but you need to ensure that the response type will match your expected type
-      // if (result.data is T) {
-      //   return result.data;
-      // } else {
-      //   throw ErrorResponse.fromSystem(APIErrorType.unknown,
-      //       "Can not match the $T type with ${result.data.runtimeType}");
-      // }
+      if (result.data is T) {
+        return result.data;
+      } else {
+        throw ErrorResponse.fromSystem(APIErrorType.unknown,
+            "Can not match the $T type with ${result.data.runtimeType}");
+      }
     } on DioError catch (e) {
       if (e.response?.data != null) {
         T apiWrapper = create(e.response);
@@ -108,6 +114,5 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
         throw RPCErrorResponse.fromAPI(e.response);
       }
     }
-    throw UnimplementedError();
   }
 }

@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:ed25519_edwards/ed25519_edwards.dart';
-
 abstract class AbstractAccount {
   String address();
 

@@ -26,6 +26,8 @@ class RPCRoute implements APIRouteConfigurable {
       case RPCFunction.suiGetObjectsOwnedByAddress:
         path = _suiGetObjectsOwnedByAddress;
         break;
+      case RPCFunction.suiGetObject:
+        break;
     }
     final options = Options(
             headers: headers,

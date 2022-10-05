@@ -1,3 +1,4 @@
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/decodable.dart';
@@ -12,7 +13,8 @@ class BaseRPCResponseWrapper<R, E> extends BaseAPIResponseWrapper {
 
   @override
   void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
-    hasError = formatResponse['data']?['error'] != null;
+    hasError = formatResponse[AppConstants.rootAPIStatusFormat] != 200 &&
+        formatResponse[AppConstants.rootAPIStatusFormat] != 202;
   }
 }
 
@@ -48,11 +50,21 @@ class RPCListResponse<T> extends BaseRPCResponseWrapper<Response, List<T>> {
   void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
-      final data = formatResponse["data"]["result"];
-      if (data is List && data.isNotEmpty) {
-        decodedData ??= <T>[];
-        for (final e in data) {
-          (decodedData as List).add(createObject.decode(e));
+      if (formatResponse["data"] is List) {
+        final listData = formatResponse["data"] as List;
+        if (listData.isNotEmpty) {
+          decodedData ??= <T>[];
+          for (final e in listData) {
+            (decodedData as List).add(createObject.decode(e['result']));
+          }
+        }
+      } else {
+        final data = formatResponse["data"]["result"];
+        if (data is List && data.isNotEmpty) {
+          decodedData ??= <T>[];
+          for (final e in data) {
+            (decodedData as List).add(createObject.decode(e));
+          }
         }
       }
       decodedData ??= <T>[];

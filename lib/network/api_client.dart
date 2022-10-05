@@ -37,6 +37,7 @@ abstract class BaseRPCClient {
       Map<String, dynamic>? params,
       String? extraPath,
       bool noEncode = false,
+      bool isBatch = false,
       Map<String, dynamic> header,
       Map<String, dynamic>? body});
 }
