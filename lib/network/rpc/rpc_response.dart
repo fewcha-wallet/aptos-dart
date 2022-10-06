@@ -28,7 +28,19 @@ class RPCResponse<T> extends BaseRPCResponseWrapper<Response, T> {
   void decode(Map<String, dynamic> formatResponse, {createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
-      decodedData = createObject.decode(formatResponse["data"]["result"] ?? {});
+      if (formatResponse["data"] is List) {
+        final listData = formatResponse["data"] as List;
+
+        if (listData.isNotEmpty) {
+          decodedData ??= <T>[];
+          for (final e in listData) {
+            decodedData = createObject.decode(e['result']);
+          }
+        }
+      } else {
+        decodedData =
+            createObject.decode(formatResponse["data"]["result"] ?? {});
+      }
     } else if (T == dynamic) {
       decodedData = formatResponse["data"]["result"];
     } else {
@@ -68,6 +80,19 @@ class RPCListResponse<T> extends BaseRPCResponseWrapper<Response, List<T>> {
         }
       }
       decodedData ??= <T>[];
+    } else if (T == dynamic) {
+      final data = formatResponse["data"] as List;
+      decodedData ??= <T>[];
+      for (final e in data) {
+        (decodedData as List).add((e['result']));
+      }
+    } else {
+      final data = formatResponse["data"] as List;
+      decodedData ??= <T>[];
+      for (final e in data) {
+        (decodedData as List).add((e['result']));
+      }
+      if (data is T) decodedData = data;
     }
   }
 }

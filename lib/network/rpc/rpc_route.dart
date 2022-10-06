@@ -28,6 +28,8 @@ class RPCRoute implements APIRouteConfigurable {
         break;
       case RPCFunction.suiGetObject:
         break;
+      case RPCFunction.getTransactionsByAddress:
+        break;
     }
     final options = Options(
             headers: headers,

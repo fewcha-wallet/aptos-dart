@@ -31,6 +31,8 @@ enum APIErrorType {
 enum RPCFunction {
   suiGetObjectsOwnedByAddress,
   suiGetObject,
+  getTransactionsByAddress,
+  suiGetTransaction,
 }
 enum LogStatus { hide, show }
 enum CoinType { aptos, sui }
