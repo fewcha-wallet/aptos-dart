@@ -239,12 +239,11 @@ class SUITransaction extends Decoder<SUITransaction> {
   }
 
   String? getToAddress() {
-    final created = effects?.created;
-    if (created != null) {
-      if (created.isNotEmpty) {
-        return created.first.owner?.addressOwner;
-      }
+    final temp = suiCertificate?.data?.transactions;
+    if (temp != null) {
+      return temp.first.transferSuiData?.recipient ?? '';
     }
+
     return null;
   }
 
