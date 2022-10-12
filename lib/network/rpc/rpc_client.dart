@@ -6,6 +6,7 @@ import 'package:aptosdart/network/api_client.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/network/interceptors/error_interceptor.dart';
+import 'package:aptosdart/network/interceptors/logs_interceptor.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:dio/dio.dart';
 import 'package:jsonrpc2/jsonrpc2.dart';
@@ -26,6 +27,7 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
     instance = Dio(options);
     {
       instance.interceptors.addAll([
+        LogsInterceptor(),
         ErrorInterceptor(),
       ]);
     }

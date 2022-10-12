@@ -1,3 +1,5 @@
+import 'package:aptosdart/aptosdart.dart';
+import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
@@ -74,7 +76,9 @@ class SUIRepository with AptosSDKMixin {
   Future<Transaction> getTransactionWithEffectsBatch(
       String transactionID) async {
     try {
-      final result = await rpcClient.request(
+      final rpc = RPCClient(rpcClient.url
+          .replaceAll(SUIConstants.gateway, SUIConstants.fullnode));
+      final result = await rpc.request(
           isBatch: true,
           route: RPCRoute(
             RPCFunction.suiGetTransaction,
@@ -100,4 +104,239 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+
+  Future syncAccountState(String address) async {
+    try {
+      await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiSyncAccountState,
+          arg: [address],
+          create: (response) => RPCResponse<String>(response: response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransactionBytes> mergeCoin({
+    required SUIAccount suiAccount,
+    required String suiAddress,
+    required String primaryCoin,
+    required String coinToMerge,
+    required num gasBudget,
+    required num gasPayment,
+  }) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiMergeCoins,
+          arg: [suiAddress, primaryCoin, coinToMerge, null, gasBudget],
+          create: (response) => RPCResponse(
+              createObject: SUITransactionBytes(), response: response));
+      // await signAndExecuteTransaction(
+      //     (result.decodedData! as SUITransactionBytes).txBytes!, suiAccount);
+      return result.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransactionBytes> splitCoin({
+    required SUIAccount suiAccount,
+    required String suiAddress,
+    required String coinObjectId,
+    required num splitAmounts,
+    required num gasBudget,
+    required num? gasPayment,
+  }) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiSplitCoin,
+          arg: [
+            suiAddress,
+            coinObjectId,
+            [splitAmounts],
+            gasPayment,
+            gasBudget
+          ],
+          create: (response) => RPCResponse(
+              createObject: SUITransactionBytes(), response: response));
+      // await signAndExecuteTransaction(
+      //     (result.decodedData! as SUITransactionBytes).txBytes!, suiAccount);
+      return result.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future moveCall({
+    required String suiAddress,
+    required String packageObjectId,
+    required String module,
+    required String function,
+    required String typeArguments,
+    required List<String> arguments,
+    required String gasBudget,
+    required String gasPayment,
+  }) async {
+    try {
+      await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiMoveCall,
+          arg: [
+            suiAddress,
+            packageObjectId,
+            module,
+            function,
+            typeArguments,
+            arguments,
+            gasPayment,
+            gasBudget,
+          ],
+          create: (response) => RPCResponse<String>(response: response));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUIEffects> signAndExecuteTransaction(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiExecuteTransaction,
+          arg: [
+            suiArgument.txBytes,
+            SUIConstants.ed25519,
+            suiArgument.suiAccount!.signatureBase64(suiArgument.txBytes!),
+            suiArgument.suiAccount!.publicKeyInBase64()
+          ],
+          create: (response) =>
+              RPCResponse(createObject: SUIEffects(), response: response));
+      return result.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUIEffects> transferSuiDryRun(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final txBytes = await newTransferSui(suiArgument);
+
+      final result =
+          await signAndDryRunTransaction(suiArgument..txBytes = txBytes);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUIEffects> transferSui(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final txBytes = await newTransferSui(suiArgument);
+
+      final result =
+          await signAndExecuteTransaction(suiArgument..txBytes = txBytes);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> newTransferSui(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiTransferSui,
+          arg: [
+            suiArgument.address,
+            suiArgument.suiObjectID,
+            suiArgument.gasBudget,
+            suiArgument.recipient,
+            suiArgument.amount,
+          ],
+          create: (response) => RPCResponse(
+              createObject: SUITransactionBytes(), response: response));
+      return (result.decodedData! as SUITransactionBytes).txBytes!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUIEffects> signAndDryRunTransaction(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final result = await dryRunTransaction(
+          suiArgument.txBytes!,
+          SUIConstants.ed25519,
+          suiArgument.suiAccount!.signatureBase64(suiArgument.txBytes!),
+          suiArgument.suiAccount!.publicKeyInBase64());
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUIEffects> dryRunTransaction(String txnBytes, String signatureScheme,
+      String signature, String pubkey) async {
+    try {
+      final rpc = RPCClient(rpcClient.url
+          .replaceAll(SUIConstants.gateway, SUIConstants.fullnode));
+      final result = await rpc.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiDryRunTransaction,
+          arg: [txnBytes, signatureScheme, signature, pubkey],
+          create: (response) =>
+              RPCResponse(createObject: SUIEffects(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /*Future<SUITransactionBytes> transferSuiDryRun(
+    String txBytes,
+    SUIAccount suiAccount,
+  ) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: 'sui_executeTransaction',
+          arg: [
+            txBytes,
+            'ED25519',
+            suiAccount.signatureBase64(txBytes),
+            suiAccount.publicKeyInBase64()
+          ],
+          create: (response) => RPCResponse(
+              createObject: SUITransactionBytes(), response: response));
+      return result.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }*/
 }

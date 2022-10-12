@@ -76,7 +76,25 @@ class SUIConstants {
   static const String suiGetTransactionsToAddress =
       'sui_getTransactionsToAddress';
   static const String suiGetTransaction = 'sui_getTransaction';
+  static const String suiSyncAccountState = 'sui_syncAccountState';
+  static const String suiMergeCoins = 'sui_mergeCoins';
+  static const String suiSplitCoin = 'sui_splitCoin';
+  static const String suiMoveCall = 'sui_moveCall';
+  static const String suiTransferSui = 'sui_transferSui';
+  static const String suiDryRunTransaction = 'sui_dryRunTransaction';
+  static const String suiExecuteTransaction = 'sui_executeTransaction';
   static const String gateway = 'gateway';
   static const String fullnode = 'fullnode';
   static const String success = 'success';
+
+  static const int defaultGasBudgetForTransferSui = 100;
+  static const int defaultGasBudgetForTransfer = 100;
+  static const int defaultGasBudgetForMerge = 500;
+  static const int defaultGasBudgetForSplit = 1000;
+  static const String coinPackageId = '0x2';
+  static const String ed25519 = 'ED25519';
+  static const String coinModuleName = 'coin';
+  static const String coinSplitVecFuncName = 'split_vec';
+  static const String coinJoinFuncName = 'join';
+  static const String coinTypeArgRegex = r'^0x2::coin::coin<(.+)>$';
 }

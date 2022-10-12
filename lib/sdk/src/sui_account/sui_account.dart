@@ -68,6 +68,10 @@ class SUIAccount implements AbstractAccount {
     return buffer.toHexString();
   }
 
+  String publicKeyInBase64() {
+    return base64Encode(public(PrivateKey(_privateKey)).bytes);
+  }
+
   /// Get private key in Hex
   @override
   String privateKeyInHex() {
@@ -78,14 +82,29 @@ class SUIAccount implements AbstractAccount {
 
   @override
   String signBuffer(Uint8List buffer) {
-    final signed = sign(PrivateKey(_privateKey), buffer);
-    return signed.fromBytesToString().substring(0, 128).toHexString();
+    final signed = detached(buffer);
+    return base64Encode(signed);
+    // return signed.fromBytesToString().substring(0, 128).toHexString();
+  }
+
+  String signatureBase64(String hexString) {
+    // final List<int> codeUnits = base64Decode(hexString);
+
+    return signBuffer(base64Decode(hexString));
+  }
+
+  Uint8List detached(Uint8List buffer) {
+    final signedMsg = sign(PrivateKey(_privateKey), buffer);
+    var sig = Uint8List(64);
+    for (var i = 0; i < sig.length; i++) {
+      sig[i] = signedMsg[i];
+    }
+    return sig;
   }
 
   @override
   String signatureHex(String hexString) {
-    final listInt = hexString.stringToListInt();
-    final toUInt8List = Uint8List.fromList(listInt);
-    return signBuffer(toUInt8List);
+    // TODO: implement signatureHex
+    throw UnimplementedError();
   }
 }

@@ -31,6 +31,10 @@ class SUIObjects extends Decoder<SUIObjects> {
   num getBalance() {
     return details?.data?.fields?.balance ?? 0;
   }
+
+  String getID() {
+    return details?.data?.fields?.id?.id ?? '';
+  }
 }
 
 class SUIDetails extends Decoder<SUIDetails> {
@@ -226,7 +230,7 @@ class SUITransaction extends Decoder<SUITransaction> {
   }
 
   String? getTimeStamp() {
-    if (timestampMs != null) return timestampMs.toString();
+    if (timestampMs != null) return (timestampMs! * 1000).toString();
     return '0';
   }
 
@@ -477,5 +481,23 @@ class SUICreated extends Decoder<SUICreated> {
   @override
   SUICreated decode(Map<String, dynamic> json) {
     return SUICreated.fromJson(json);
+  }
+}
+
+class SUITransactionBytes extends Decoder<SUITransactionBytes> {
+  String? txBytes;
+  SUIReference? gas;
+  SUITransactionBytes({
+    this.txBytes,
+    this.gas,
+  });
+
+  SUITransactionBytes.fromJson(Map<String, dynamic> json) {
+    txBytes = json['txBytes'];
+    gas = json['gas'] != null ? SUIReference.fromJson(json['gas']) : null;
+  }
+  @override
+  SUITransactionBytes decode(Map<String, dynamic> json) {
+    return SUITransactionBytes.fromJson(json);
   }
 }
