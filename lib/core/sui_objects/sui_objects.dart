@@ -222,6 +222,10 @@ class SUITransaction extends Decoder<SUITransaction> {
     return effects?.status?.status;
   }
 
+  bool? getStatusInBool() {
+    return effects?.status?.status == SUIConstants.success ? true : false;
+  }
+
   bool isSucceed() {
     if (effects?.status?.status == SUIConstants.success) {
       return true;
@@ -427,6 +431,10 @@ class SUIStatus extends Decoder<SUIStatus> {
   @override
   SUIStatus decode(Map<String, dynamic> json) {
     return SUIStatus.fromJson(json);
+  }
+
+  bool getStatus() {
+    return status == SUIConstants.success ? true : false;
   }
 }
 

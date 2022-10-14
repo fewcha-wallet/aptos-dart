@@ -89,12 +89,13 @@ class SUIConstants {
 
   static const int defaultGasBudgetForTransferSui = 100;
   static const int defaultGasBudgetForTransfer = 100;
-  static const int defaultGasBudgetForMerge = 500;
+  static const int defaultGasBudgetForMerge = 5000;
   static const int defaultGasBudgetForSplit = 1000;
   static const String coinPackageId = '0x2';
   static const String ed25519 = 'ED25519';
   static const String coinModuleName = 'coin';
   static const String coinSplitVecFuncName = 'split_vec';
   static const String coinJoinFuncName = 'join';
+  static const String suiConstruct = '0x2::sui::SUI';
   static const String coinTypeArgRegex = r'^0x2::coin::coin<(.+)>$';
 }

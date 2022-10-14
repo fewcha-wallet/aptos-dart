@@ -143,22 +143,30 @@ class SUIClient {
         }
 
         final primaryCoin = listSortAscending[listSortAscending.length - 1];
+
         for (int i = listSortAscending.length - 2; i > 0; i--) {
           await _suiRepository.mergeCoin(
               suiAccount: suiAccount,
               coinToMerge: listSortAscending[i].key,
               primaryCoin: primaryCoin.key,
               gasBudget: SUIConstants.defaultGasBudgetForMerge,
-              gasPayment: SUIConstants.defaultGasBudgetForMerge,
+              gasPayment: null,
               suiAddress: address);
+
+          final objects = await getObject(primaryCoin.key);
+          if (objects.getBalance() > amount) {
+            return primaryCoin.value;
+          }
         }
+        return primaryCoin.value;
       }
+      return null;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<SUIEffects> simulateTransaction({
+  Future<SUIEffects?> simulateTransaction({
     required SUIArgument suiArgument,
   }) async {
     try {
@@ -174,7 +182,7 @@ class SUIClient {
     }
   }
 
-  Future<SUIEffects> submitTransaction({
+  Future<SUITransaction?> submitTransaction({
     required SUIArgument suiArgument,
   }) async {
     try {
@@ -190,7 +198,7 @@ class SUIClient {
     }
   }
 
-  Future<SUIEffects> transferSUI({
+  Future<dynamic> transferSUI({
     required String address,
     required String toAddress,
     required SUIAccount suiAccount,
@@ -203,21 +211,24 @@ class SUIClient {
           suiAccount: suiAccount,
           amount: amount + SUIConstants.defaultGasBudgetForTransferSui,
           address: address);
-      final arg = SUIArgument(
-        suiObjectID: coin!.getID(),
-        gasBudget: SUIConstants.defaultGasBudgetForTransferSui,
-        recipient: toAddress,
-        address: address,
-        amount: amount,
-        suiAccount: suiAccount,
-      );
-      if (dryRun) {
-        final result = await _suiRepository.transferSuiDryRun(arg);
-        return result;
-      } else {
-        final result = await _suiRepository.transferSui(arg);
-        return result;
+      if (coin != null) {
+        final arg = SUIArgument(
+          suiObjectID: coin.getID(),
+          gasBudget: SUIConstants.defaultGasBudgetForTransferSui,
+          recipient: toAddress,
+          address: address,
+          amount: amount,
+          suiAccount: suiAccount,
+        );
+        if (dryRun) {
+          final result = await _suiRepository.transferSuiDryRun(arg);
+          return result;
+        } else {
+          final result = await _suiRepository.transferSui(arg);
+          return result;
+        }
       }
+      return null;
     } catch (e) {
       rethrow;
     }
