@@ -26,8 +26,15 @@ class NetWorkRepository {
         coinCurrency: AppConstants.suiDefaultCurrency,
         coinType: CoinType.sui,
       );
+      final aptosMainnet = NetworkType(
+        networkURL: HostUrl.aptosMainNetUrl,
+        networkName: HostUrl.aptosMainnet,
+        faucetURL: '',
+        coinCurrency: AppConstants.aptosDefaultCurrency,
+        coinType: CoinType.aptos,
+      );
 
-      return [aptosDevNet, aptosTestNet, suiDevNet];
+      return [aptosDevNet, aptosTestNet, suiDevNet, aptosMainnet];
     } catch (e) {
       rethrow;
     }

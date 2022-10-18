@@ -6,7 +6,7 @@ class HostUrl {
 
   static const aptosDevUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
   static const aptosTestNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
-  static const mainNetUrl = 'https://fullnode.mainnet.aptoslabs.com/';
+  static const aptosMainNetUrl = 'https://fullnode.mainnet.aptoslabs.com/';
 
   static const faucetAptosDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
   static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
@@ -18,7 +18,7 @@ class HostUrl {
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: aptosDevUrl,
     aptosTestnet: aptosTestNetUrl,
-    aptosMainnet: mainNetUrl,
+    aptosMainnet: aptosMainNetUrl,
     suiDevnet: suiDevnetUrl,
   };
   static const Map<String, String> faucetUrlMap = {
