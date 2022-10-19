@@ -1,8 +1,10 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 import 'package:hex/hex.dart';
+import 'package:intl/intl.dart';
 
 extension HexString on String {
   String toHexString() {
@@ -47,4 +49,63 @@ extension Uint8ListExtension on Uint8List {
     Uint8List temp = this;
     return HEX.encode(temp);
   }
+}
+
+extension DecimalFormatNumber on String {
+  String decimalFormat({int? decimal}) {
+    decimal ??= 8;
+    final number = double.parse(this);
+    final powDecimal = pow(10, -decimal);
+    final result = (number * powDecimal).toStringAsFixed(8);
+    return result;
+  }
+
+  String formatBalance() {
+    final temp = decimalFormat();
+    final toDouble = double.parse(temp);
+    final format = toDouble.formatNumber(
+        decimalDigits: 8, keepDecimalDigitLikeOrigin: true);
+    return format;
+  }
+}
+
+extension NumberExtension on num {
+  ///[keepDecimalDigitLikeOrigin] set to true if you want to keep all the rest of digits numbers value
+  String formatNumber(
+      {int decimalDigits = 0, bool keepDecimalDigitLikeOrigin = false}) {
+    String suffix = List.generate(decimalDigits, (index) => "0").join();
+    final splitText = toString().split(".");
+    if (this == 0) {
+      if (decimalDigits == 0) return "0";
+      return "0.$suffix";
+    } else if (splitText.first == "0") {
+      suffix = List.generate(decimalDigits, (index) => "#").join();
+    }
+    if (keepDecimalDigitLikeOrigin) {
+      final haveDecimalDigits = splitText.length > 1;
+      if (haveDecimalDigits) {
+        final removeZeros =
+            splitText.last.replaceAll(Validator.removingTrailingZeros, '');
+        suffix = List.generate(removeZeros.length, (index) => "#").join();
+      }
+    }
+    String result = NumberFormat('#,###.$suffix').format(this);
+    if (suffix.isNotEmpty) {
+      result = NumberFormat('#,###.$suffix').format(this);
+    } else {
+      result = NumberFormat('#,###').format(this);
+    }
+    final haveDot = result.contains(".");
+    if (!haveDot && suffix.isNotEmpty) {
+      result =
+          "$result.${List.generate(suffix.length, (index) => "0").join("")}";
+    }
+    return result;
+  }
+
+  String formatNumberWithCurrency(
+          {String currencySymbol = "\$",
+          int decimalDigits = 1,
+          bool keepDecimalDigitLikeOrigin = false}) =>
+      "$currencySymbol${formatNumber(decimalDigits: decimalDigits, keepDecimalDigitLikeOrigin: keepDecimalDigitLikeOrigin)}";
 }

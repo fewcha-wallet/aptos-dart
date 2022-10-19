@@ -24,6 +24,7 @@ dependencies:
       url: https://github.com/beobanhbo/jsonrpc2-folk.git
       ref: main
   http: ^0.13.5
+  intl: ^0.17.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
