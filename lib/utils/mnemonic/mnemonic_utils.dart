@@ -29,4 +29,8 @@ class MnemonicUtils {
     }
     return data.getRange(0, data.length).toList();
   }
+
+  static bool isValidMnemonicString(String mnemonic) {
+    return bip39.validateMnemonic(mnemonic);
+  }
 }
