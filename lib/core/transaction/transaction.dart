@@ -4,6 +4,7 @@ import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/transaction_event/transaction_event.dart';
 import 'package:aptosdart/network/decodable.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
@@ -64,7 +65,7 @@ class Transaction extends Decoder<Transaction> {
     hash = json['hash'];
     stateRootHash = json['state_root_hash'];
     eventRootHash = json['event_root_hash'];
-    gasUsed = json['gas_used'];
+    gasUsed = json['gas_used'] ?? '0';
     success = json['success'] ?? false;
     vmStatus = json['vm_status'];
     accumulatorRootHash = json['accumulator_root_hash'];
@@ -141,5 +142,22 @@ class Transaction extends Decoder<Transaction> {
   String getTokenCurrency() {
     if (gasCurrencyCode == null) return AppConstants.aptosDefaultCurrency;
     return gasCurrencyCode!;
+  }
+
+  String getTokenAmountRemoveTrailingZeros() {
+    return tokenAmount().removeTrailingZeros();
+  }
+
+  String getGasFeeRemoveTrailingZeros() {
+    if (gasUsed != null) return gasUsed!.removeTrailingZeros();
+    return (maxGasAmount ?? '0').removeTrailingZeros();
+  }
+
+  String tokenAmountInDecimalFormat() {
+    return tokenAmount().decimalFormat();
+  }
+
+  String maxGasAmountInDecimalFormat() {
+    return (maxGasAmount ?? '0').decimalFormat();
   }
 }

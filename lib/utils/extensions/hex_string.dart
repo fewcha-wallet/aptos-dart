@@ -60,6 +60,17 @@ extension DecimalFormatNumber on String {
     return result;
   }
 
+  String removeTrailingZeros() {
+    final temp = decimalFormat();
+    if (temp.contains('.')) {
+      final s = double.parse(temp.replaceAll(RegExp(r"([.]*0+)(?!.*\d)"), ""));
+      return s.toString();
+    } else {
+      final s = double.parse(temp);
+      return s.toString();
+    }
+  }
+
   String formatBalance() {
     final temp = decimalFormat();
     final toDouble = double.parse(temp);
