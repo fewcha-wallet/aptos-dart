@@ -74,8 +74,16 @@ extension DecimalFormatNumber on String {
   String formatBalance() {
     final temp = decimalFormat();
     final toDouble = double.parse(temp);
-    final format = toDouble.formatNumber(
-        decimalDigits: 8, keepDecimalDigitLikeOrigin: true);
+
+    final format = formatWithComma(value: toDouble);
+    return format;
+  }
+
+  String formatWithComma({double? value}) {
+    double temp = value ?? double.parse(this);
+    final format = temp.formatNumber(
+      decimalDigits: temp < 1 ? 8 : 2,
+    );
     return format;
   }
 }
