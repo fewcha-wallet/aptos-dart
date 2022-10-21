@@ -14,15 +14,15 @@ class HostUrl {
 
   static const suiDevnetUrl = "https://gateway.devnet.sui.io";
   static const Map<String, String> hostUrlMap = {
+    aptosMainnet: mainNetUrl,
     aptosDevnet: devUrl,
     aptosTestnet: testNetUrl,
-    aptosMainnet: mainNetUrl,
     // suiDevnet: suiDevnetUrl,
   };
   static const Map<String, String> faucetUrlMap = {
+    aptosMainnet: '',
     aptosDevnet: faucetDevnetUrl,
     aptosTestnet: faucetTestnetUrl,
-    aptosMainnet: '',
   };
 }
 
