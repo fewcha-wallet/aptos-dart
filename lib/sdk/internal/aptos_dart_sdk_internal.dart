@@ -24,8 +24,8 @@ class AptosDartSDKInternal {
       {LogStatus? logStatus, String? network, String? faucet}) {
     _netWorkRepository = NetWorkRepository();
     _aptosCurrentConfig.listNetwork = _netWorkRepository.getListNetWork();
-    _network = network ?? HostUrl.hostUrlMap[HostUrl.aptosDevnet]!;
-    _faucetUrl = faucet ?? HostUrl.faucetUrlMap[HostUrl.aptosDevnet]!;
+    _network = network ?? HostUrl.hostUrlMap[HostUrl.aptosMainnet]!;
+    _faucetUrl = faucet ?? HostUrl.faucetUrlMap[HostUrl.aptosMainnet]!;
     _aptosCurrentConfig.logStatus = logStatus;
     _aptosCurrentConfig.faucetUrl = _faucetUrl;
     _apiClient = APIClient(logStatus: logStatus, baseUrl: _network);
