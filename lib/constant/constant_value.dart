@@ -12,9 +12,11 @@ class HostUrl {
   static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
   static const faucetSUIDevnetUrl =
       'https://discord.com/channels/916379725201563759/971488439931392130';
+  static const iosSchemeURLSUIDevnet =
+      'discord:///channels/916379725201563759/971488439931392130';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
 
-  static const String suiDevnetUrl = "https://gateway.devnet.sui.io";
+  static const String suiDevnetUrl = "https://fullnode.devnet.sui.io";
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: aptosDevUrl,
     aptosTestnet: aptosTestNetUrl,

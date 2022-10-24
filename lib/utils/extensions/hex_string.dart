@@ -80,9 +80,8 @@ extension DecimalFormatNumber on String {
   }
 
   String formatWithComma({double? value}) {
-    if (value == 0) return '0';
+    if (value == 0 || this == '0.0') return '0';
     double temp = value ?? double.parse(this);
-
     final format = temp.formatNumber(
       decimalDigits: temp < 1 ? 8 : 2,
     );
