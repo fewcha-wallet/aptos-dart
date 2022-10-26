@@ -44,8 +44,7 @@ class AptosAccountRepository with AptosSDKMixin {
       String address, String resourceType) async {
     try {
       final response = await apiClient.request(
-          route: APIRoute(APIType.getResourcesByType,
-              routeParams: address.trimPrefix()),
+          route: APIRoute(APIType.getResourcesByType, routeParams: address),
           extraPath: resourceType,
           create: (response) =>
               APIResponse(createObject: ResourceNew(), response: response));

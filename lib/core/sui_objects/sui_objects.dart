@@ -1,6 +1,7 @@
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/owner/owner.dart';
 import 'package:aptosdart/network/decodable.dart';
+import 'package:aptosdart/utils/validator/validator.dart';
 
 class SUIObjects extends Decoder<SUIObjects> {
   String? status;
@@ -34,6 +35,10 @@ class SUIObjects extends Decoder<SUIObjects> {
 
   String getID() {
     return details?.data?.fields?.id?.id ?? '';
+  }
+
+  bool isSUICoinObject() {
+    return Validator.isSUICoinObject(details?.data?.type);
   }
 }
 
@@ -189,13 +194,106 @@ class SUIReference extends Decoder<SUIReference> {
   }
 }
 
+class EffectsCert extends Decoder<EffectsCert> {
+  SUITransaction? suiTransaction;
+
+  EffectsCert({this.suiTransaction});
+  EffectsCert.fromJson(Map<String, dynamic> json) {
+    suiTransaction = json['EffectsCert'] != null
+        ? SUITransaction.fromJson(json['EffectsCert'])
+        : null;
+  }
+
+  @override
+  EffectsCert decode(Map<String, dynamic> json) {
+    return EffectsCert.fromJson(json);
+  }
+}
+
 class SUITransaction extends Decoder<SUITransaction> {
+  SUIEffects? effects;
+  SUICertificate? suiCertificate;
+  SUITransaction({this.effects, this.suiCertificate});
+
+  SUITransaction.fromJson(Map<String, dynamic> json) {
+    effects = json['effects']['effects'] != null
+        ? SUIEffects.fromJson(json['effects']['effects'])
+        : null;
+    suiCertificate = json['certificate'] != null
+        ? SUICertificate.fromJson(json['certificate'])
+        : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (effects != null) {
+      data['effects'] = effects!.toJson();
+    }
+    return data;
+  }
+
+  @override
+  SUITransaction decode(Map<String, dynamic> json) {
+    return SUITransaction.fromJson(json);
+  }
+
+  String? getStatus() {
+    return effects?.status?.status;
+  }
+
+  bool? getStatusInBool() {
+    return effects?.status?.status == SUIConstants.success ? true : false;
+  }
+
+  bool isSucceed() {
+    if (effects?.status?.status == SUIConstants.success) {
+      return true;
+    }
+    return false;
+  }
+
+  // String? getTimeStamp() {
+  //   if (timestampMs != null) return (timestampMs! * 1000).toString();
+  //   return '0';
+  // }
+
+  String? getHash() {
+    return effects?.transactionDigest;
+  }
+
+  num getTotalGasUsed() {
+    return effects?.gasUsed?.getTotalGasUsed() ?? 0;
+  }
+
+  num getSubmitGasUsed() {
+    return effects?.gasUsed?.getSubmitGasUsed() ?? 0;
+  }
+
+  String? getToAddress() {
+    final temp = suiCertificate?.data?.transactions;
+    if (temp != null) {
+      return temp.first.transferSuiData?.recipient ?? '';
+    }
+
+    return null;
+  }
+
+  String getTokenAmount() {
+    final temp = suiCertificate?.data?.transactions;
+    if (temp != null) {
+      return temp.first.transferSuiData?.amount.toString() ?? '0';
+    }
+    return '0';
+  }
+}
+
+class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   SUIEffects? effects;
   int? timestampMs;
   SUICertificate? suiCertificate;
-  SUITransaction({this.effects, this.timestampMs, this.suiCertificate});
+  SUITransactionHistory({this.effects, this.timestampMs, this.suiCertificate});
 
-  SUITransaction.fromJson(Map<String, dynamic> json) {
+  SUITransactionHistory.fromJson(Map<String, dynamic> json) {
     effects =
         json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
     suiCertificate = json['certificate'] != null
@@ -214,8 +312,8 @@ class SUITransaction extends Decoder<SUITransaction> {
   }
 
   @override
-  SUITransaction decode(Map<String, dynamic> json) {
-    return SUITransaction.fromJson(json);
+  SUITransactionHistory decode(Map<String, dynamic> json) {
+    return SUITransactionHistory.fromJson(json);
   }
 
   String? getStatus() {
@@ -242,8 +340,12 @@ class SUITransaction extends Decoder<SUITransaction> {
     return effects?.transactionDigest;
   }
 
-  num getGasUsed() {
-    return effects?.gasUsed?.calculateGas() ?? 0;
+  num getTotalGasUsed() {
+    return effects?.gasUsed?.getTotalGasUsed() ?? 0;
+  }
+
+  num getSubmitGasUsed() {
+    return effects?.gasUsed?.getSubmitGasUsed() ?? 0;
   }
 
   String? getToAddress() {
@@ -276,7 +378,7 @@ class SUIEffects extends Decoder<SUIEffects> {
     status = json['status'] != null ? SUIStatus.fromJson(json['status']) : null;
     gasUsed =
         json['gasUsed'] != null ? SUIGasUsed.fromJson(json['gasUsed']) : null;
-    transactionDigest = json['transactionDigest'];
+    transactionDigest = json['transactionEffectsDigest'];
     if (json['created'] != null) {
       created = <SUICreated>[];
       json['created'].forEach((v) {
@@ -464,8 +566,12 @@ class SUIGasUsed extends Decoder<SUIGasUsed> {
     return SUIGasUsed.fromJson(json);
   }
 
-  num calculateGas() {
+  num getTotalGasUsed() {
     return (computationCost ?? 0) + ((storageCost ?? 0) - (storageRebate ?? 0));
+  }
+
+  num getSubmitGasUsed() {
+    return (computationCost ?? 0) + (storageCost ?? 0);
   }
 }
 

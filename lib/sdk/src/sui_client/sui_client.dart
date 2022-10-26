@@ -129,7 +129,9 @@ class SUIClient {
       if (getObjectOwned.isNotEmpty) {
         for (var element in getObjectOwned) {
           final objects = await getObject(element.objectId!);
-          listTokenAmount.putIfAbsent(element.objectId!, () => objects);
+          if (objects.isSUICoinObject()) {
+            listTokenAmount.putIfAbsent(element.objectId!, () => objects);
+          }
         }
         final listSortAscending = listTokenAmount.entries.toList()
           ..sort(
@@ -183,7 +185,7 @@ class SUIClient {
     }
   }
 
-  Future<SUITransaction?> submitTransaction({
+  Future<EffectsCert?> submitTransaction({
     required SUIArgument suiArgument,
   }) async {
     try {
@@ -192,6 +194,7 @@ class SUIClient {
           toAddress: suiArgument.recipient!,
           suiAccount: suiArgument.suiAccount!,
           amount: suiArgument.amount!,
+          gasBudget: suiArgument.gasBudget!,
           dryRun: false);
       return result;
     } catch (e) {
@@ -204,6 +207,7 @@ class SUIClient {
     required String toAddress,
     required SUIAccount suiAccount,
     required num amount,
+    num? gasBudget,
     bool dryRun = true,
   }) async {
     try {
@@ -215,7 +219,7 @@ class SUIClient {
       if (coin != null) {
         final arg = SUIArgument(
           suiObjectID: coin.getID(),
-          gasBudget: SUIConstants.defaultGasBudgetForTransferSui,
+          gasBudget: gasBudget ?? SUIConstants.defaultGasBudgetForTransferSui,
           recipient: toAddress,
           address: address,
           amount: amount,

@@ -82,9 +82,9 @@ class SUIRepository with AptosSDKMixin {
           ),
           function: SUIConstants.suiGetTransaction,
           arg: [transactionID],
-          create: (response) =>
-              RPCResponse(createObject: SUITransaction(), response: response));
-      final temp = (result.decodedData as SUITransaction);
+          create: (response) => RPCResponse(
+              createObject: SUITransactionHistory(), response: response));
+      final temp = (result.decodedData as SUITransactionHistory);
 
       return Transaction(
           success: temp.isSucceed(),
@@ -92,7 +92,7 @@ class SUIRepository with AptosSDKMixin {
           gasCurrencyCode: AppConstants.suiDefaultCurrency,
           timestamp: temp.getTimeStamp(),
           hash: temp.getHash(),
-          gasUsed: temp.getGasUsed().toString(),
+          gasUsed: temp.getTotalGasUsed().toString(),
           payload: Payload(arguments: [
             temp.getTokenAmount(),
             temp.getToAddress().toString()
@@ -116,7 +116,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<SUITransaction> mergeCoin({
+  Future<EffectsCert> mergeCoin({
     required SUIAccount suiAccount,
     required String suiAddress,
     required String primaryCoin,
@@ -218,7 +218,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<SUITransaction> signAndExecuteTransaction(
+  Future<EffectsCert> signAndExecuteTransaction(
     SUIArgument suiArgument,
   ) async {
     try {
@@ -231,10 +231,11 @@ class SUIRepository with AptosSDKMixin {
             suiArgument.txBytes,
             SUIConstants.ed25519,
             suiArgument.suiAccount!.signatureBase64(suiArgument.txBytes!),
-            suiArgument.suiAccount!.publicKeyInBase64()
+            suiArgument.suiAccount!.publicKeyInBase64(),
+            "WaitForLocalExecution"
           ],
           create: (response) =>
-              RPCResponse(createObject: SUITransaction(), response: response));
+              RPCResponse(createObject: EffectsCert(), response: response));
       return result.decodedData!;
     } catch (e) {
       rethrow;
@@ -255,7 +256,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<SUITransaction> transferSui(
+  Future<EffectsCert> transferSui(
     SUIArgument suiArgument,
   ) async {
     try {

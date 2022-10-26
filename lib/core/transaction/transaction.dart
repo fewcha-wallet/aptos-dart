@@ -91,7 +91,7 @@ class Transaction extends Decoder<Transaction> {
         events!.add(TransactionEvent.fromJson(v));
       });
     }
-    timestamp = json['timestamp'];
+    timestamp = json['timestamp'] ?? '0';
   }
 
   Map<String, dynamic> toJson() {

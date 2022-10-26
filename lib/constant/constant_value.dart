@@ -102,5 +102,4 @@ class SUIConstants {
   static const String coinSplitVecFuncName = 'split_vec';
   static const String coinJoinFuncName = 'join';
   static const String suiConstruct = '0x2::sui::SUI';
-  static const String coinTypeArgRegex = r'^0x2::coin::coin<(.+)>$';
 }
