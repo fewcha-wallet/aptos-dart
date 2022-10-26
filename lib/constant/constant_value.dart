@@ -79,8 +79,7 @@ class SUIConstants {
   static const String suiGetObject = 'sui_getObject';
   static const String suiGetTransactionsFromAddress =
       'sui_getTransactionsFromAddress';
-  static const String suiGetTransactionsToAddress =
-      'sui_getTransactionsToAddress';
+  static const String suiGetTransactions = 'sui_getTransactions';
   static const String suiGetTransaction = 'sui_getTransaction';
   static const String suiSyncAccountState = 'sui_syncAccountState';
   static const String suiMergeCoins = 'sui_mergeCoins';

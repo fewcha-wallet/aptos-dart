@@ -27,7 +27,7 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
     instance = Dio(options);
     {
       instance.interceptors.addAll([
-        // LogsInterceptor(),
+        LogsInterceptor(),
         ErrorInterceptor(),
       ]);
     }

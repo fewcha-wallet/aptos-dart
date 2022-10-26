@@ -3,6 +3,7 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
 import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';
 import 'package:collection/collection.dart';
@@ -31,34 +32,34 @@ class SUIClient {
     }
   }
 
-  Future<List<String>> getTransactionsByAddress(
-      {required String address, required String function}) async {
-    try {
-      final result = await _suiRepository.getTransactionsByAddress(
-          address: address, function: function);
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<List<String>> getTransactionsByAddress(
+  //     {required String address, required String function}) async {
+  //   try {
+  //     final result = await _suiRepository.getTransactionsByAddress(
+  //         address: address, function: function);
+  //     return result;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+  //
+  // Future<List<String>> getTransactionsFromAddress(
+  //     {required String address}) async {
+  //   try {
+  //     final result = await _suiRepository.getTransactionsByAddress(
+  //         address: address,
+  //         function: SUIConstants.suiGetTransactionsFromAddress);
+  //     return result;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-  Future<List<String>> getTransactionsFromAddress(
+  Future<TransactionPagination> getTransactionsToAddress(
       {required String address}) async {
     try {
       final result = await _suiRepository.getTransactionsByAddress(
-          address: address,
-          function: SUIConstants.suiGetTransactionsFromAddress);
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<List<String>> getTransactionsToAddress(
-      {required String address}) async {
-    try {
-      final result = await _suiRepository.getTransactionsByAddress(
-          address: address, function: SUIConstants.suiGetTransactionsToAddress);
+          address: address, function: SUIConstants.suiGetTransactions);
       return result;
     } catch (e) {
       rethrow;
@@ -70,8 +71,8 @@ class SUIClient {
       List<Transaction> listTrans = [];
       final transactionsFromAddress =
           await getTransactionsToAddress(address: address);
-      if (transactionsFromAddress.isNotEmpty) {
-        for (var element in transactionsFromAddress) {
+      if (transactionsFromAddress.data!.isNotEmpty) {
+        for (var element in transactionsFromAddress.data!) {
           final trans = await getTransactionWithEffectsBatch(element);
           listTrans.add(trans);
         }

@@ -6,6 +6,7 @@ import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/network/rpc/rpc_client.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:aptosdart/network/rpc/rpc_route.dart';
@@ -47,9 +48,10 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<List<String>> getTransactionsByAddress(
+  Future<TransactionPagination> getTransactionsByAddress(
       {required String address, required String function}) async {
     try {
+      final addressMap = {"FromAddress": address};
       List<String> listTransID = [];
       final rpc = RPCClient(rpcClient.url
           .replaceAll(SUIConstants.gateway, SUIConstants.fullnode));
@@ -59,15 +61,10 @@ class SUIRepository with AptosSDKMixin {
             RPCFunction.getTransactionsByAddress,
           ),
           function: function,
-          arg: [address],
-          create: (response) => RPCListResponse(response: response));
-      if (result.decodedData.isNotEmpty) {
-        List<dynamic> list = (result.decodedData as List).first;
-        for (var element in list) {
-          listTransID.add((element as List).last.toString());
-        }
-      }
-      return listTransID;
+          arg: [addressMap, null, null, "Ascending"],
+          create: (response) => RPCResponse(
+              createObject: TransactionPagination(), response: response));
+      return result.decodedData;
     } catch (e) {
       rethrow;
     }

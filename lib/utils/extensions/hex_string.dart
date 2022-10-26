@@ -63,11 +63,9 @@ extension DecimalFormatNumber on String {
   String removeTrailingZeros() {
     final temp = decimalFormat();
     if (temp.contains('.')) {
-      final s = double.parse(temp.replaceAll(RegExp(r"([.]*0+)(?!.*\d)"), ""));
-      return s.toString();
+      return temp.replaceAll(RegExp(r"([.]*0+)(?!.*\d)"), "");
     } else {
-      final s = double.parse(temp);
-      return s.toString();
+      return temp.toString();
     }
   }
 
