@@ -37,8 +37,40 @@ class SUIObjects extends Decoder<SUIObjects> {
     return details?.data?.fields?.id?.id ?? '';
   }
 
+  String getType() {
+    return details?.data?.type ?? '';
+  }
+
+  String getSUITokenSymbol() {
+    return SUIConstants.coinModuleName.toUpperCase();
+  }
+
   bool isSUICoinObject() {
     return Validator.isSUICoinObject(details?.data?.type);
+  }
+
+  bool isSUITokenObject() {
+    return Validator.isSUITokenObject(details?.data?.type);
+  }
+
+  bool isSUINFTObject() {
+    return (details?.data?.type == SUIConstants.suiNFTType);
+  }
+
+  String getNFTName() {
+    return details?.data?.fields?.name ?? '';
+  }
+
+  String getNFTDes() {
+    return details?.data?.fields?.description ?? '';
+  }
+
+  String getNFTUrl() {
+    return details?.data?.fields?.url ?? '';
+  }
+
+  String getSUITypeArg() {
+    return Validator.getSUITypeArg(details?.data?.type);
   }
 }
 
@@ -122,12 +154,22 @@ class SUIData extends Decoder<SUIData> {
 
 class SUIFields extends Decoder<SUIFields> {
   int? balance;
+  String? description, name, url;
   SUIId? id;
 
-  SUIFields({this.balance, this.id});
+  SUIFields({
+    this.balance,
+    this.id,
+    this.description,
+    this.name,
+    this.url,
+  });
 
   SUIFields.fromJson(Map<String, dynamic> json) {
     balance = json['balance'];
+    description = json['description'];
+    name = json['name'];
+    url = json['url'];
     id = json['id'] != null ? SUIId.fromJson(json['id']) : null;
   }
 
@@ -581,7 +623,17 @@ class SUICreated extends Decoder<SUICreated> {
   SUICreated({this.owner});
 
   SUICreated.fromJson(Map<String, dynamic> json) {
-    owner = json['owner'] != null ? Owner.fromJson(json['owner']) : null;
+    Owner ownerModel = Owner();
+    if (json['owner'] != null) {
+      try {
+        ownerModel = Owner.fromJson(json['owner']);
+      } catch (e) {
+        ownerModel.addressOwner = json['owner'];
+      }
+      owner = ownerModel;
+    } else {
+      owner = null;
+    }
   }
 
   Map<String, dynamic> toJson() {

@@ -97,16 +97,77 @@ class SUIClient {
   Future<double> getAccountBalance(String address) async {
     try {
       double balance = 0;
+      final result = await getAccountSUIObjectList(address);
+      if (result.isNotEmpty) {
+        for (var element in result) {
+          if (element.isSUICoinObject()) {
+            balance += element.getBalance();
+          }
+        }
+      }
+      // final getObjectOwned = await getObjectsOwnedByAddress(address);
+      // if (getObjectOwned.isNotEmpty) {
+      //   for (var element in getObjectOwned) {
+      //     final objects = await getObject(element.objectId!);
+      //     balance += objects.getBalance();
+      //   }
+      // }
+      return balance;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SUIObjects>> getAccountNFT(String address) async {
+    try {
+      List<SUIObjects> listNFT = [];
+
+      final result = await getAccountSUIObjectList(address);
+      if (result.isNotEmpty) {
+        for (var element in result) {
+          if (element.isSUINFTObject()) {
+            listNFT.add(element);
+          }
+        }
+      }
+      return listNFT;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<List<SUIObjects>> getAccountToken(String address) async {
+    try {
+      List<SUIObjects> listToken = [];
+
+      final result = await getAccountSUIObjectList(address);
+      if (result.isNotEmpty) {
+        for (var element in result) {
+          if (element.isSUITokenObject()) {
+            listToken.add(element);
+          }
+        }
+      }
+      return listToken;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<List<SUIObjects>> getAccountSUIObjectList(String address) async {
+    try {
+      List<SUIObjects> listObjects = [];
+
       final getObjectOwned = await getObjectsOwnedByAddress(address);
       if (getObjectOwned.isNotEmpty) {
         for (var element in getObjectOwned) {
           final objects = await getObject(element.objectId!);
-          balance += objects.getBalance();
+          listObjects.add(objects);
         }
       }
-      return balance;
+      return listObjects;
     } catch (e) {
-      rethrow;
+      return [];
     }
   }
 
