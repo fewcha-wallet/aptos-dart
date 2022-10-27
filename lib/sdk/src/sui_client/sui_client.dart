@@ -32,29 +32,6 @@ class SUIClient {
     }
   }
 
-  // Future<List<String>> getTransactionsByAddress(
-  //     {required String address, required String function}) async {
-  //   try {
-  //     final result = await _suiRepository.getTransactionsByAddress(
-  //         address: address, function: function);
-  //     return result;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-  //
-  // Future<List<String>> getTransactionsFromAddress(
-  //     {required String address}) async {
-  //   try {
-  //     final result = await _suiRepository.getTransactionsByAddress(
-  //         address: address,
-  //         function: SUIConstants.suiGetTransactionsFromAddress);
-  //     return result;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
   Future<TransactionPagination> getTransactionsToAddress(
       {required String address}) async {
     try {
@@ -105,13 +82,6 @@ class SUIClient {
           }
         }
       }
-      // final getObjectOwned = await getObjectsOwnedByAddress(address);
-      // if (getObjectOwned.isNotEmpty) {
-      //   for (var element in getObjectOwned) {
-      //     final objects = await getObject(element.objectId!);
-      //     balance += objects.getBalance();
-      //   }
-      // }
       return balance;
     } catch (e) {
       rethrow;

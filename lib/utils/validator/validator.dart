@@ -7,7 +7,7 @@ class Validator {
       RegExp(r"0x1::coin::CoinStore<(0x[0-9A-Fa-f]+::[^>]+)>");
   static final removingTrailingZeros = RegExp(r'([.]*0)(?!.*\d)');
   static const String suiCoinTypeArgRegex = r'^0x2::coin::Coin<(.+)>$';
-  static const String suiTypeArgRegex = r'\<(.*?)\>';
+  static const String suiTypeArgRegex = r'(?<=\<).+?(?=\>)';
   static const String suiTokenTypeArgRegex =
       r'^0x2::coin::Coin<(.+)::Coin::COIN>$';
 

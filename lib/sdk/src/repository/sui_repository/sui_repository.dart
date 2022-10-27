@@ -52,16 +52,13 @@ class SUIRepository with AptosSDKMixin {
       {required String address, required String function}) async {
     try {
       final addressMap = {"FromAddress": address};
-      List<String> listTransID = [];
-      final rpc = RPCClient(rpcClient.url
-          .replaceAll(SUIConstants.gateway, SUIConstants.fullnode));
-      final result = await rpc.request(
+      final result = await rpcClient.request(
           isBatch: true,
           route: RPCRoute(
             RPCFunction.getTransactionsByAddress,
           ),
           function: function,
-          arg: [addressMap, null, null, "Ascending"],
+          arg: [addressMap, null, 10, "Ascending"],
           create: (response) => RPCResponse(
               createObject: TransactionPagination(), response: response));
       return result.decodedData;
@@ -73,9 +70,7 @@ class SUIRepository with AptosSDKMixin {
   Future<Transaction> getTransactionWithEffectsBatch(
       String transactionID) async {
     try {
-      final rpc = RPCClient(rpcClient.url
-          .replaceAll(SUIConstants.gateway, SUIConstants.fullnode));
-      final result = await rpc.request(
+      final result = await rpcClient.request(
           isBatch: true,
           route: RPCRoute(
             RPCFunction.suiGetTransaction,
@@ -125,15 +120,6 @@ class SUIRepository with AptosSDKMixin {
     required String? gasPayment,
   }) async {
     try {
-      // final result = await rpcClient.request(
-      //     route: RPCRoute(
-      //       RPCFunction.suiGetTransaction,
-      //     ),
-      //     function: SUIConstants.suiMergeCoins,
-      //     arg: [suiAddress, primaryCoin, coinToMerge, null, gasBudget],
-      //     create: (response) => RPCResponse(
-      //         createObject: SUITransactionBytes(), response: response));
-
       final results = await moveCall(
           gasPayment: gasPayment,
           packageObjectId: SUIConstants.coinPackageId,
@@ -176,8 +162,6 @@ class SUIRepository with AptosSDKMixin {
           ],
           create: (response) => RPCResponse(
               createObject: SUITransactionBytes(), response: response));
-      // await signAndExecuteTransaction(
-      //     (result.decodedData! as SUITransactionBytes).txBytes!, suiAccount);
       return result.decodedData!;
     } catch (e) {
       rethrow;
@@ -312,9 +296,7 @@ class SUIRepository with AptosSDKMixin {
   Future<SUIEffects> dryRunTransaction(String txnBytes, String signatureScheme,
       String signature, String pubkey) async {
     try {
-      final rpc = RPCClient(rpcClient.url
-          .replaceAll(SUIConstants.gateway, SUIConstants.fullnode));
-      final result = await rpc.request(
+      final result = await rpcClient.request(
           route: RPCRoute(
             RPCFunction.suiGetTransaction,
           ),
@@ -327,28 +309,4 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
-
-  /*Future<SUITransactionBytes> transferSuiDryRun(
-    String txBytes,
-    SUIAccount suiAccount,
-  ) async {
-    try {
-      final result = await rpcClient.request(
-          route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
-          function: 'sui_executeTransaction',
-          arg: [
-            txBytes,
-            'ED25519',
-            suiAccount.signatureBase64(txBytes),
-            suiAccount.publicKeyInBase64()
-          ],
-          create: (response) => RPCResponse(
-              createObject: SUITransactionBytes(), response: response));
-      return result.decodedData!;
-    } catch (e) {
-      rethrow;
-    }
-  }*/
 }
