@@ -42,7 +42,7 @@ class TransactionRepository with AptosSDKMixin {
 
   Future<List<Transaction>> simulateTransaction(Transaction transaction) async {
     try {
-      final path = '?estimate_gas_unit_price=true&estimate_max_gas_amount=true';
+      const path = '?estimate_gas_unit_price=true&estimate_max_gas_amount=true';
       final response = await apiClient.request(
           body: transaction.toJson(),
           extraPath: path,

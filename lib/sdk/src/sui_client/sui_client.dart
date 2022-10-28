@@ -1,5 +1,7 @@
+import 'package:aptosdart/argument/sui_argument/compute_sui_object_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
@@ -7,6 +9,7 @@ import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
 import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 
 class SUIClient {
   late SUIRepository _suiRepository;
@@ -76,11 +79,10 @@ class SUIClient {
       double balance = 0;
       final result = await getAccountSUIObjectList(address);
       if (result.isNotEmpty) {
-        for (var element in result) {
-          if (element.isSUICoinObject()) {
-            balance += element.getBalance();
-          }
-        }
+        final arg = ComputeSUIObjectArg(
+            computeSUIObjectType: ComputeSUIObjectType.getBalance,
+            listSUIObject: result);
+        balance = await compute(_computeSUIObject, arg) as double;
       }
       return balance;
     } catch (e) {
@@ -94,11 +96,10 @@ class SUIClient {
 
       final result = await getAccountSUIObjectList(address);
       if (result.isNotEmpty) {
-        for (var element in result) {
-          if (element.isSUINFTObject()) {
-            listNFT.add(element);
-          }
-        }
+        final arg = ComputeSUIObjectArg(
+            computeSUIObjectType: ComputeSUIObjectType.getNFT,
+            listSUIObject: result);
+        listNFT = await compute(_computeSUIObject, arg) as List<SUIObjects>;
       }
       return listNFT;
     } catch (e) {
@@ -112,11 +113,10 @@ class SUIClient {
 
       final result = await getAccountSUIObjectList(address);
       if (result.isNotEmpty) {
-        for (var element in result) {
-          if (element.isSUITokenObject()) {
-            listToken.add(element);
-          }
-        }
+        final arg = ComputeSUIObjectArg(
+            computeSUIObjectType: ComputeSUIObjectType.getToken,
+            listSUIObject: result);
+        listToken = await compute(_computeSUIObject, arg) as List<SUIObjects>;
       }
       return listToken;
     } catch (e) {
@@ -138,6 +138,38 @@ class SUIClient {
       return listObjects;
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<dynamic> _computeSUIObject(ComputeSUIObjectArg arg) async {
+    switch (arg.computeSUIObjectType) {
+      case ComputeSUIObjectType.getBalance:
+        double balance = 0;
+
+        for (var element in arg.listSUIObject) {
+          if (element.isSUICoinObject()) {
+            balance += element.getBalance();
+          }
+        }
+        return balance;
+      case ComputeSUIObjectType.getNFT:
+        List<SUIObjects> listNFT = [];
+
+        for (var element in arg.listSUIObject) {
+          if (element.isSUINFTObject()) {
+            listNFT.add(element);
+          }
+        }
+        return listNFT;
+      case ComputeSUIObjectType.getToken:
+        List<SUIObjects> listToken = [];
+
+        for (var element in arg.listSUIObject) {
+          if (element.isSUITokenObject()) {
+            listToken.add(element);
+          }
+        }
+        return listToken;
     }
   }
 
@@ -283,7 +315,7 @@ class SUIClient {
         if (balance == amount) {
           return coin.getID();
         } else if (balance > amount) {
-          final result = await _suiRepository.splitCoin(
+          await _suiRepository.splitCoin(
             suiAccount: suiAccount,
             suiAddress: address,
             coinObjectId: coin.getID(),

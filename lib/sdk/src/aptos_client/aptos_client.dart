@@ -19,6 +19,14 @@ import 'package:aptosdart/sdk/src/repository/table_repository/table_repository.d
 import 'package:aptosdart/sdk/src/repository/transaction_repository/transaction_repository.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
+import 'package:flutter/foundation.dart';
+
+class AccountArg {
+  Uint8List? privateKeyBytes;
+  String? privateKeyHex;
+
+  AccountArg({required this.privateKeyBytes, required this.privateKeyHex});
+}
 
 class AptosClient {
   late AptosAccountRepository _accountRepository;
@@ -41,16 +49,31 @@ class AptosClient {
     String? privateKeyHex,
   }) async {
     try {
+      final arg = AccountArg(
+          privateKeyBytes: privateKeyBytes, privateKeyHex: privateKeyHex);
       AptosAccount aptosAccount;
-      if (privateKeyBytes != null) {
-        aptosAccount = AptosAccount(privateKeyBytes: privateKeyBytes);
-      } else {
-        aptosAccount = AptosAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
-      }
+      aptosAccount = await compute(_computeAptosAccount, arg);
+      // if (privateKeyBytes != null) {
+      //   aptosAccount = AptosAccount(privateKeyBytes: privateKeyBytes);
+      // } else {
+      //   aptosAccount = AptosAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
+      // }
       return aptosAccount;
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<AptosAccount> _computeAptosAccount(AccountArg arg) async {
+    AptosAccount aptosAccount;
+
+    if (arg.privateKeyBytes != null) {
+      aptosAccount = AptosAccount(privateKeyBytes: arg.privateKeyBytes);
+    } else {
+      aptosAccount =
+          AptosAccount.fromPrivateKey(arg.privateKeyHex!.trimPrefix());
+    }
+    return aptosAccount;
   }
 
   Future<SUIAccount> createSUIAccount({

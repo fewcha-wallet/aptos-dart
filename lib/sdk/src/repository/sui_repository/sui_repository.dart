@@ -7,7 +7,6 @@ import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
-import 'package:aptosdart/network/rpc/rpc_client.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:aptosdart/network/rpc/rpc_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
