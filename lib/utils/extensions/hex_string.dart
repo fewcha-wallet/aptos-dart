@@ -81,7 +81,7 @@ extension DecimalFormatNumber on String {
     if (value == 0 || this == '0.0') return '0';
     double temp = value ?? double.parse(this);
     final format = temp.formatNumber(
-      decimalDigits: temp < 1 ? 8 : 2,
+      decimalDigits: temp < 1 ? 8 : 4,
     );
     return format;
   }

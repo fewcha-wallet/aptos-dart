@@ -33,8 +33,21 @@ class NetWorkRepository {
         coinCurrency: AppConstants.aptosDefaultCurrency,
         coinType: CoinType.aptos,
       );
+      final aptosMainnet2 = NetworkType(
+        networkURL: HostUrl.aptosMainNet2Url,
+        networkName: HostUrl.aptosMainnet2,
+        faucetURL: '',
+        coinCurrency: AppConstants.aptosDefaultCurrency,
+        coinType: CoinType.aptos,
+      );
 
-      return [aptosDevNet, aptosTestNet, suiDevNet, aptosMainnet];
+      return [
+        aptosDevNet,
+        aptosTestNet,
+        suiDevNet,
+        aptosMainnet,
+        aptosMainnet2
+      ];
     } catch (e) {
       rethrow;
     }
