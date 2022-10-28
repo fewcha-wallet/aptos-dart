@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
+import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/account_core.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
@@ -21,12 +22,6 @@ import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
 
-class AccountArg {
-  Uint8List? privateKeyBytes;
-  String? privateKeyHex;
-
-  AccountArg({required this.privateKeyBytes, required this.privateKeyHex});
-}
 
 class AptosClient {
   late AptosAccountRepository _accountRepository;
@@ -76,22 +71,6 @@ class AptosClient {
     return aptosAccount;
   }
 
-  Future<SUIAccount> createSUIAccount({
-    Uint8List? privateKeyBytes,
-    String? privateKeyHex,
-  }) async {
-    try {
-      SUIAccount suiAccount;
-      if (privateKeyBytes != null) {
-        suiAccount = SUIAccount(privateKeyBytes: privateKeyBytes);
-      } else {
-        suiAccount = SUIAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
-      }
-      return suiAccount;
-    } catch (e) {
-      rethrow;
-    }
-  }
 
   Future<AccountCore> getAccount(String address) async {
     try {

@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/sui_argument/compute_sui_object_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
@@ -8,6 +11,7 @@ import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
 import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
@@ -17,6 +21,37 @@ class SUIClient {
   SUIClient() {
     _suiRepository = SUIRepository();
   }
+  Future<SUIAccount> _computeSUIAccount(AccountArg arg) async {
+    SUIAccount suiAccount;
+    if (arg.privateKeyBytes != null) {
+      suiAccount = SUIAccount(privateKeyBytes: arg.privateKeyBytes);
+    } else {
+      suiAccount = SUIAccount.fromPrivateKey(arg.privateKeyHex!.trimPrefix());
+    }
+    return suiAccount;
+  }
+
+  Future<SUIAccount> createSUIAccount({
+    Uint8List? privateKeyBytes,
+    String? privateKeyHex,
+  }) async {
+    try {
+      SUIAccount suiAccount;
+      final arg = AccountArg(
+          privateKeyBytes: privateKeyBytes, privateKeyHex: privateKeyHex);
+      suiAccount = await compute(_computeSUIAccount, arg);
+
+      // if (privateKeyBytes != null) {
+      //   suiAccount = SUIAccount(privateKeyBytes: privateKeyBytes);
+      // } else {
+      //   suiAccount = SUIAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
+      // }
+      return suiAccount;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<ObjectsOwned>> getObjectsOwnedByAddress(String address) async {
     try {
       final result = await _suiRepository.getObjectsOwnedByAddress(address);
