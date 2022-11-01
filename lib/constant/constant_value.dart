@@ -88,6 +88,7 @@ class SUIConstants {
   static const String suiSplitCoin = 'sui_splitCoin';
   static const String suiMoveCall = 'sui_moveCall';
   static const String suiTransferSui = 'sui_transferSui';
+  static const String suiTransferObject = 'sui_transferObject';
   static const String suiDryRunTransaction = 'sui_dryRunTransaction';
   static const String suiExecuteTransaction = 'sui_executeTransaction';
   static const String gateway = 'gateway';
@@ -96,6 +97,7 @@ class SUIConstants {
 
   static const int defaultGasBudgetForTransferSui = 100;
   static const int defaultGasBudgetForTransfer = 100;
+
   static const int defaultGasBudgetForMerge = 5000;
   static const int defaultGasBudgetForSplit = 1000;
   static const String coinPackageId = '0x2';

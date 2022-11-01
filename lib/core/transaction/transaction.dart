@@ -144,8 +144,8 @@ class Transaction extends Decoder<Transaction> {
     return gasCurrencyCode!;
   }
 
-  String getTokenAmountRemoveTrailingZeros() {
-    return tokenAmount().removeTrailingZeros();
+  String getTokenAmountRemoveTrailingZeros({int? decimal}) {
+    return tokenAmount().removeTrailingZeros(decimal: decimal);
   }
 
   String getGasFeeRemoveTrailingZeros() {

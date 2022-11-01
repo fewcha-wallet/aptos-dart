@@ -138,7 +138,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<SUITransactionBytes> splitCoin({
+  Future<EffectsCert> splitCoin({
     required SUIAccount suiAccount,
     required String suiAddress,
     required String coinObjectId,
@@ -161,7 +161,13 @@ class SUIRepository with AptosSDKMixin {
           ],
           create: (response) => RPCResponse(
               createObject: SUITransactionBytes(), response: response));
-      return result.decodedData!;
+
+      final arg = SUIArgument(
+          txBytes: (result.decodedData as SUITransactionBytes).txBytes,
+          suiAccount: suiAccount);
+
+      final signResult = await signAndExecuteTransaction(arg);
+      return signResult;
     } catch (e) {
       rethrow;
     }
@@ -225,6 +231,34 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
+  Future<SUIEffects> transferObjectDryRun(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final txBytes = await newTransferObject(suiArgument);
+
+      final result =
+          await signAndDryRunTransaction(suiArgument..txBytes = txBytes);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<EffectsCert> transferObjectWithRequestType(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final txBytes = await newTransferObject(suiArgument);
+
+      final result =
+          await signAndExecuteTransaction(suiArgument..txBytes = txBytes);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<SUIEffects> transferSuiDryRun(
     SUIArgument suiArgument,
   ) async {
@@ -268,6 +302,30 @@ class SUIRepository with AptosSDKMixin {
             suiArgument.gasBudget,
             suiArgument.recipient,
             suiArgument.amount,
+          ],
+          create: (response) => RPCResponse(
+              createObject: SUITransactionBytes(), response: response));
+      return (result.decodedData! as SUITransactionBytes).txBytes!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> newTransferObject(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiTransferObject,
+          arg: [
+            suiArgument.address,
+            suiArgument.suiObjectID,
+            suiArgument.amount,
+            suiArgument.gasBudget,
+            suiArgument.recipient,
           ],
           create: (response) => RPCResponse(
               createObject: SUITransactionBytes(), response: response));

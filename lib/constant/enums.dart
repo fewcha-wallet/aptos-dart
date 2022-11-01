@@ -36,4 +36,10 @@ enum RPCFunction {
 }
 enum LogStatus { hide, show }
 enum CoinType { aptos, sui }
-enum ComputeSUIObjectType { getBalance, getNFT, getToken }
+enum ComputeSUIObjectType {
+  getBalance,
+  getNFT,
+  getToken,
+  getSUIObjectList,
+  getSUICoinObjectList
+}

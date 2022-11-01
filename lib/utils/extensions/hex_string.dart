@@ -60,8 +60,8 @@ extension DecimalFormatNumber on String {
     return result;
   }
 
-  String removeTrailingZeros() {
-    final temp = decimalFormat();
+  String removeTrailingZeros({int? decimal}) {
+    final temp = decimalFormat(decimal: decimal);
     if (temp.contains('.')) {
       return temp.replaceAll(RegExp(r"([.]*0+)(?!.*\d)"), "");
     } else {

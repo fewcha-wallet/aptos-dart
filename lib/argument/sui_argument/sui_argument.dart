@@ -4,6 +4,7 @@ class SUIArgument {
   String? suiObjectID, recipient, address, txBytes;
   num? gasBudget, amount;
   SUIAccount? suiAccount;
+
   SUIArgument(
       {this.address,
       this.suiObjectID,

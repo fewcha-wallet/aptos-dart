@@ -33,6 +33,11 @@ class SUIObjects extends Decoder<SUIObjects> {
     return details?.data?.fields?.balance ?? 0;
   }
 
+  void addBalance(int balance) {
+    details?.data?.fields?.balance =
+        (details?.data?.fields?.balance ?? 0) + balance;
+  }
+
   String getID() {
     return details?.data?.fields?.id?.id ?? '';
   }
@@ -166,7 +171,7 @@ class SUIFields extends Decoder<SUIFields> {
   });
 
   SUIFields.fromJson(Map<String, dynamic> json) {
-    balance = json['balance'];
+    balance = json['balance'] ?? 0;
     description = json['description'];
     name = json['name'];
     url = json['url'];

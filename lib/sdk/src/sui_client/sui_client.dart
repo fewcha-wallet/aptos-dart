@@ -205,6 +205,22 @@ class SUIClient {
           }
         }
         return listToken;
+      case ComputeSUIObjectType.getSUIObjectList:
+        List<SUIObjects> listSUI = [];
+        for (var element in arg.listSUIObject) {
+          if (element.isSUICoinObject()) {
+            listSUI.add(element);
+          }
+        }
+        return listSUI;
+      case ComputeSUIObjectType.getSUICoinObjectList:
+        List<SUIObjects> listSUI = [];
+        for (var element in arg.listSUIObject) {
+          if (element.isSUICoinObject()) {
+            listSUI.add(element);
+          }
+        }
+        break;
     }
   }
 
@@ -220,48 +236,37 @@ class SUIClient {
     required String address,
     required SUIAccount suiAccount,
     required num amount,
+    required List<SUIObjects> listSuiObject,
   }) async {
     try {
-      Map<String, SUIObjects> listTokenAmount = {};
-      final getObjectOwned = await getObjectsOwnedByAddress(address);
-      if (getObjectOwned.isNotEmpty) {
-        for (var element in getObjectOwned) {
-          final objects = await getObject(element.objectId!);
-          if (objects.isSUICoinObject()) {
-            listTokenAmount.putIfAbsent(element.objectId!, () => objects);
-          }
-        }
-        final listSortAscending = listTokenAmount.entries.toList()
-          ..sort(
-              (a, b) => a.value.getBalance().compareTo(b.value.getBalance()));
+      final listSortAscending = listSuiObject
+        ..sort((a, b) => a.getBalance().compareTo(b.getBalance()));
 
-        // return the coin with the smallest balance that is greater than or equal to the amount
-        final coinWithSufficientBalance = listSortAscending.firstWhereOrNull(
-            (element) => element.value.getBalance() >= amount);
+      // return the coin with the smallest balance that is greater than or equal to the amount
+      final coinWithSufficientBalance = listSortAscending
+          .firstWhereOrNull((element) => element.getBalance() >= amount);
 
-        if (coinWithSufficientBalance != null) {
-          return coinWithSufficientBalance.value;
-        }
-
-        final primaryCoin = listSortAscending[listSortAscending.length - 1];
-
-        for (int i = listSortAscending.length - 2; i > 0; i--) {
-          await _suiRepository.mergeCoin(
-              suiAccount: suiAccount,
-              coinToMerge: listSortAscending[i].key,
-              primaryCoin: primaryCoin.key,
-              gasBudget: SUIConstants.defaultGasBudgetForMerge,
-              gasPayment: null,
-              suiAddress: address);
-
-          final objects = await getObject(primaryCoin.key);
-          if (objects.getBalance() > amount) {
-            return primaryCoin.value;
-          }
-        }
-        return primaryCoin.value;
+      if (coinWithSufficientBalance != null) {
+        return coinWithSufficientBalance;
       }
-      return null;
+
+      final primaryCoin = listSortAscending[listSortAscending.length - 1];
+
+      for (int i = listSortAscending.length - 2; i > 0; i--) {
+        await _suiRepository.mergeCoin(
+            suiAccount: suiAccount,
+            coinToMerge: listSortAscending[i].getID(),
+            primaryCoin: primaryCoin.getID(),
+            gasBudget: SUIConstants.defaultGasBudgetForMerge,
+            gasPayment: null,
+            suiAddress: address);
+
+        final objects = await getObject(primaryCoin.getID());
+        if (objects.getBalance() > amount) {
+          return primaryCoin;
+        }
+      }
+      return primaryCoin;
     } catch (e) {
       rethrow;
     }
@@ -277,6 +282,38 @@ class SUIClient {
           suiAccount: suiArgument.suiAccount!,
           amount: suiArgument.amount!,
           dryRun: true);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUIEffects?> simulateSendTokenTransaction({
+    required SUIArgument suiArgument,
+  }) async {
+    try {
+      final result = await transferCoin(
+        toAddress: suiArgument.recipient!,
+        suiAccount: suiArgument.suiAccount!,
+        amount: suiArgument.amount!.toDouble(),
+        dryRun: true,
+      );
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<EffectsCert?> submitSendTokenTransaction({
+    required SUIArgument suiArgument,
+  }) async {
+    try {
+      final result = await transferCoin(
+        toAddress: suiArgument.recipient!,
+        suiAccount: suiArgument.suiAccount!,
+        amount: suiArgument.amount!.toDouble(),
+        dryRun: false,
+      );
       return result;
     } catch (e) {
       rethrow;
@@ -309,10 +346,23 @@ class SUIClient {
     bool dryRun = true,
   }) async {
     try {
+      List<SUIObjects> listSUIs = [];
       await syncAccountState(address);
+
+      /// Get list SUI object
+      final getObjectOwned = await getObjectsOwnedByAddress(address);
+      for (var element in getObjectOwned) {
+        final objects = await getObject(element.objectId!);
+        if (objects.isSUICoinObject()) {
+          listSUIs.add(objects);
+        }
+      }
+
+      ///
       final coin = await prepareCoinWithEnoughBalance(
           suiAccount: suiAccount,
           amount: amount + SUIConstants.defaultGasBudgetForTransferSui,
+          listSuiObject: listSUIs,
           address: address);
       if (coin != null) {
         final arg = SUIArgument(
@@ -337,31 +387,67 @@ class SUIClient {
     }
   }
 
+  Future<dynamic> transferCoin({
+    required String toAddress,
+    required SUIAccount suiAccount,
+    required double amount,
+    bool dryRun = true,
+  }) async {
+    try {
+      final coin = await selectCoin(
+        toAddress: toAddress,
+        suiAccount: suiAccount,
+        amount: amount,
+      );
+      final arg = SUIArgument(
+          address: suiAccount.address(),
+          recipient: toAddress,
+          suiObjectID: coin,
+          suiAccount: suiAccount,
+          gasBudget: SUIConstants.defaultGasBudgetForTransfer);
+      if (dryRun) {
+        final result = await _suiRepository.transferObjectDryRun(arg);
+        return result;
+      } else {
+        final result = await _suiRepository.transferObjectWithRequestType(arg);
+        return result;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<String> selectCoin({
-    required String address,
+    required String toAddress,
     required SUIAccount suiAccount,
     required double amount,
   }) async {
     try {
-      final coin = await prepareCoinWithEnoughBalance(
-          suiAccount: suiAccount, amount: amount, address: address);
-      if (coin != null) {
-        final balance = coin.getBalance();
-        if (balance == amount) {
-          return coin.getID();
-        } else if (balance > amount) {
-          await _suiRepository.splitCoin(
+      final result = await getAccountToken(suiAccount.address());
+      if (result.isNotEmpty) {
+        final coin = await prepareCoinWithEnoughBalance(
             suiAccount: suiAccount,
-            suiAddress: address,
-            coinObjectId: coin.getID(),
-            splitAmounts: (balance - amount).toInt(),
-            gasBudget: SUIConstants.defaultGasBudgetForSplit,
-            gasPayment: null,
-          );
-          return coin.getID();
+            amount: amount,
+            address: suiAccount.address(),
+            listSuiObject: result);
+        if (coin != null) {
+          final balance = coin.getBalance();
+          if (balance == amount) {
+            return coin.getID();
+          } else if (balance > amount) {
+            await _suiRepository.splitCoin(
+              suiAccount: suiAccount,
+              suiAddress: suiAccount.address(),
+              coinObjectId: coin.getID(),
+              splitAmounts: (balance - amount).toInt(),
+              gasBudget: SUIConstants.defaultGasBudgetForSplit,
+              gasPayment: null,
+            );
+            return coin.getID();
+          }
         }
       }
-      return '';
+      return "";
     } catch (e) {
       rethrow;
     }
