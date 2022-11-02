@@ -316,13 +316,13 @@ class SUITransaction extends Decoder<SUITransaction> {
     return effects?.gasUsed?.getSubmitGasUsed() ?? 0;
   }
 
-  String? getToAddress() {
+  String getToAddress() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
       return temp.first.transferSuiData?.recipient ?? '';
     }
 
-    return null;
+    return '';
   }
 
   String getTokenAmount() {
