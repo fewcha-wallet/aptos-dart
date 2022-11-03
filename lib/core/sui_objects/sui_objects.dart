@@ -319,7 +319,7 @@ class SUITransaction extends Decoder<SUITransaction> {
   String getToAddress() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.transferSuiData?.recipient ?? '';
+      return temp.first.getRecipient() /*?.recipient ?? ''*/;
     }
 
     return '';
@@ -328,7 +328,7 @@ class SUITransaction extends Decoder<SUITransaction> {
   String getTokenAmount() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.transferSuiData?.amount.toString() ?? '0';
+      return temp.first.getAmount() /*?.amount.toString() ?? '0'*/;
     }
     return '0';
   }
@@ -398,7 +398,9 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   String? getToAddress() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.transferSuiData?.recipient ?? '';
+      return temp.first.getRecipient().isNotEmpty
+          ? temp.first.getRecipient()
+          : suiCertificate?.data?.sender /*?.recipient ?? ''*/;
     }
 
     return null;
@@ -407,7 +409,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   String getTokenAmount() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.transferSuiData?.amount.toString() ?? '0';
+      return temp.first.getAmount() /*?.amount.toString() ?? '0'*/;
     }
     return '0';
   }
@@ -480,7 +482,7 @@ class SUICertificate extends Decoder<SUICertificate> {
 }
 
 class SUICertificateData extends Decoder<SUICertificateData> {
-  List<SUITransfer>? transactions;
+  List<SUITransferAbstract>? transactions;
   String? sender;
   int? gasBudget;
 
@@ -488,9 +490,13 @@ class SUICertificateData extends Decoder<SUICertificateData> {
 
   SUICertificateData.fromJson(Map<String, dynamic> json) {
     if (json['transactions'] != null) {
-      transactions = <SUITransfer>[];
+      transactions = <SUITransferAbstract>[];
       json['transactions'].forEach((v) {
-        transactions!.add(SUITransfer.fromJson(v));
+        if (v['TransferObject'] != null) {
+          transactions!.add(SUITransferObjectData.fromJson(v));
+        } else {
+          transactions!.add(SUITransfer.fromJson(v));
+        }
       });
     }
     sender = json['sender'];
@@ -499,9 +505,9 @@ class SUICertificateData extends Decoder<SUICertificateData> {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (transactions != null) {
-      data['transactions'] = transactions!.map((v) => v.toJson()).toList();
-    }
+    // if (transactions != null) {
+    //   data['transactions'] = transactions!.map((v) => v.toJson()).toList();
+    // }
     data['sender'] = sender;
     data['gasBudget'] = gasBudget;
     return data;
@@ -513,7 +519,17 @@ class SUICertificateData extends Decoder<SUICertificateData> {
   }
 }
 
-class SUITransfer extends Decoder<SUITransfer> {
+abstract class SUITransferAbstract extends Decoder<SUITransferAbstract> {
+  @override
+  SUITransferAbstract decode(Map<String, dynamic> json) {
+    throw UnimplementedError();
+  }
+
+  String getRecipient();
+  String getAmount();
+}
+
+class SUITransfer extends SUITransferAbstract {
   SUITransferData? transferSuiData;
 
   SUITransfer({this.transferSuiData});
@@ -535,6 +551,16 @@ class SUITransfer extends Decoder<SUITransfer> {
   @override
   SUITransfer decode(Map<String, dynamic> json) {
     return SUITransfer.fromJson(json);
+  }
+
+  @override
+  String getAmount() {
+    return transferSuiData?.amount.toString() ?? '0';
+  }
+
+  @override
+  String getRecipient() {
+    return transferSuiData?.recipient ?? '';
   }
 }
 
@@ -559,6 +585,37 @@ class SUITransferData extends Decoder<SUITransferData> {
   @override
   SUITransferData decode(Map<String, dynamic> json) {
     return SUITransferData.fromJson(json);
+  }
+}
+
+class SUITransferObjectData extends SUITransferAbstract {
+  String? recipient;
+
+  SUITransferObjectData({this.recipient});
+
+  SUITransferObjectData.fromJson(Map<String, dynamic> json) {
+    recipient = json['recipient'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['recipient'] = recipient;
+    return data;
+  }
+
+  @override
+  SUITransferObjectData decode(Map<String, dynamic> json) {
+    return SUITransferObjectData.fromJson(json);
+  }
+
+  @override
+  String getAmount() {
+    return '0';
+  }
+
+  @override
+  String getRecipient() {
+    return recipient ?? '';
   }
 }
 
