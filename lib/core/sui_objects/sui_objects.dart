@@ -493,7 +493,8 @@ class SUICertificateData extends Decoder<SUICertificateData> {
       transactions = <SUITransferAbstract>[];
       json['transactions'].forEach((v) {
         if (v['TransferObject'] != null) {
-          transactions!.add(SUITransferObjectData.fromJson(v));
+          transactions!
+              .add(SUITransferObjectData.fromJson(v['TransferObject']));
         } else {
           transactions!.add(SUITransfer.fromJson(v));
         }
