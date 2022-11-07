@@ -22,7 +22,6 @@ import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
 
-
 class AptosClient {
   late AptosAccountRepository _accountRepository;
   late TransactionRepository _transactionRepository;
@@ -71,7 +70,6 @@ class AptosClient {
     return aptosAccount;
   }
 
-
   Future<AccountCore> getAccount(String address) async {
     try {
       final result = await _accountRepository.getAccount(address);
@@ -104,37 +102,35 @@ class AptosClient {
 
 //endregion
   //region Transaction
-  Future<bool> transactionPending(String txnHashOrVersion) async {
+  Future<Transaction?> transactionPending(String txnHashOrVersion) async {
     try {
       final result =
           await _transactionRepository.getTransactionByHash(txnHashOrVersion);
       if (result.type == AppConstants.pendingTransaction ||
           result.success == false) {
-        return true;
+        return null;
       }
-      return false;
+      return result;
     } catch (e) {
-      return true;
+      return null;
     }
   }
 
-  Future<bool> waitForTransaction(String txnHashOrVersion) async {
-    bool isSucceed = false;
+  Future<Transaction?> waitForTransaction(String txnHashOrVersion) async {
     int count = 0;
-
+    Transaction? transaction;
     try {
       while (count < 10) {
-        final isPending = await transactionPending(txnHashOrVersion);
-        if (isPending) {
+        transaction = await transactionPending(txnHashOrVersion);
+        if (transaction == null) {
           count++;
         } else {
           count = 10;
-          isSucceed = true;
         }
       }
-      return isSucceed;
+      return transaction;
     } catch (e) {
-      return false;
+      return null;
     }
   }
 
