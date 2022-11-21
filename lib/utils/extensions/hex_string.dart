@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 import 'package:hex/hex.dart';
 import 'package:intl/intl.dart';
@@ -32,6 +33,15 @@ extension HexString on String {
 
   List<int> stringToListInt() {
     return HEX.decode(this);
+  }
+
+  Uint8List toUint8Array() {
+    return Uint8List.fromList(Utilities.hexToBytes(trimPrefix()));
+  }
+
+  String toShortString() {
+    final trimmed = replaceAllMapped(RegExp('^0x0*'), (Match m) => '');
+    return '0x$trimmed';
   }
 }
 

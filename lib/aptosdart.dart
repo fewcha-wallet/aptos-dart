@@ -12,3 +12,5 @@ export 'sdk/src/token_client/token_client.dart';
 export 'sdk/src/repository/faucet_client_repository/faucet_client_repository.dart';
 export 'sdk/src/repository/aptos_account_repository/aptos_account_repository.dart';
 export 'utils/mnemonic/mnemonic_utils.dart';
+export 'utils/deserializer/deserializer.dart';
+export 'core/account_address/account_address.dart';

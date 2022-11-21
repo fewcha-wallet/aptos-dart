@@ -64,7 +64,8 @@ class APIRoute implements APIRouteConfigurable {
 
       ///Faucet
       case APIType.mint:
-        baseUrl =AptosCurrentConfig.shared.faucetUrl?? HostUrl.faucetAptosDevnetUrl;
+        baseUrl =
+            AptosCurrentConfig.shared.faucetUrl ?? HostUrl.faucetAptosDevnetUrl;
         method = APIMethod.post;
         path = '/$_mint';
         break;

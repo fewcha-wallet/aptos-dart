@@ -15,6 +15,7 @@ dependencies:
   bip39: ^1.0.6
   sha3: ^0.2.0
   buffer: ^1.1.1
+  crypto: ^3.0.2
   ed25519_edwards: ^0.3.1
   hex: ^0.2.0
   json_rpc_2: ^3.0.2

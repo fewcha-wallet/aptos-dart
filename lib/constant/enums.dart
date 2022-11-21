@@ -18,6 +18,7 @@ enum APIType {
   getEventsByEventHandle,
   getTableItem,
   getIPFSProfile,
+  getListDApps,
 }
 enum APIErrorType {
   invalidLedger,
