@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:math';
 
 class HostUrl {
@@ -42,6 +41,7 @@ class ExtraKeys {
 
 class AppConstants {
   static const String rootAPIDataFormat = "data";
+  static const String entryFunctionPayload = "entry_function_payload";
   static const String aptosDefaultCurrency = "APT";
   static const String suiDefaultCurrency = "SUI";
   static const String defaultGasUnitPrice = '100';
@@ -64,6 +64,9 @@ class AppConstants {
   static const String tokenTokenData = '0x3::token::TokenData';
   static const String tokenTransfersClaimScript =
       '0x3::token_transfers::claim_script';
+  static const String rawTransactionSalt = 'APTOS::RawTransaction';
+  static const String rawTransactionWithDataSalt =
+      'APTOS::RawTransactionWithData';
 }
 
 class ErrorMessages {
@@ -75,7 +78,7 @@ class ErrorMessages {
 
 class HeadersApi {
   static Map<String, String> headers = {"Content-Type": "application/json"};
-  static Map<String, String> transactionHeaders = {
+  static Map<String, String> signedTransactionHeaders = {
     "Content-Type": "application/x.aptos.signed_transaction+bcs",
   };
 }
@@ -142,8 +145,7 @@ class Abis {
 class MaxNumber {
   static num maxU32Number = pow(2, 32) - 1;
   static num maxU16Number = pow(2, 16) - 1;
-  static int maxU64BigInt =
-      (BigInt.from(pow(2, 64)) - BigInt.from(1)).toUnsigned(64).toInt();
+  static BigInt maxU64BigInt = BigInt.from(2).pow((64)) - BigInt.from(1);
   static int defaultMaxGasAmount = 200000;
   static int defaultTxnExpSecFromNow = 20;
 }

@@ -1,5 +1,7 @@
+import 'package:aptosdart/core/account_address/account_address.dart';
 import 'package:aptosdart/utils/deserializer/deserializer.dart';
 import 'package:aptosdart/utils/serializer/serializer.dart';
+import 'package:aptosdart/utils/utilities.dart';
 
 abstract class TypeTag {
   void serialize(Serializer serializer);
@@ -21,10 +23,10 @@ abstract class TypeTag {
         return TypeTagSigner.load(deserializer);
       case 6:
         return TypeTagVector.load(deserializer);
-      // case 7:
-      //   return TypeTagStruct.load(deserializer);
+      case 7:
+        return TypeTagStruct.load(deserializer);
       default:
-        throw ('Unknown variant index for TypeTag: ${index}');
+        throw ('Unknown variant index for TypeTag: $index');
     }
   }
 }
@@ -112,6 +114,30 @@ class TypeTagVector extends TypeTag {
   }
 }
 
+class TypeTagStruct extends TypeTag {
+  StructTag value;
+
+  TypeTagStruct(this.value);
+
+  @override
+  void serialize(Serializer serializer) {
+    serializer.serializeU32AsUleb128(7);
+    value.serialize(serializer);
+  }
+
+  static TypeTagStruct load(Deserializer deserializer) {
+    final value = StructTag.deserialize(deserializer);
+    return TypeTagStruct(value);
+  }
+
+  bool isStringTypeTag() {
+    if (value.address == AccountAddress.fromHex("0x1")) {
+      return true;
+    }
+    return false;
+  }
+}
+
 class Identifier {
   String value;
 
@@ -124,5 +150,48 @@ class Identifier {
   static Identifier deserialize(Deserializer deserializer) {
     final value = deserializer.deserializeStr();
     return Identifier(value);
+  }
+}
+
+class StructTag {
+  AccountAddress address;
+  Identifier moduleName;
+  Identifier name;
+  List<TypeTag> typeArgs;
+
+  StructTag(this.address, this.moduleName, this.name, this.typeArgs);
+
+  /// Converts a string literal to a StructTag
+  /// @param structTag String literal in format "AcountAddress::module_name::ResourceName",
+  ///   e.g. "0x1::aptos_coin::AptosCoin"
+  /// @returns
+  static StructTag fromString(String structTag) {
+    // Type args are not supported in string literal
+    if (structTag.contains("<")) {
+      throw ("Not implemented");
+    }
+
+    final parts = structTag.split("::");
+    if (parts.length != 3) {
+      throw ("Invalid struct tag string literal.");
+    }
+
+    return StructTag(AccountAddress.fromHex(parts[0]), Identifier(parts[1]),
+        Identifier(parts[2]), []);
+  }
+
+  void serialize(Serializer serializer) {
+    address.serialize(serializer);
+    moduleName.serialize(serializer);
+    name.serialize(serializer);
+    Utilities.serializeVector(typeArgs, serializer);
+  }
+
+  static StructTag deserialize(Deserializer deserializer) {
+    final address = AccountAddress.deserialize(deserializer);
+    final moduleName = Identifier.deserialize(deserializer);
+    final name = Identifier.deserialize(deserializer);
+    final typeArgs = Utilities.deserializeVector(deserializer, TypeTag);
+    return StructTag(address, moduleName, name, List<TypeTag>.from(typeArgs));
   }
 }

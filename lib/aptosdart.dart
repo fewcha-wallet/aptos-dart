@@ -14,3 +14,5 @@ export 'sdk/src/repository/aptos_account_repository/aptos_account_repository.dar
 export 'utils/mnemonic/mnemonic_utils.dart';
 export 'utils/deserializer/deserializer.dart';
 export 'core/account_address/account_address.dart';
+export 'core/aptos_types/multi_ed25519.dart';
+export 'core/entry_function_payload/entry_function_payload.dart';

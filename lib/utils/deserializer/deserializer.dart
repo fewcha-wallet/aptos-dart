@@ -13,7 +13,7 @@ class Deserializer {
     _buffer.setAll(0, data);
     _offset = 0;
   }
-
+  Uint8List get getBuffer => _buffer;
   String deserializeStr() {
     final value = deserializeBytes();
     final result = const Utf8Decoder().convert(value);
@@ -32,8 +32,8 @@ class Deserializer {
 
     while (value < maxNumber) {
       final byte = deserializeU8();
-      value = BigInt.from((byte & 0x7f) << (shift));
 
+      value |= BigInt.from(byte & 0x7f) << (shift);
       if ((byte & 0x80) == 0) {
         break;
       }
@@ -62,5 +62,35 @@ class Deserializer {
 
   int deserializeU8() {
     return ByteData.view(read(1).buffer).getUint8(0);
+  }
+
+  int deserializeU32() {
+    return ByteData.view(read(4).buffer).getUint32(0, Endian.little);
+  }
+
+  BigInt deserializeU64() {
+    final low = deserializeU32();
+    final high = deserializeU32();
+
+    // combine the two 32-bit values and return (little endian)
+    BigInt firstCombine = (BigInt.from(high) << BigInt.from(32).toInt());
+    BigInt secondCombine = BigInt.from(low);
+    BigInt result = (firstCombine | secondCombine);
+
+    return result;
+  }
+
+  BigInt deserializeU128() {
+    final low = deserializeU64();
+    final high = deserializeU64();
+
+    // combine the two 64-bit values and return (little endian)
+    return ((high << BigInt.from(64).toInt()) | low);
+  }
+
+  bool deserializeBool() {
+    ByteData.view(read(1).buffer);
+    if (_buffer.isEmpty) throw "Invalid boolean value";
+    return _buffer[0] == 1;
   }
 }

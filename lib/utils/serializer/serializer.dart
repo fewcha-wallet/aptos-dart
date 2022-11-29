@@ -63,22 +63,29 @@ class Serializer {
     } else {
       _ensureBufferWillHandleSize(4);
 
-      ByteData.view(_buffer.buffer).setInt32(0, value, Endian.little);
+      ByteData.view(_buffer.buffer).setInt32(_offset, value, Endian.little);
       _offset += 4;
     }
   }
 
-  void serializeU64(int value) {
-    if (value < 0 || value > (MaxNumber.maxU64BigInt)) {
+  void serializeU64(BigInt value) {
+    if (value.toInt() < 0 || value > (MaxNumber.maxU64BigInt)) {
       throw "Not in range ${MaxNumber.maxU64BigInt}";
     } else {
-      final low = BigInt.from(value) & BigInt.from(MaxNumber.maxU32Number);
-      final high = BigInt.from(value) >> BigInt.from(32).toInt();
-
-      // // write little endian number
-      // this.serializeU32(Number(low));
-      // this.serializeU32(Number(high));
+      final low = value & BigInt.from(MaxNumber.maxU32Number);
+      final high = value >> BigInt.from(32).toInt();
+      // write little endian number
+      serializeU32(low.toInt());
+      serializeU32(high.toInt());
     }
+  }
+
+  void serializeU128(BigInt value) {
+    final low = value & MaxNumber.maxU64BigInt;
+    BigInt high = value >> BigInt.from(64).toInt();
+    // write little endian number
+    serializeU64(low);
+    serializeU64(high);
   }
 
   void serializeU32AsUleb128(int val) {
@@ -96,8 +103,15 @@ class Serializer {
     }
   }
 
+  void serializeBool(bool value) {
+    final byteValue = value ? 1 : 0;
+    serialize(Uint8List.fromList([byteValue]));
+  }
+
   Uint8List getBytes() {
     final temp = Uint8List.fromList(_buffer).getRange(0, _offset).toList();
     return Uint8List.fromList(temp);
   }
+
+  List<String> get getBuffer => Utilities.buffer(_buffer);
 }

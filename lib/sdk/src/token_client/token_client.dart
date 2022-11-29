@@ -2,8 +2,10 @@ import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event_data/event_data.dart';
+import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/core/table_item/table_item.dart';
+import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/sdk/src/transaction_builder_abi/transaction_builder_abi.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
@@ -41,11 +43,33 @@ class TokenClient with AptosSDKMixin {
     }
   }
 
-  Future<void> claimToken(
+  Future<Transaction> claimTokenSimulate(
       {required AptosAccount aptosAccount,
       required String creator,
       required String sender,
       required String collectionName,
       required String name,
-      required int propertyVersion}) async {}
+      required int propertyVersion}) async {
+    try {
+      final payload = Payload(
+          arguments: [
+            sender,
+            creator,
+            collectionName,
+            name,
+            propertyVersion.toString()
+          ],
+          typeArguments: [],
+          function: AppConstants.tokenTransfersClaimScript,
+          type: AppConstants.entryFunctionPayload);
+      final transaction = await _aptosClient.generateTransaction(
+          aptosAccount.address(), payload, '100');
+      final result =
+          await _aptosClient.simulateTransaction(aptosAccount, transaction);
+
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

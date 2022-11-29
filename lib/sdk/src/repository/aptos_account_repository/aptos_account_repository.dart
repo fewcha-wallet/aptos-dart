@@ -1,6 +1,6 @@
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
-import 'package:aptosdart/core/account/account_core.dart';
+import 'package:aptosdart/core/account/account_data.dart';
 import 'package:aptosdart/core/account_module/account_module.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/api_response.dart';
@@ -12,13 +12,13 @@ import 'package:aptosdart/utils/validator/validator.dart';
 class AptosAccountRepository with AptosSDKMixin {
   AptosAccountRepository();
 
-  Future<AccountCore> getAccount(String address) async {
+  Future<AccountData> getAccount(String address) async {
     try {
       final response = await apiClient.request(
           route:
               APIRoute(APIType.getAccount, routeParams: address.trimPrefix()),
           create: (response) =>
-              APIResponse(createObject: AccountCore(), response: response));
+              APIResponse(createObject: AccountData(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;

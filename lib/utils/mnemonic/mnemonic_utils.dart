@@ -2,13 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/utils/extensions/hex_string.dart';
-import 'package:aptosdart/utils/utilities.dart';
 import 'package:bip39/bip39.dart' as bip39;
-import 'package:buffer/buffer.dart';
-import 'package:cryptography/cryptography.dart';
-import 'package:cryptography/dart.dart';
 import 'package:crypto/crypto.dart' as crypto;
-import 'package:flutter/services.dart';
 
 class MnemonicUtils {
   static List<String> generateMnemonicList() {

@@ -3,10 +3,13 @@ import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/argument/account_arg.dart';
+import 'package:aptosdart/argument/optional_transaction_args.dart';
 import 'package:aptosdart/constant/constant_value.dart';
-import 'package:aptosdart/core/account/account_core.dart';
+import 'package:aptosdart/core/account/account_data.dart';
+import 'package:aptosdart/core/aptos_types/ed25519.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event/event.dart';
+import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/resources/resource.dart';
@@ -14,6 +17,7 @@ import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/table_item/table_item.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/transaction_builder.dart';
 import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
 import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
 import 'package:aptosdart/sdk/src/repository/table_repository/table_repository.dart';
@@ -70,10 +74,19 @@ class AptosClient {
     return aptosAccount;
   }
 
-  Future<AccountCore> getAccount(String address) async {
+  Future<AccountData> getAccount(String address) async {
     try {
       final result = await _accountRepository.getAccount(address);
       return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<int> getChainId() async {
+    try {
+      final result = await getLedgerInformation();
+      return result.chainID!;
     } catch (e) {
       rethrow;
     }
@@ -102,6 +115,70 @@ class AptosClient {
 
 //endregion
   //region Transaction
+  Future<String> generateSignSubmitTransaction({
+    required AptosAccount sender,
+    required TransactionPayload payload,
+    OptionalTransactionArgs? extraArgs,
+  }) async {
+    try {
+      final rawTransaction = await generateRawTransaction(
+          accountFrom: sender.address(),
+          payload: payload,
+          extraArgs: extraArgs);
+
+      final bcsTxn = await generateBCSTransaction(sender, rawTransaction);
+
+      final pendingTransaction = await submitSignedBCSTransaction(bcsTxn);
+      return pendingTransaction.hash!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<RawTransaction> generateRawTransaction({
+    required String accountFrom,
+    required TransactionPayload payload,
+    OptionalTransactionArgs? extraArgs,
+  }) async {
+    try {
+      final sequenceNumber = (await getAccount(accountFrom)).sequenceNumber;
+      final chainId = (await getLedgerInformation()).chainID;
+      final gasEstimate = extraArgs?.gasUnitPrice != null
+          ? extraArgs!.gasUnitPrice!
+          : (await estimateGasPrice()).gasEstimate;
+
+      ///
+      final maxGasAmount = BigInt.from(MaxNumber.defaultMaxGasAmount);
+      final gasUnitPrice = BigInt.from(gasEstimate!);
+      final expireTimestamp = BigInt.from(
+          (DateTime.now().microsecondsSinceEpoch ~/ 1000) +
+              MaxNumber.defaultTxnExpSecFromNow);
+
+      return RawTransaction(
+        sequenceNumber: BigInt.parse(sequenceNumber!),
+        chainId: ChainId(chainId!),
+        gasUnitPrice: gasUnitPrice,
+        payload: payload,
+        expirationTimestampSecs: expireTimestamp,
+        maxGasAmount: maxGasAmount,
+        sender: AccountAddress.fromHex(accountFrom),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Uint8List> generateBCSTransaction(
+      AptosAccount accountFrom, RawTransaction rawTxn) async {
+    final txnBuilder = TransactionBuilderEd25519((Uint8List uint8list) {
+      final buffer = accountFrom.signBuffer(uint8list);
+
+      final ed25519Signature = Ed25519Signature(buffer.toUint8Array());
+      return ed25519Signature;
+    }, accountFrom.publicKeyInHex().toUint8Array());
+    return await txnBuilder.sign(rawTxn);
+  }
+
   Future<Transaction?> transactionPending(String txnHashOrVersion) async {
     try {
       final result =
@@ -131,6 +208,15 @@ class AptosClient {
       return transaction;
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<GasEstimation> estimateGasPrice() async {
+    try {
+      final result = await _transactionRepository.estimateGasPrice();
+      return result;
+    } catch (e) {
+      rethrow;
     }
   }
 
@@ -180,6 +266,16 @@ class AptosClient {
     try {
       final result =
           await _transactionRepository.submitTransaction(transaction);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Transaction> submitSignedBCSTransaction(Uint8List signedTxn) async {
+    try {
+      final result =
+          await _transactionRepository.submitSignedBCSTransaction(signedTxn);
       return result;
     } catch (e) {
       rethrow;
@@ -305,7 +401,7 @@ class AptosClient {
 //endregion
 //region Ledge
 
-  Future<Ledger?> getLedgerInformation() async {
+  Future<Ledger> getLedgerInformation() async {
     try {
       final response = await _ledgerRepository.getLedgerInformation();
       return response;

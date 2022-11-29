@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/network/api_response.dart';
@@ -31,6 +34,21 @@ class TransactionRepository with AptosSDKMixin {
           body: transaction.toJson(),
           route: APIRoute(
             APIType.submitTransaction,
+          ),
+          create: (response) =>
+              APIResponse(createObject: Transaction(), response: response));
+      return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Transaction> submitSignedBCSTransaction(Uint8List signedTxn) async {
+    try {
+      final response = await apiClient.request(
+          body: {'': signedTxn},
+          route: APIRoute(
+            APIType.submitSignedBCSTransaction,
           ),
           create: (response) =>
               APIResponse(createObject: Transaction(), response: response));
@@ -138,6 +156,20 @@ class TransactionRepository with AptosSDKMixin {
             APIType.encodeSubmission,
           ),
           create: (response) => APIResponse<String>(response: response));
+      return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<GasEstimation> estimateGasPrice() async {
+    try {
+      final response = await apiClient.request(
+          route: APIRoute(
+            APIType.estimateGasPrice,
+          ),
+          create: (response) =>
+              APIResponse(createObject: GasEstimation(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;

@@ -32,6 +32,7 @@ class APIRoute implements APIRouteConfigurable {
   final String _encodeSubmission = 'encode_submission';
   final String _event = 'events';
   final String _tables = 'tables';
+  final String _estimateGasPrice = 'estimate_gas_price';
   final String _item = 'item';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
@@ -78,6 +79,11 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
         path = '/$_transactions';
         break;
+      case APIType.submitSignedBCSTransaction:
+        method = APIMethod.post;
+        path = '/$_transactions';
+        headers = HeadersApi.signedTransactionHeaders;
+        break;
       case APIType.simulateTransaction:
         method = APIMethod.post;
         path = '/$_transactions/$_simulate';
@@ -112,6 +118,10 @@ class APIRoute implements APIRouteConfigurable {
       case APIType.getIPFSProfile:
         method = APIMethod.get;
         path = '$routeParams';
+        break;
+      case APIType.estimateGasPrice:
+        method = APIMethod.get;
+        path = '/$_estimateGasPrice';
         break;
     }
     final options = Options(

@@ -39,8 +39,15 @@ extension HexString on String {
     return Uint8List.fromList(Utilities.hexToBytes(trimPrefix()));
   }
 
+  Uint8List normalStringToUint8List() {
+    final List<int> codeUnits = this.codeUnits;
+    final Uint8List unit8List = Uint8List.fromList(codeUnits);
+
+    return unit8List;
+  }
+
   String toShortString() {
-    final trimmed = replaceAllMapped(RegExp('^0x0*'), (Match m) => '');
+    final trimmed = replaceAll(RegExp(r'^0x0*'), '');
     return '0x$trimmed';
   }
 }

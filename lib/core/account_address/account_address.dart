@@ -23,7 +23,6 @@ class AccountAddress {
       address = '0${address.trimPrefix()}'.toHexString();
     }
     final addressBytes = address.toUint8Array();
-
     if (addressBytes.length > AccountAddress.defaultLength) {
       throw ("Hex string is too long. Address's length is 32 bytes.");
     } else if (addressBytes.length == AccountAddress.defaultLength) {
