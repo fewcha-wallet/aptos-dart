@@ -30,7 +30,7 @@ class TokenClient with AptosSDKMixin {
           tokenDataId.copyWith(newCreator: tokenDataId.creator!.toHexString());
       final table = TableItem(
         keyType: AppConstants.tokenTokenDataId,
-        valueType: AppConstants.tokenTokenData,
+        valueType: AppConstants.tokenStore,
         key: tokenDataid.toJson(),
       );
       final tableItem = await _aptosClient.getTableItem(
@@ -71,5 +71,23 @@ class TokenClient with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<Transaction> simulateAutoReceiveNFT({
+    required AptosAccount aptosAccount,
+    bool enable = true,
+  }) async {
+    final payload = Payload(
+        arguments: [enable],
+        typeArguments: [],
+        function: AppConstants.optInDirectTransfer,
+        type: AppConstants.entryFunctionPayload);
+
+    final estimate = await _aptosClient.estimateGasPrice();
+    final transaction = await _aptosClient.generateTransaction(
+        aptosAccount.address(), payload, estimate.gasEstimate!.toString());
+    final result =
+        await _aptosClient.simulateTransaction(aptosAccount, transaction);
+    return result;
   }
 }

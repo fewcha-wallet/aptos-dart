@@ -45,6 +45,11 @@ class ResourceNew extends Decoder<ResourceNew> {
         .toLowerCase()
         .contains(AppConstants.tokenCollections.toLowerCase())) {
       return Collections.fromJson(json);
+    } else if (type
+        .toString()
+        .toLowerCase()
+        .contains(AppConstants.tokenStore.toLowerCase())) {
+      return TokenStore.fromJson(json);
     }
     return Token.fromJson(json);
   }
@@ -168,6 +173,22 @@ class AptosCoin extends DataModelAbstract {
         coin: coin,
         depositEvents: depositEvents,
         withdrawEvents: withdrawEvents);
+  }
+}
+
+class TokenStore extends DataModelAbstract {
+  bool? directTransfer;
+
+  TokenStore({
+    this.directTransfer,
+  });
+
+  TokenStore.fromJson(Map<String, dynamic> json) {
+    directTransfer = json['direct_transfer'] ?? false;
+  }
+  @override
+  DataModelAbstract decode(Map<String, dynamic> json) {
+    return TokenStore.fromJson(json);
   }
 }
 

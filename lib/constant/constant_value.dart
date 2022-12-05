@@ -61,9 +61,11 @@ class AppConstants {
   static const String pendingTransaction = 'pending_transaction';
   static const String tokenCollections = '0x3::token::Collections';
   static const String tokenTokenDataId = '0x3::token::TokenDataId';
-  static const String tokenTokenData = '0x3::token::TokenData';
+  static const String tokenStore = '0x3::token::TokenStore';
   static const String tokenTransfersClaimScript =
       '0x3::token_transfers::claim_script';
+  static const String optInDirectTransfer =
+      '0x3::token::opt_in_direct_transfer';
   static const String rawTransactionSalt = 'APTOS::RawTransaction';
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';

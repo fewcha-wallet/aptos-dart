@@ -4,7 +4,7 @@ class Payload extends Decoder<Payload> {
   String? type;
   String? function;
   List<String>? typeArguments;
-  List<String>? arguments;
+  List<dynamic>? arguments;
 
   Payload({this.type, this.function, this.typeArguments, this.arguments});
   @override

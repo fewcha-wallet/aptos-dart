@@ -33,7 +33,7 @@ class AptosAccount implements AbstractAccount {
     final privateKey = HEX.decode(privateKeyHex.trimPrefix());
 
     final list = Utilities.toUint8List(privateKey);
-    print('privateKey $privateKey');
+
     return AptosAccount(privateKeyBytes: list);
   }
 
