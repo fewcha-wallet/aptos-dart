@@ -30,7 +30,7 @@ class TokenClient with AptosSDKMixin {
           tokenDataId.copyWith(newCreator: tokenDataId.creator!.toHexString());
       final table = TableItem(
         keyType: AppConstants.tokenTokenDataId,
-        valueType: AppConstants.tokenStore,
+        valueType: AppConstants.tokenData,
         key: tokenDataid.toJson(),
       );
       final tableItem = await _aptosClient.getTableItem(
