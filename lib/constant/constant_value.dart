@@ -9,8 +9,8 @@ class HostUrl {
 
   static const aptosDevUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
   static const aptosTestNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
-  static const aptosMainNetUrl = 'https://fullnode.mainnet.aptoslabs.com/';
-  static const aptosMainNet2Url = 'https://mainnet.aptoslabs.com';
+  static const aptosMainNetUrl = 'https://fullnode.mainnet.aptoslabs.com/v1';
+  static const aptosMainNet2Url = 'https://mainnet.aptoslabs.com/v1';
 
   static const faucetAptosDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
   static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
