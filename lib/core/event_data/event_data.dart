@@ -36,6 +36,11 @@ class EventData extends Decoder<EventData> {
   }
 
   @override
+  String toString() {
+    return '${nftId!.tokenDataId!.name}${nftId!.tokenDataId!.creator}${nftId!.tokenDataId!.collection}';
+  }
+
+  @override
   EventData decode(Map<String, dynamic> json) {
     return EventData.fromJson(json);
   }

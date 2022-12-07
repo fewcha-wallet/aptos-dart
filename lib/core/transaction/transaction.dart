@@ -175,7 +175,11 @@ class Transaction extends Decoder<Transaction> {
   String getNFTName() {
     if (payload?.arguments != null) {
       if (payload!.arguments!.isNotEmpty && payload!.arguments!.length > 3) {
-        return payload!.arguments![3];
+        if (payload?.function == AppConstants.transferWithOptIn) {
+          return payload!.arguments![2];
+        } else {
+          return payload!.arguments![3];
+        }
       }
     }
     return '';

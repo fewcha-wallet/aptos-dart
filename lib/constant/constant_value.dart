@@ -63,6 +63,8 @@ class AppConstants {
   static const String tokenTokenDataId = '0x3::token::TokenDataId';
   static const String tokenStore = '0x3::token::TokenStore';
   static const String tokenData = '0x3::token::TokenData';
+  static const String transferWithOptIn = "0x3::token::transfer_with_opt_in";
+
   static const String tokenTransfersClaimScript =
       '0x3::token_transfers::claim_script';
   static const String optInDirectTransfer =

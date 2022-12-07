@@ -353,6 +353,7 @@ class AptosClient {
 
 //endregion
 //region Event
+
   Future<List<Event>> getEventsByEventHandle({
     required String address,
     required String eventHandleStruct,
@@ -364,6 +365,58 @@ class AptosClient {
           eventHandleStruct: eventHandleStruct,
           fieldName: fieldName);
       return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<Event>> getEventStream({
+    required String address,
+    required String eventHandleStruct,
+    required String fieldName,
+    List<Event> data = const [],
+    int? start,
+    int? limit,
+  }) async {
+    try {
+      final res = await _eventRepository.getEventsByEventHandle(
+        address: address,
+        eventHandleStruct: eventHandleStruct,
+        fieldName: fieldName,
+        start: start,
+        limit: limit,
+      );
+      // return response;
+
+      List<Event> result = res;
+      if (data.isNotEmpty) {
+        result = [...data, ...res];
+      }
+      if (res.isNotEmpty) {
+        final lastItem = res[res.length - 1];
+
+        final diff = int.parse(lastItem.sequenceNumber!) - 25 > 0;
+
+        if (diff) {
+          final start = int.parse(lastItem.sequenceNumber!) - 50;
+          if (start > 0) {
+            return await getEventStream(
+                address: address,
+                eventHandleStruct: eventHandleStruct,
+                fieldName: fieldName,
+                data: result,
+                start: start);
+          }
+          return await getEventStream(
+              address: address,
+              eventHandleStruct: eventHandleStruct,
+              fieldName: fieldName,
+              data: result,
+              start: 0,
+              limit: int.parse(lastItem.sequenceNumber!) - 25 + 1);
+        }
+      }
+      return result;
     } catch (e) {
       rethrow;
     }
