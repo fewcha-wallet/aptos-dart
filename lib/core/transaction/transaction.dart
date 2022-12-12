@@ -157,6 +157,10 @@ class Transaction extends Decoder<Transaction> {
     }
   }
 
+  bool isReceive() {
+    return type == AppConstants.withdrawEvent ? false : true;
+  }
+
   String getTokenCurrency() {
     if (gasCurrencyCode == null) return AppConstants.aptosDefaultCurrency;
     return gasCurrencyCode!;
@@ -187,15 +191,6 @@ class Transaction extends Decoder<Transaction> {
         } else {
           return payload!.arguments![3];
         }
-      }
-    }
-    return '';
-  }
-
-  String getNFTSender() {
-    if (payload?.arguments != null) {
-      if (payload!.arguments!.isNotEmpty && payload!.arguments!.length > 3) {
-        return payload!.arguments![0];
       }
     }
     return '';

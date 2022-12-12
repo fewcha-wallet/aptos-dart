@@ -2,6 +2,10 @@ import 'dart:typed_data';
 
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
+import 'package:aptosdart/core/graphql/coin_history.dart';
+import 'package:aptosdart/core/graphql/token_activities.dart';
+import 'package:aptosdart/core/graphql/token_history.dart';
+import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/network/api_response.dart';
@@ -75,21 +79,82 @@ class TransactionRepository with AptosSDKMixin {
     }
   }
 
-  Future<List<Transaction>> getAccountTransactions(String address,
-      {int start = 0, int? limit}) async {
+  Future<List<Transaction>> getAccountCoinTransactions(
+      {required String address,
+      required String operationName,
+      required String query,
+      int start = 0,
+      int? limit}) async {
     try {
-      final param = {'start': start.toString(), 'limit': limit.toString()}
-        ..removeWhere((key, value) => value == 'null');
+      final payload = _createTransactionGraphQLPayload(
+        operationName: operationName,
+        query: query,
+        address: address,
+        offset: start,
+        limit: limit,
+      );
 
       final response = await apiClient.request(
-          params: param,
+          body: payload,
+          route: APIRoute(
+            APIType.getAccountTransactions,
+          ),
+          create: (response) => GraphQLListResponse(
+              createObject: CoinHistory(), response: response));
+      List<Transaction> listTransaction = [];
+      for (var item in response.decodedData!.coinActivities!) {
+        listTransaction.add(Transaction(
+          hash: item.transactionVersion.toString(),
+          success: item.isTransactionSuccess,
+          vmStatus: item.getStatus(),
+          gasCurrencyCode: item.getCurrency(),
+          timestamp: item.getTimeStamp(),
+          type: item.activityType,
+          payload: Payload(
+              arguments: [item.amount.toString(), item.eventAccountAddress]),
+        ));
+      }
+      // return Transaction(
+      //     success: temp.isSucceed(),
+      //     vmStatus: temp.getStatus(),
+      //     gasCurrencyCode: AppConstants.suiDefaultCurrency,
+      //     timestamp: temp.getTimeStamp(),
+      //     hash: temp.getHash(),
+      //     gasUsed: temp.getTotalGasUsed().toString(),
+      //     payload: Payload(arguments: [
+      //       temp.getTokenAmount(),
+      //       temp.getToAddress().toString()
+      //     ]));
+      return listTransaction;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<TokenActivities>> getAccountTokenTransactions(
+      {required String address,
+      required String operationName,
+      required String query,
+      int start = 0,
+      int? limit}) async {
+    try {
+      final payload = _createTransactionGraphQLPayload(
+        operationName: operationName,
+        query: query,
+        address: address,
+        offset: start,
+        limit: limit,
+      );
+
+      final response = await apiClient.request(
+          body: payload,
           route: APIRoute(
             APIType.getAccountTransactions,
             routeParams: address.trimPrefix(),
           ),
-          create: (response) =>
-              APIListResponse(createObject: Transaction(), response: response));
-      return response.decodedData!;
+          create: (response) => GraphQLListResponse(
+              createObject: TokenHistory(), response: response));
+      return response.decodedData!.tokenActivities ?? [];
     } catch (e) {
       rethrow;
     }
@@ -174,5 +239,24 @@ class TransactionRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Map<String, dynamic> _createTransactionGraphQLPayload({
+    required String operationName,
+    required String address,
+    required String query,
+    int? offset,
+    int? limit,
+  }) {
+    final map = {
+      "operationName": operationName,
+      "variables": {
+        "address": address,
+        "offset": offset,
+        "limit": limit,
+      },
+      "query": query,
+    };
+    return map;
   }
 }

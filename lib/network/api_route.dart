@@ -95,7 +95,12 @@ class APIRoute implements APIRouteConfigurable {
         path = '/$_transactions/$_byVersion/$routeParams';
         break;
       case APIType.getAccountTransactions:
-        path = '/$_accounts/$routeParams/$_transactions';
+        if (AptosCurrentConfig.shared.transactionHistoryGraphQL!.isNotEmpty) {
+          baseUrl = AptosCurrentConfig.shared.transactionHistoryGraphQL;
+        }
+        // path = '/$_accounts/$routeParams/$_transactions';
+        method = APIMethod.post;
+
         break;
       case APIType.signingMessage:
         method = APIMethod.post;
@@ -122,6 +127,8 @@ class APIRoute implements APIRouteConfigurable {
       case APIType.estimateGasPrice:
         method = APIMethod.get;
         path = '/$_estimateGasPrice';
+        break;
+      case APIType.getListDApps:
         break;
     }
     final options = Options(

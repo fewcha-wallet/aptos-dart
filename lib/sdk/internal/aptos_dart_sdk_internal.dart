@@ -12,7 +12,7 @@ class AptosDartSDKInternal {
   late RPCClient _rpcClient;
   late IPFSClient _ipfsClient;
   late String _network;
-  late String _faucetUrl;
+  // late String _faucetUrl;
   final AptosCurrentConfig _aptosCurrentConfig = AptosCurrentConfig.shared;
   APIClient get api => _apiClient;
   RPCClient get rpc => _rpcClient;
@@ -22,12 +22,15 @@ class AptosDartSDKInternal {
   late NetWorkRepository _netWorkRepository;
   AptosDartSDKInternal(
       {LogStatus? logStatus, String? network, String? faucet}) {
+
     _netWorkRepository = NetWorkRepository();
     _aptosCurrentConfig.listNetwork = _netWorkRepository.getListNetWork();
     _network = network ?? HostUrl.hostUrlMap[HostUrl.aptosMainnet]!;
-    _faucetUrl = faucet ?? HostUrl.faucetUrlMap[HostUrl.aptosMainnet]!;
+    _aptosCurrentConfig.faucetUrl =  faucet ?? HostUrl.faucetUrlMap[HostUrl.aptosMainnet]!;
     _aptosCurrentConfig.logStatus = logStatus;
-    _aptosCurrentConfig.faucetUrl = _faucetUrl;
+
+    _aptosCurrentConfig.transactionHistoryGraphQL = HostUrl.transactionHistoryGraphQLUrlMap[HostUrl.aptosMainnet];
+
     _apiClient = APIClient(logStatus: logStatus, baseUrl: _network);
     _ipfsClient = IPFSClient(logStatus: logStatus);
     _rpcClient = RPCClient(_network);
@@ -47,7 +50,7 @@ class AptosDartSDKInternal {
     _network = networkType.networkURL;
     _apiClient.options.baseUrl = _network;
     _aptosCurrentConfig.faucetUrl = networkType.faucetURL;
-
+    _aptosCurrentConfig.transactionHistoryGraphQL=networkType.transactionHistoryGraphQL;
     _rpcClient = RPCClient(_network);
   }
 

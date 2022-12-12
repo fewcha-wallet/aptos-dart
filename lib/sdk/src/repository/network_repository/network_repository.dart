@@ -10,6 +10,7 @@ class NetWorkRepository {
         networkName: HostUrl.aptosDevnet,
         faucetURL: HostUrl.faucetAptosDevnetUrl,
         coinCurrency: AppConstants.aptosDefaultCurrency,
+        transactionHistoryGraphQL: HostUrl.aptosDevnetGraphql,
         coinType: CoinType.aptos,
       );
       final aptosTestNet = NetworkType(
@@ -17,6 +18,7 @@ class NetWorkRepository {
         networkName: HostUrl.aptosTestnet,
         faucetURL: HostUrl.faucetAptosTestnetUrl,
         coinCurrency: AppConstants.aptosDefaultCurrency,
+        transactionHistoryGraphQL: HostUrl.aptosTestnetGraphql,
         coinType: CoinType.aptos,
       );
       final suiDevNet = NetworkType(
@@ -24,6 +26,7 @@ class NetWorkRepository {
         networkName: HostUrl.suiDevnet,
         faucetURL: HostUrl.faucetSUIDevnetUrl,
         coinCurrency: AppConstants.suiDefaultCurrency,
+        transactionHistoryGraphQL: '',
         coinType: CoinType.sui,
       );
       final aptosMainnet = NetworkType(
@@ -31,6 +34,7 @@ class NetWorkRepository {
         networkName: HostUrl.aptosMainnet,
         faucetURL: '',
         coinCurrency: AppConstants.aptosDefaultCurrency,
+        transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
         coinType: CoinType.aptos,
       );
       final aptosMainnet2 = NetworkType(
@@ -38,6 +42,7 @@ class NetWorkRepository {
         networkName: HostUrl.aptosMainnet2,
         faucetURL: '',
         coinCurrency: AppConstants.aptosDefaultCurrency,
+        transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
         coinType: CoinType.aptos,
       );
 

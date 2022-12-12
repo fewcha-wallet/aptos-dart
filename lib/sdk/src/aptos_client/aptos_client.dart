@@ -10,6 +10,7 @@ import 'package:aptosdart/core/aptos_types/ed25519.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
+import 'package:aptosdart/core/graphql/token_activities.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/resources/resource.dart';
@@ -251,11 +252,30 @@ class AptosClient {
     }
   }
 
-  Future<List<Transaction>> getAccountTransactions(String address,
-      {int start = 0, int? limit}) async {
+  Future<List<Transaction>> getAccountCoinTransactions(
+      {required String address, int start = 0, int? limit}) async {
     try {
-      final result = await _transactionRepository
-          .getAccountTransactions(address, start: start, limit: limit);
+      final result = await _transactionRepository.getAccountCoinTransactions(
+          address: address,
+          operationName: GraphQLConstant.getAccountCoinActivity,
+          query: GraphQLConstant.getAccountCoinQuery,
+          start: start,
+          limit: limit);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<TokenActivities>> getAccountTokenTransactions(
+      {required String address, int start = 0, int? limit}) async {
+    try {
+      final result = await _transactionRepository.getAccountTokenTransactions(
+          address: address,
+          operationName: GraphQLConstant.getAccountTokenActivity,
+          query: GraphQLConstant.getAccountTokenQuery,
+          start: start,
+          limit: limit);
       return result;
     } catch (e) {
       rethrow;

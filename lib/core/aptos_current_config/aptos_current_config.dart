@@ -9,6 +9,7 @@ class AptosCurrentConfig {
   LogStatus? logStatus;
   Ledger? ledger;
   String? faucetUrl;
+  String? transactionHistoryGraphQL;
   List<NetworkType>? listNetwork;
   void clearAllData() {
     logStatus = null;

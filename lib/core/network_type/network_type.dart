@@ -2,7 +2,11 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class NetworkType extends Decoder<NetworkType> {
-  String networkURL, networkName, faucetURL, coinCurrency;
+  String networkURL,
+      networkName,
+      faucetURL,
+      coinCurrency,
+      transactionHistoryGraphQL;
   CoinType coinType;
   bool isSelected;
   NetworkType({
@@ -11,6 +15,7 @@ class NetworkType extends Decoder<NetworkType> {
     required this.faucetURL,
     required this.coinCurrency,
     required this.coinType,
+    required this.transactionHistoryGraphQL,
     this.isSelected = false,
   });
 
