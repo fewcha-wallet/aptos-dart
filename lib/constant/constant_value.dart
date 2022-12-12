@@ -21,6 +21,14 @@ class HostUrl {
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
 
   static const String suiDevnetUrl = "https://fullnode.devnet.sui.io";
+
+  static const String aptosMainnetGraphql =
+      'https://indexer.mainnet.aptoslabs.com/v1/graphql';
+  static const String aptosTestnetGraphql =
+      'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
+  static const String aptosDevnetGraphql =
+      'https://indexer-devnet.staging.gcp.aptosdev.com/v1/graphql';
+
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: aptosDevUrl,
     aptosTestnet: aptosTestNetUrl,
@@ -32,6 +40,12 @@ class HostUrl {
     aptosTestnet: faucetAptosTestnetUrl,
     aptosMainnet: '',
     suiDevnet: faucetSUIDevnetUrl,
+  };
+  static const Map<String, String> transactionHistoryGraphQLUrlMap = {
+    aptosDevnet: aptosDevnetGraphql,
+    aptosTestnet: aptosTestnetGraphql,
+    aptosMainnet: aptosMainnetGraphql,
+    suiDevnet: '',
   };
 }
 
@@ -55,6 +69,7 @@ class AppConstants {
   static const String coinEvents = '0x1::coin::CoinEvents';
   static const String guidGenerator = '0x1::guid::Generator';
   static const String coinInfo = '0x1::coin::CoinInfo';
+  static const String aptosCoin0x1 = '0x1::aptos_coin::AptosCoin';
 
   static const String account = '0x1::account::Account';
   static const String ansProfile = 'Ans::AnsProfile';
@@ -64,12 +79,19 @@ class AppConstants {
   static const String tokenStore = '0x3::token::TokenStore';
   static const String tokenData = '0x3::token::TokenData';
   static const String transferWithOptIn = "0x3::token::transfer_with_opt_in";
+  static const String tokenOfferEvent = "0x3::token_transfers::TokenOfferEvent";
+  static const String tokenClaimEvent = "0x3::token_transfers::TokenClaimEvent";
+  static const String tokenWithdrawEvent0x3 = "0x3::token::WithdrawEvent";
+  static const String tokenDepositEvent0x3 = "0x3::token::DepositEvent";
+  static const String mintTokenEvent0x3 = "0x3::token::MintTokenEvent";
 
   static const String tokenTransfersClaimScript =
       '0x3::token_transfers::claim_script';
   static const String optInDirectTransfer =
       '0x3::token::opt_in_direct_transfer';
   static const String rawTransactionSalt = 'APTOS::RawTransaction';
+  static const String withdrawEvent = '0x1::coin::WithdrawEvent';
+  static const String depositEvent = '0x1::coin::DepositEvent';
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
 }
@@ -153,4 +175,13 @@ class MaxNumber {
   static BigInt maxU64BigInt = BigInt.from(2).pow((64)) - BigInt.from(1);
   static int defaultMaxGasAmount = 200000;
   static int defaultTxnExpSecFromNow = 20;
+}
+
+class GraphQLConstant {
+  static const String getAccountCoinActivity = 'getAccountCoinActivity';
+  static const String getAccountTokenActivity = 'getAccountTokenActivity';
+  static const String getAccountCoinQuery =
+      r'query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {coin_activities(where: { owner_address: { _eq: $address } }limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {...CoinActivityFields}} fragment CoinActivityFields on coin_activities { transaction_timestamp transaction_version amount activity_type coin_type is_gas_fee is_transaction_success event_account_address event_creation_number event_sequence_number entry_function_id_str block_height}';
+  static const String getAccountTokenQuery =
+      r'query getAccountTokenActivity($address: String!, $offset: Int, $limit: Int) { token_activities( where: { _or: [{ from_address: { _eq: $address } }, { to_address: { _eq: $address } }] } limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {  ...TokenActivityFields } }  fragment TokenActivityFields on token_activities { coin_amount   coin_type   collection_data_id_hash    collection_name   creator_address   event_account_address   event_creation_number   from_address   event_sequence_number    name   property_version   to_address   token_amount  token_data_id_hash   transaction_timestamp   transaction_version   transfer_type }';
 }

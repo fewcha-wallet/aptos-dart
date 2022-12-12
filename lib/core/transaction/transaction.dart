@@ -138,16 +138,27 @@ class Transaction extends Decoder<Transaction> {
     return '0';
   }
 
-  String toAddress() {
-    if (payload?.arguments != null) {
-      if (payload!.arguments!.isNotEmpty) {
-        return payload!.arguments!.firstWhere(
-            (element) => Validator.validatorByRegex(
-                regExp: Validator.addressFormat, data: element),
-            orElse: () => '');
+  String recipientAddress() {
+    try {
+      if (payload?.arguments != null) {
+        if (payload!.arguments!.isNotEmpty) {
+          if (payload?.function == AppConstants.transferWithOptIn) {
+            return payload!.arguments![4];
+          }
+          return payload!.arguments!.firstWhere(
+              (element) => Validator.validatorByRegex(
+                  regExp: Validator.addressFormat, data: element),
+              orElse: () => '');
+        }
       }
+      return '';
+    } catch (e) {
+      return '';
     }
-    return '';
+  }
+
+  bool isReceive() {
+    return type == AppConstants.withdrawEvent ? false : true;
   }
 
   String getTokenCurrency() {
@@ -180,15 +191,6 @@ class Transaction extends Decoder<Transaction> {
         } else {
           return payload!.arguments![3];
         }
-      }
-    }
-    return '';
-  }
-
-  String getNFTSender() {
-    if (payload?.arguments != null) {
-      if (payload!.arguments!.isNotEmpty && payload!.arguments!.length > 3) {
-        return payload!.arguments![0];
       }
     }
     return '';

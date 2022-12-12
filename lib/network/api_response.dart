@@ -77,6 +77,28 @@ class APIListResponse<T> extends BaseAPIResponseWrapper<Response, List<T>> {
   }
 }
 
+class GraphQLListResponse<T> extends BaseAPIResponseWrapper<Response, T> {
+  GraphQLListResponse({T? createObject, Response? response})
+      : super(
+          originalResponse: response,
+        ) {
+    decode(extractJson(), createObject: createObject);
+  }
+
+  @override
+  void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
+    super.decode(formatResponse, createObject: createObject);
+    if (createObject is Decoder && !hasError) {
+      decodedData = createObject.decode(formatResponse["data"]["data"] ?? {});
+    } else if (T == dynamic) {
+      decodedData = formatResponse["data"]["data"];
+    } else {
+      final data = formatResponse["data"]["data"];
+      if (data is T) decodedData = data;
+    }
+  }
+}
+
 class ErrorResponse extends BaseAPIResponseWrapper<Response, dynamic>
     implements Exception {
   late APIErrorType error;
