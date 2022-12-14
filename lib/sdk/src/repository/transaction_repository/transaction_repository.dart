@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
 import 'package:aptosdart/core/graphql/coin_history.dart';
@@ -103,16 +104,18 @@ class TransactionRepository with AptosSDKMixin {
               createObject: CoinHistory(), response: response));
       List<Transaction> listTransaction = [];
       for (var item in response.decodedData!.coinActivities!) {
-        listTransaction.add(Transaction(
-          hash: item.transactionVersion.toString(),
-          success: item.isTransactionSuccess,
-          vmStatus: item.getStatus(),
-          gasCurrencyCode: item.getCurrency(),
-          timestamp: item.getTimeStamp(),
-          type: item.activityType,
-          payload: Payload(
-              arguments: [item.amount.toString(), item.eventAccountAddress]),
-        ));
+        if (item.activityType != AppConstants.gasFeeEvent) {
+          listTransaction.add(Transaction(
+            hash: item.transactionVersion.toString(),
+            success: item.isTransactionSuccess,
+            vmStatus: item.getStatus(),
+            gasCurrencyCode: item.getCurrency(),
+            timestamp: item.getTimeStamp(),
+            type: item.activityType,
+            entryFunctionIdStr: item.entryFunctionIdStr,
+            payload: Payload(arguments: [item.amount.toString(), '']),
+          ));
+        }
       }
       // return Transaction(
       //     success: temp.isSucceed(),

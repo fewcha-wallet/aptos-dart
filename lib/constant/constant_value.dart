@@ -84,6 +84,7 @@ class AppConstants {
   static const String tokenWithdrawEvent0x3 = "0x3::token::WithdrawEvent";
   static const String tokenDepositEvent0x3 = "0x3::token::DepositEvent";
   static const String mintTokenEvent0x3 = "0x3::token::MintTokenEvent";
+  static const String gasFeeEvent = "0x1::aptos_coin::GasFeeEvent";
 
   static const String tokenTransfersClaimScript =
       '0x3::token_transfers::claim_script';
@@ -92,6 +93,7 @@ class AppConstants {
   static const String rawTransactionSalt = 'APTOS::RawTransaction';
   static const String withdrawEvent = '0x1::coin::WithdrawEvent';
   static const String depositEvent = '0x1::coin::DepositEvent';
+  static const String userTransaction = 'user_transaction';
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
 }
@@ -180,8 +182,31 @@ class MaxNumber {
 class GraphQLConstant {
   static const String getAccountCoinActivity = 'getAccountCoinActivity';
   static const String getAccountTokenActivity = 'getAccountTokenActivity';
-  static const String getAccountCoinQuery =
-      r'query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {coin_activities(where: { owner_address: { _eq: $address } }limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {...CoinActivityFields}} fragment CoinActivityFields on coin_activities { transaction_timestamp transaction_version amount activity_type coin_type is_gas_fee is_transaction_success event_account_address event_creation_number event_sequence_number entry_function_id_str block_height}';
+  static const String getAccountCoinQuery = r""" 
+     query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {
+      coin_activities(
+      where: { owner_address: { _eq: $address } }
+      limit: $limit
+      offset: $offset
+      order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]
+      ) {
+      ...CoinActivityFields
+      }
+    }
+    fragment CoinActivityFields on coin_activities {
+    transaction_timestamp
+    transaction_version
+    amount
+    activity_type
+    coin_type
+    is_gas_fee
+    is_transaction_success
+    event_account_address
+    event_creation_number
+    event_sequence_number
+    entry_function_id_str
+    block_height
+    }""";
   static const String getAccountTokenQuery =
       r'query getAccountTokenActivity($address: String!, $offset: Int, $limit: Int) { token_activities( where: { _or: [{ from_address: { _eq: $address } }, { to_address: { _eq: $address } }] } limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {  ...TokenActivityFields } }  fragment TokenActivityFields on token_activities { coin_amount   coin_type   collection_data_id_hash    collection_name   creator_address   event_account_address   event_creation_number   from_address   event_sequence_number    name   property_version   to_address   token_amount  token_data_id_hash   transaction_timestamp   transaction_version   transfer_type }';
 }

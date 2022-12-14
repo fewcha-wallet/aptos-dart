@@ -36,6 +36,7 @@ class Transaction extends Decoder<Transaction> {
   String? gasUnitPrice;
   String? expirationTimestampSecs;
   String? gasCurrencyCode;
+  String? entryFunctionIdStr;
   Payload? payload;
   TransactionSignature? signature;
   List<TransactionEvent>? events;
@@ -63,6 +64,7 @@ class Transaction extends Decoder<Transaction> {
     this.signature,
     this.events,
     this.timestamp,
+    this.entryFunctionIdStr,
     this.secondarySigners,
   });
   @override

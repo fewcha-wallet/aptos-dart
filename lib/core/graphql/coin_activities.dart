@@ -58,7 +58,7 @@ class CoinActivities extends Decoder<CoinActivities> {
 
   String getTimeStamp() {
     final result =
-        TimestampUtil.timeStringToMicroseconds(transactionTimestamp!);
+        TimestampUtil.timeStringToMicroseconds(transactionTimestamp! + 'Z');
     return result.toString();
   }
 
