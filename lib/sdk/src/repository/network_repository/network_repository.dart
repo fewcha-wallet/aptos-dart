@@ -12,6 +12,8 @@ class NetWorkRepository {
         coinCurrency: AppConstants.aptosDefaultCurrency,
         transactionHistoryGraphQL: HostUrl.aptosDevnetGraphql,
         coinType: CoinType.aptos,
+        explorerParam: HostUrl.devNet,
+        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
       );
       final aptosTestNet = NetworkType(
         networkURL: HostUrl.aptosTestNetUrl,
@@ -20,6 +22,8 @@ class NetWorkRepository {
         coinCurrency: AppConstants.aptosDefaultCurrency,
         transactionHistoryGraphQL: HostUrl.aptosTestnetGraphql,
         coinType: CoinType.aptos,
+        explorerParam: HostUrl.testnet,
+        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
       );
       final suiDevNet = NetworkType(
         networkURL: HostUrl.suiDevnetUrl,
@@ -28,6 +32,8 @@ class NetWorkRepository {
         coinCurrency: AppConstants.suiDefaultCurrency,
         transactionHistoryGraphQL: '',
         coinType: CoinType.sui,
+        explorerParam: '',
+        explorerBaseURL: HostUrl.suiExplorerBaseURL,
       );
       final aptosMainnet = NetworkType(
         networkURL: HostUrl.aptosMainNetUrl,
@@ -36,6 +42,8 @@ class NetWorkRepository {
         coinCurrency: AppConstants.aptosDefaultCurrency,
         transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
         coinType: CoinType.aptos,
+        explorerParam: HostUrl.mainNet,
+        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
       );
       final aptosMainnet2 = NetworkType(
         networkURL: HostUrl.aptosMainNet2Url,
@@ -44,6 +52,8 @@ class NetWorkRepository {
         coinCurrency: AppConstants.aptosDefaultCurrency,
         transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
         coinType: CoinType.aptos,
+        explorerParam: HostUrl.mainNet,
+        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
       );
 
       return [

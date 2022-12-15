@@ -6,7 +6,10 @@ class NetworkType extends Decoder<NetworkType> {
       networkName,
       faucetURL,
       coinCurrency,
-      transactionHistoryGraphQL;
+      transactionHistoryGraphQL,
+      explorerBaseURL,
+      explorerParam;
+
   CoinType coinType;
   bool isSelected;
   NetworkType({
@@ -16,6 +19,8 @@ class NetworkType extends Decoder<NetworkType> {
     required this.coinCurrency,
     required this.coinType,
     required this.transactionHistoryGraphQL,
+    required this.explorerBaseURL,
+    required this.explorerParam,
     this.isSelected = false,
   });
 

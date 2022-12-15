@@ -28,6 +28,11 @@ class HostUrl {
       'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
   static const String aptosDevnetGraphql =
       'https://indexer-devnet.staging.gcp.aptosdev.com/v1/graphql';
+  static const String aptosExplorerBaseURL = "https://explorer.aptoslabs.com";
+  static const String suiExplorerBaseURL = "https://explorer.devnet.sui.io";
+  static const String devNet = "?network=devnet";
+  static const String testnet = "?network=testnet";
+  static const String mainNet = "?network=mainnet";
 
   static const Map<String, String> hostUrlMap = {
     aptosDevnet: aptosDevUrl,
