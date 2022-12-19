@@ -1,5 +1,5 @@
 import 'package:aptosdart/constant/enums.dart';
-import 'package:aptosdart/core/data_model/data_model.dart';
+import 'package:aptosdart/core/network_type/network_type.dart';
 import 'package:aptosdart/sdk/internal/aptos_dart_sdk_internal.dart';
 
 class AptosDartSDK {
@@ -20,11 +20,15 @@ class AptosDartSDK {
 
     return _instance;
   }
-  Future<DataModel> connectAptosAccount(String address) async {
-    if (_instance._internal.aptosCurrentConfig.ledger == null) {
-      await _internal.initSDK();
-    }
-    final result = await _internal.connect(address);
-    return result;
+  void setNetwork(NetworkType networkType) {
+    _internal.setNetWork(networkType);
+  }
+
+  NetworkType getCurrentNetwork() {
+    return _internal.getCurrentNetWork();
+  }
+
+  List<NetworkType> getListNetworks() {
+    return _internal.getListNetwork();
   }
 }

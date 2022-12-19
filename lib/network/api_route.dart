@@ -1,6 +1,7 @@
 import 'package:aptosdart/constant/api_method.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/aptos_current_config/aptos_current_config.dart';
 import 'package:dio/dio.dart';
 
 abstract class APIRouteConfigurable {
@@ -24,10 +25,14 @@ class APIRoute implements APIRouteConfigurable {
   final String _module = 'module';
   final String _mint = 'mint';
   final String _transactions = 'transactions';
+  final String _byHash = 'by_hash';
+  final String _byVersion = 'by_version';
   final String _simulate = 'simulate';
   final String _signingMessage = 'signing_message';
+  final String _encodeSubmission = 'encode_submission';
   final String _event = 'events';
   final String _tables = 'tables';
+  final String _estimateGasPrice = 'estimate_gas_price';
   final String _item = 'item';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
@@ -60,7 +65,8 @@ class APIRoute implements APIRouteConfigurable {
 
       ///Faucet
       case APIType.mint:
-        baseUrl = HostUrl.faucetUrl;
+        baseUrl =
+            AptosCurrentConfig.shared.faucetUrl ?? HostUrl.faucetAptosDevnetUrl;
         method = APIMethod.post;
         path = '/$_mint';
         break;
@@ -73,20 +79,36 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
         path = '/$_transactions';
         break;
+      case APIType.submitSignedBCSTransaction:
+        method = APIMethod.post;
+        path = '/$_transactions';
+        headers = HeadersApi.signedTransactionHeaders;
+        break;
       case APIType.simulateTransaction:
-        // headers = HeadersApi.transactionHeaders;
         method = APIMethod.post;
         path = '/$_transactions/$_simulate';
         break;
-      case APIType.getTransaction:
-        path = '/$_transactions/$routeParams';
+      case APIType.getTransactionByHash:
+        path = '/$_transactions/$_byHash/$routeParams';
+        break;
+      case APIType.getTransactionByVersion:
+        path = '/$_transactions/$_byVersion/$routeParams';
         break;
       case APIType.getAccountTransactions:
-        path = '/$_accounts/$routeParams/$_transactions';
+        if (AptosCurrentConfig.shared.transactionHistoryGraphQL!.isNotEmpty) {
+          baseUrl = AptosCurrentConfig.shared.transactionHistoryGraphQL;
+        }
+        // path = '/$_accounts/$routeParams/$_transactions';
+        method = APIMethod.post;
+
         break;
       case APIType.signingMessage:
         method = APIMethod.post;
         path = '/$_transactions/$_signingMessage';
+        break;
+      case APIType.encodeSubmission:
+        method = APIMethod.post;
+        path = '/$_transactions/$_encodeSubmission';
         break;
       case APIType.getEventsByEventKey:
         path = '/$_event/$routeParams';
@@ -98,9 +120,19 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
         path = '/$_tables/$routeParams/$_item';
         break;
+      case APIType.getIPFSProfile:
+        method = APIMethod.get;
+        path = '$routeParams';
+        break;
+      case APIType.estimateGasPrice:
+        method = APIMethod.get;
+        path = '/$_estimateGasPrice';
+        break;
+      case APIType.getListDApps:
+        break;
     }
     final options = Options(
-            headers: HeadersApi.headers,
+            headers: headers ?? HeadersApi.headers,
             extra: {ExtraKeys.authorize: authorize},
             responseType: responseType,
             method: this.method ?? method)

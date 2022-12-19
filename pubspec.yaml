@@ -2,7 +2,7 @@ name: aptosdart
 description: A SDK to connect to Aptos Web3
 version: 0.0.1
 homepage:
-
+publish_to: none
 environment:
   sdk: ">=2.16.1 <3.0.0"
   flutter: ">=1.17.0"
@@ -15,8 +15,17 @@ dependencies:
   bip39: ^1.0.6
   sha3: ^0.2.0
   buffer: ^1.1.1
+  crypto: ^3.0.2
   ed25519_edwards: ^0.3.1
   hex: ^0.2.0
+  json_rpc_2: ^3.0.2
+  web_socket_channel: ^2.2.0
+  jsonrpc2:
+    git:
+      url: https://github.com/beobanhbo/jsonrpc2-folk.git
+      ref: main
+  http: ^0.13.5
+  intl: ^0.17.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

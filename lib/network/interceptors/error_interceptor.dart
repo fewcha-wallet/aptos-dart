@@ -34,15 +34,7 @@ class ErrorInterceptor extends InterceptorsWrapper {
       case DioErrorType.response:
 
         ///Unauthorized, may be the access token has been expired
-        if (err.response!.statusCode ==
-                HttpStatus
-                    .unauthorized /*&&
-            err.requestOptions
-                .extra[AppConstants.ignoreNavigateWhenUnAuthorize] !=
-                true*/
-            ) {
-          // unauthorizedCallback();
-        }
+        if (err.response!.statusCode == HttpStatus.unauthorized) {}
 
         break;
     }

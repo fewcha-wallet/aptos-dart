@@ -1,11 +1,12 @@
-import 'package:aptosdart/core/data_model/data_model.dart';
+import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class TransactionEvent extends Decoder<TransactionEvent> {
   String? key;
   String? sequenceNumber;
   String? type;
-  DataModel? data;
+  AptosAccountData? data;
+  // DataModel? data;
 
   TransactionEvent({this.key, this.sequenceNumber, this.type, this.data});
 
@@ -18,6 +19,7 @@ class TransactionEvent extends Decoder<TransactionEvent> {
     key = json['key'];
     sequenceNumber = json['sequence_number'];
     type = json['type'];
-    data = json['data'] != null ? DataModel.fromJson(json['data']) : null;
+    data =
+        json['data'] != null ? AptosAccountData.fromJson(json['data']) : null;
   }
 }

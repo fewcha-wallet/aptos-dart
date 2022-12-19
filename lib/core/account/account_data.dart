@@ -1,16 +1,16 @@
 import 'package:aptosdart/network/decodable.dart';
 
-class AccountCore extends Decoder<AccountCore> {
+class AccountData extends Decoder<AccountData> {
   String? sequenceNumber, authenticationKey;
 
-  AccountCore({this.sequenceNumber, this.authenticationKey});
+  AccountData({this.sequenceNumber, this.authenticationKey});
 
   @override
-  AccountCore decode(Map<String, dynamic> json) {
+  AccountData decode(Map<String, dynamic> json) {
     return fromJson(json);
   }
 
-  AccountCore fromJson(Map<String, dynamic> json) {
+  AccountData fromJson(Map<String, dynamic> json) {
     sequenceNumber = json['sequence_number'] ?? '0';
     authenticationKey = json['authentication_key'] ?? '0x0';
     return this;

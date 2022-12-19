@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
@@ -16,14 +14,14 @@ class FaucetClientRepository with AptosSDKMixin {
       final response = await apiClient.request(
           params: param,
           route: APIRoute(APIType.mint),
-          create: (response) => APIResponse<String>(response: response));
+          create: (response) => APIResponse<dynamic>(response: response));
       if (response.decodedData != null) {
-        final result = jsonDecode(response.decodedData!);
-
-        if (result is List) {
-          return result.map((e) => e.toString()).toList();
+        if (response.decodedData is List) {
+          return (response.decodedData as List)
+              .map((e) => e as String)
+              .toList();
         }
-        return [result];
+        return [response.decodedData];
       }
       return [];
     } catch (e) {

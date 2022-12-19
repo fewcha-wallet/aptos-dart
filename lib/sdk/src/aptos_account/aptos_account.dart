@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart';
@@ -7,7 +8,7 @@ import 'package:sha3/sha3.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 import 'package:hex/hex.dart';
 
-class AptosAccount {
+class AptosAccount implements AbstractAccount {
   List<int> _privateKey;
   String _accountAddress, _authenKey;
 
@@ -32,14 +33,17 @@ class AptosAccount {
     final privateKey = HEX.decode(privateKeyHex.trimPrefix());
 
     final list = Utilities.toUint8List(privateKey);
+
     return AptosAccount(privateKeyBytes: list);
   }
 
+  @override
   String address() {
     return _accountAddress;
   }
 
-  List<int> privateKey() {
+  @override
+  List<int> getPrivateKey() {
     return _privateKey;
   }
 
@@ -57,6 +61,7 @@ class AptosAccount {
   }
 
   /// Get public key in Hex
+  @override
   String publicKeyInHex() {
     final buffer =
         Utilities.buffer(public(PrivateKey(_privateKey)).bytes).join('');
@@ -64,17 +69,21 @@ class AptosAccount {
   }
 
   /// Get private key in Hex
+  @override
   String privateKeyInHex() {
     final getRange = _privateKey.getRange(0, 32).toList();
     final buffer = Utilities.buffer(getRange).join('');
     return buffer.toHexString();
   }
 
+  @override
   String signBuffer(Uint8List buffer) {
+    print(_privateKey);
     final signed = sign(PrivateKey(_privateKey), buffer);
     return signed.fromBytesToString().substring(0, 128).toHexString();
   }
 
+  @override
   String signatureHex(String hexString) {
     final listInt = hexString.stringToListInt();
     final toUInt8List = Uint8List.fromList(listInt);

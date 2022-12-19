@@ -1,6 +1,3 @@
-import 'dart:collection';
-import 'dart:convert';
-
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/pagination/pagination.dart';
@@ -44,13 +41,6 @@ class APIResponse<T> extends BaseAPIResponseWrapper<Response, T> {
   void decode(Map<String, dynamic> formatResponse, {createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
-      // if (formatResponse["data"] is List) {
-      //   List<dynamic> data = formatResponse["data"];
-      //   if (data.isNotEmpty) {
-      //     decodedData = createObject.decode(data[0] ?? {});
-      //   }
-      // } else {
-      // }
       decodedData = createObject.decode(formatResponse["data"] ?? {});
     } else if (T == dynamic) {
       decodedData = formatResponse["data"];
@@ -84,9 +74,28 @@ class APIListResponse<T> extends BaseAPIResponseWrapper<Response, List<T>> {
       }
       decodedData ??= <T>[];
     }
-    // if (formatResponse["data"]['pagination'] != null) {
-    //   pagination = Pagination.fromJson(formatResponse["data"]['pagination']);
-    // }
+  }
+}
+
+class GraphQLListResponse<T> extends BaseAPIResponseWrapper<Response, T> {
+  GraphQLListResponse({T? createObject, Response? response})
+      : super(
+          originalResponse: response,
+        ) {
+    decode(extractJson(), createObject: createObject);
+  }
+
+  @override
+  void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
+    super.decode(formatResponse, createObject: createObject);
+    if (createObject is Decoder && !hasError) {
+      decodedData = createObject.decode(formatResponse["data"]["data"] ?? {});
+    } else if (T == dynamic) {
+      decodedData = formatResponse["data"]["data"];
+    } else {
+      final data = formatResponse["data"]["data"];
+      if (data is T) decodedData = data;
+    }
   }
 }
 

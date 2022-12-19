@@ -9,10 +9,19 @@ class EventRepository with AptosSDKMixin {
     required String address,
     required String eventHandleStruct,
     required String fieldName,
+    int? start,
+    int? limit,
   }) async {
     try {
-      final path = '/$address/events/$eventHandleStruct/$fieldName';
+      String path = '/$address/events/$eventHandleStruct/$fieldName';
 
+      if (limit != null) {
+        path += '?limit=$limit';
+      }
+
+      if (start != null) {
+        path += limit != null ? '&start=$start' : '?start=$start';
+      }
       final response = await apiClient.request(
           extraPath: path,
           route: APIRoute(

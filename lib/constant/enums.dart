@@ -8,13 +8,19 @@ enum APIType {
   getAccountModuleByID,
   getTransactions,
   submitTransaction,
+  submitSignedBCSTransaction,
   simulateTransaction,
-  getTransaction,
+  getTransactionByHash,
+  getTransactionByVersion,
   getAccountTransactions,
   signingMessage,
+  encodeSubmission,
+  estimateGasPrice,
   getEventsByEventKey,
   getEventsByEventHandle,
   getTableItem,
+  getIPFSProfile,
+  getListDApps,
 }
 enum APIErrorType {
   invalidLedger,
@@ -25,4 +31,18 @@ enum APIErrorType {
   badRequest,
   unknown,
 }
+enum RPCFunction {
+  suiGetObjectsOwnedByAddress,
+  suiGetObject,
+  getTransactionsByAddress,
+  suiGetTransaction,
+}
 enum LogStatus { hide, show }
+enum CoinType { aptos, sui }
+enum ComputeSUIObjectType {
+  getBalance,
+  getNFT,
+  getToken,
+  getSUIObjectList,
+  getSUICoinObjectList
+}
