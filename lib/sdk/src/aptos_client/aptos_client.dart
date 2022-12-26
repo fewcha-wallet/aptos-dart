@@ -149,11 +149,15 @@ class AptosClient {
           : (await estimateGasPrice()).gasEstimate;
 
       ///
-      final maxGasAmount = BigInt.from(MaxNumber.defaultMaxGasAmount);
+      final maxGasAmount =
+          BigInt.from(extraArgs?.maxGasAmount ?? MaxNumber.defaultMaxGasAmount);
       final gasUnitPrice = BigInt.from(gasEstimate!);
+
       final expireTimestamp = BigInt.from(
-          (DateTime.now().microsecondsSinceEpoch ~/ 1000) +
-              MaxNumber.defaultTxnExpSecFromNow);
+          int.parse(Utilities.getExpirationTimeStamp())
+          /*(DateTime.now().microsecondsSinceEpoch ~/ 1000) +
+              MaxNumber.defaultTxnExpSecFromNow*/
+          );
 
       return RawTransaction(
         sequenceNumber: BigInt.parse(sequenceNumber!),
@@ -292,6 +296,16 @@ class AptosClient {
     }
   }
 
+  Future<Transaction> submitRawTransaction(Uint8List rawTransaction) async {
+    try {
+      final result = await _transactionRepository
+          .submitSignedBCSTransaction(rawTransaction);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Transaction> submitSignedBCSTransaction(Uint8List signedTxn) async {
     try {
       final result =
@@ -366,6 +380,38 @@ class AptosClient {
           type: AppConstants.ed25519Signature,
           publicKey: aptosAccount.publicKeyInHex(),
           signature: signature.trimPrefix());
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Uint8List> signRawTransaction(
+      AptosAccount aptosAccount, RawTransaction rawTransaction) async {
+    try {
+      // final signMessage = await encodeSubmission(transaction);
+      // final signature = aptosAccount.signatureHex(signMessage.trimPrefix());
+      // return TransactionSignature(
+      //     type: AppConstants.ed25519Signature,
+      //     publicKey: aptosAccount.publicKeyInHex(),
+      //     signature: signature.trimPrefix());
+      final result = await generateBCSTransaction(aptosAccount, rawTransaction);
+      final temp = Uint8List.fromList(result).getRange(0, 236).toList();
+      final raw = Uint8List.fromList(temp);
+      return raw;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> signAndSubmitTransaction(
+      AptosAccount aptosAccount, Uint8List rawTransaction) async {
+    try {
+      final d = Deserializer(rawTransaction);
+      final transaction = RawTransaction.deserialize(d);
+
+      final signed = await signRawTransaction(aptosAccount, transaction);
+      final tx = await submitRawTransaction(signed);
+      return tx.hash!;
     } catch (e) {
       rethrow;
     }

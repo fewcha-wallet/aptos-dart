@@ -56,7 +56,7 @@ class MobileProviderRes<T> {
     final json = <String, dynamic>{};
     json['data'] = data ?? "";
     json['method'] = method ?? "";
-    json['status'] = status ?? -1;
+    json['status'] = status ?? 401;
     return json;
   }
 }

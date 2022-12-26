@@ -72,7 +72,7 @@ class APIClient extends BaseAPIClient {
       bool noEncode = false,
       Map<String, dynamic>? header,
       String? extraPath,
-      Map<String, dynamic>? body,
+      /*Map<String, dynamic>?*/ dynamic body,
       FormData? formData}) async {
     final RequestOptions? requestOptions = route.getConfig(options);
 

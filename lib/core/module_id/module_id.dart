@@ -19,9 +19,9 @@ class ModuleId {
   /// @returns
   static ModuleId fromStr(String moduleId) {
     final parts = moduleId.split("::");
-    if (parts.length != 2) {
-      throw ("Invalid module id.");
-    }
+    // if (parts.length != 2) {
+    //   throw ("Invalid module id.");
+    // }
     return ModuleId(
         address: AccountAddress.fromHex(parts[0].toHexString()),
         name: Identifier(parts[1]));

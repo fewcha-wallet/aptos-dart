@@ -51,7 +51,7 @@ class TransactionRepository with AptosSDKMixin {
   Future<Transaction> submitSignedBCSTransaction(Uint8List signedTxn) async {
     try {
       final response = await apiClient.request(
-          body: {'': signedTxn},
+          body: signedTxn,
           route: APIRoute(
             APIType.submitSignedBCSTransaction,
           ),
@@ -117,17 +117,6 @@ class TransactionRepository with AptosSDKMixin {
           ));
         }
       }
-      // return Transaction(
-      //     success: temp.isSucceed(),
-      //     vmStatus: temp.getStatus(),
-      //     gasCurrencyCode: AppConstants.suiDefaultCurrency,
-      //     timestamp: temp.getTimeStamp(),
-      //     hash: temp.getHash(),
-      //     gasUsed: temp.getTotalGasUsed().toString(),
-      //     payload: Payload(arguments: [
-      //       temp.getTokenAmount(),
-      //       temp.getToAddress().toString()
-      //     ]));
       return listTransaction;
     } catch (e) {
       rethrow;

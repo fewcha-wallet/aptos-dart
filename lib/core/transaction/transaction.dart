@@ -530,7 +530,7 @@ class EntryFunction {
     final tyArgs = Utilities.deserializeVector(deserializer, TypeTag);
 
     final length = deserializer.deserializeUleb128AsU32();
-    final List<Uint8List> list = [];
+    List<Uint8List> list = [];
     for (int i = 0; i < length; i += 1) {
       list.add(deserializer.deserializeBytes());
     }
@@ -539,7 +539,7 @@ class EntryFunction {
     return EntryFunction(
         moduleName: moduleName,
         functionName: functionName,
-        tyArgs: tyArgs as List<TypeTag>,
+        tyArgs: tyArgs.cast<TypeTag>(),
         args: args);
   }
 }

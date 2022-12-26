@@ -303,4 +303,10 @@ class Utilities {
     serializer.serializeU64(value);
     return serializer.getBytes();
   }
+
+  static Uint8List bcsSerializeStr(String value) {
+    final serializer = Serializer();
+    serializer.serializeStr(value);
+    return serializer.getBytes();
+  }
 }

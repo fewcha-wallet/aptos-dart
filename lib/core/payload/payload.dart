@@ -1,3 +1,4 @@
+import 'package:aptosdart/core/entry_function_payload/entry_function_payload.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class Payload extends Decoder<Payload> {
@@ -24,9 +25,7 @@ class Payload extends Decoder<Payload> {
     if (json['arguments'] != null) {
       arguments = <String>[];
       json['arguments'].forEach((v) {
-        if (v is String) {
-          arguments!.add(v);
-        }
+        arguments!.add(v.toString());
       });
     }
   }
@@ -37,5 +36,25 @@ class Payload extends Decoder<Payload> {
     data['type_arguments'] = typeArguments;
     data['arguments'] = arguments;
     return data;
+  }
+
+  EntryFunctionPayload toEntryFunctionPayload() {
+    return EntryFunctionPayload(
+      function: function!,
+      type: type!,
+      typeArguments: typeArguments,
+      arguments: arguments,
+    );
+  }
+
+  @override
+  String toString() {
+    return '''{
+"type": "$type", 
+"function": "$function", 
+"typeArguments": ${typeArguments!.map((e) => '''
+    "$e"\n''').toList()}, 
+"arguments": ${arguments!.map((e) => '''$e''').toList()}
+}''';
   }
 }
