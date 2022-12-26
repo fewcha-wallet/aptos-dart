@@ -78,7 +78,6 @@ class AptosAccount implements AbstractAccount {
 
   @override
   String signBuffer(Uint8List buffer) {
-    print(_privateKey);
     final signed = sign(PrivateKey(_privateKey), buffer);
     return signed.fromBytesToString().substring(0, 128).toHexString();
   }

@@ -113,7 +113,7 @@ class Transaction extends Decoder<Transaction> {
     data['sequence_number'] = sequenceNumber;
     data['max_gas_amount'] = maxGasAmount;
     data['gas_unit_price'] = gasUnitPrice;
-    data['gas_currency_code'] = gasCurrencyCode;
+    data['gas_currency_code'] = gasCurrencyCode ?? '';
     data['expiration_timestamp_secs'] = expirationTimestampSecs;
     if (payload != null) {
       data['payload'] = payload!.toJson();
@@ -164,7 +164,9 @@ class Transaction extends Decoder<Transaction> {
   }
 
   String getTokenCurrency() {
-    if (gasCurrencyCode == null) return AppConstants.aptosDefaultCurrency;
+    if ((gasCurrencyCode ?? '').isEmpty) {
+      return AppConstants.aptosDefaultCurrency;
+    }
     return gasCurrencyCode!;
   }
 
