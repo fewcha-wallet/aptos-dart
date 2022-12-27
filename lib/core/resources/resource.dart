@@ -230,6 +230,31 @@ class AptosAccountData extends DataModelAbstract {
   DataModelAbstract decode(Map<String, dynamic> json) {
     return AptosAccountData.fromJson(json);
   }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['authentication_key'] = authenticationKey;
+    data['sequence_number'] = sequenceNumber;
+    if (keyRotationEvents != null) {
+      data['key_rotation_events'] = keyRotationEvents!.toJson();
+    }
+    if (coinRegisterEvents != null) {
+      data['coin_register_events'] = coinRegisterEvents!.toJson();
+    }
+
+    data.removeWhere((key, value) => value == null);
+    return data;
+  }
+
+  bool isNull() {
+    if (keyRotationEvents == null &&
+        coinRegisterEvents == null &&
+        authenticationKey == null &&
+        sequenceNumber == null) {
+      return true;
+    }
+    return false;
+  }
 }
 
 class Collections extends DataModelAbstract {

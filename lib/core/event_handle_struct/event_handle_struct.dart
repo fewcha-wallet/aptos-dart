@@ -16,4 +16,13 @@ class EventHandleStruct extends Decoder<EventHandleStruct> {
     counter = json['counter'];
     guid = json['guid'] != null ? Guid?.fromJson(json['guid']) : null;
   }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['counter'] = counter;
+    if (guid != null) {
+      data['guid'] = guid!.toJson();
+    }
+    data.removeWhere((key, value) => value == null);
+    return data;
+  }
 }

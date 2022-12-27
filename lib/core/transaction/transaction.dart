@@ -109,12 +109,24 @@ class Transaction extends Decoder<Transaction> {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['type'] = type;
+    data['version'] = version;
+    data['hash'] = hash;
+    data['state_root_hash'] = stateRootHash;
+    data['event_root_hash'] = eventRootHash;
+    data['gas_used'] = gasUsed;
+    data['success'] = success ?? false;
+    data['vm_status'] = vmStatus;
+    data['accumulator_root_hash'] = accumulatorRootHash;
     data['sender'] = sender;
     data['sequence_number'] = sequenceNumber;
     data['max_gas_amount'] = maxGasAmount;
     data['gas_unit_price'] = gasUnitPrice;
     data['gas_currency_code'] = gasCurrencyCode ?? '';
     data['expiration_timestamp_secs'] = expirationTimestampSecs;
+    if (changes != null) {
+      data['changes'] = changes!.map((e) => e.toJson()).toList();
+    }
     if (payload != null) {
       data['payload'] = payload!.toJson();
     }
@@ -124,6 +136,10 @@ class Transaction extends Decoder<Transaction> {
     if (secondarySigners != null) {
       data['secondary_signers'] = secondarySigners;
     }
+    if (events != null) {
+      data['events'] = events!.map((e) => e.toJson()).toList();
+    }
+
     data.removeWhere((key, value) => value == null);
     return data;
   }

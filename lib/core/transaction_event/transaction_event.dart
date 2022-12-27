@@ -22,4 +22,15 @@ class TransactionEvent extends Decoder<TransactionEvent> {
     data =
         json['data'] != null ? AptosAccountData.fromJson(json['data']) : null;
   }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> dataMap = <String, dynamic>{};
+    dataMap['key'] = key;
+    dataMap['sequence_number'] = sequenceNumber;
+    dataMap['type'] = type;
+    if (data != null) {
+      dataMap['data'] = data!.toJson();
+    }
+    dataMap.removeWhere((key, value) => value == null);
+    return dataMap;
+  }
 }

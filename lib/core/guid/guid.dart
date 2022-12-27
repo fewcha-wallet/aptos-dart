@@ -20,4 +20,11 @@ class Guid extends Decoder<Guid> {
 
     lenBytes = json['len_bytes'] ?? 0;
   }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = address ?? creationNum;
+    data['len_bytes'] = lenBytes;
+    data.removeWhere((key, value) => value == null);
+    return data;
+  }
 }

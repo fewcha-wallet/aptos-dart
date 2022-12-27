@@ -25,16 +25,17 @@ class Utilities {
     return listString;
   }
 
-  static Uint8List toUint8ListFromListString(List<String> listString) {
-    List<int> result = [];
-    for (final item in listString) {
-      String temp = item;
-      if (!item.startsWith('0x')) {
-        temp = '0x$item';
-      }
-    }
-    return Uint8List.fromList(result);
-  }
+  // static Uint8List toUint8ListFromListString(List<String> listString) {
+  //   List<int> result = [];
+  //   for (final item in listString) {
+  //     String temp = item;
+  //     if (!item.startsWith('0x')) {
+  //       temp = '0x$item';
+  //     }
+  //     result.add(temp);
+  //   }
+  //   return Uint8List.fromList(result);
+  // }
 
   static Uint8List toUint8List(List<int> privateKey) {
     return seed(PrivateKey(privateKey));

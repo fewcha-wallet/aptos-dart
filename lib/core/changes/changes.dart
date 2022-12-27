@@ -20,4 +20,15 @@ class Changes extends Decoder<Changes> {
     data =
         json['data'] != null ? AptosAccountData.fromJson(json['data']) : null;
   }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> dataMap = <String, dynamic>{};
+    dataMap['type'] = type;
+    dataMap['address'] = address;
+    dataMap['state_key_hash'] = stateKeyHash;
+    if (data != null) {
+      dataMap['data'] = data!.toJson();
+    }
+    dataMap.removeWhere((key, value) => value == null);
+    return dataMap;
+  }
 }
