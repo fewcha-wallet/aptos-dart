@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
@@ -6,6 +7,7 @@ import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/optional_transaction_args.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/account_data.dart';
+import 'package:aptosdart/core/aptos_sign_message_payload/aptos_sign_message_payload.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event/event.dart';
@@ -412,6 +414,47 @@ class AptosClient {
       final signed = await signRawTransaction(aptosAccount, transaction);
       final tx = await submitRawTransaction(signed);
       return tx.hash!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<AptosSignMessageResponse> signMessage(AptosAccount aptosAccount,
+      AptosSignMessagePayload message, String? domain) async {
+    try {
+      String prefix = "APTOS";
+      String messageToBeSigned = prefix;
+
+      final address = aptosAccount.address().toHexString();
+      if (message.address ?? false) {
+        messageToBeSigned += '\naddress: $address';
+      }
+
+      if (message.application ?? false) {
+        messageToBeSigned += '\napplication: ${domain ?? ""}';
+      }
+
+      final chainId = await getChainId();
+      if (message.chainId ?? false) {
+        messageToBeSigned += '\nchainId: $chainId';
+      }
+
+      messageToBeSigned += '\nmessage: ${message.message}';
+      messageToBeSigned += '\nnonce: ${message.nonce}';
+
+      final encoder = const Utf8Encoder().convert(messageToBeSigned);
+      final signature = aptosAccount.signBuffer(encoder);
+      final signatureString = signature.trimPrefix();
+      return AptosSignMessageResponse(
+        address: address,
+        application: domain ?? "",
+        chainId: chainId,
+        fullMessage: messageToBeSigned,
+        message: message.message!,
+        nonce: message.nonce!,
+        prefix: "APTOS",
+        signature: signatureString,
+      );
     } catch (e) {
       rethrow;
     }
