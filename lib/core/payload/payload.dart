@@ -23,9 +23,13 @@ class Payload extends Decoder<Payload> {
       });
     }
     if (json['arguments'] != null) {
-      arguments = <String>[];
+      arguments = [];
       json['arguments'].forEach((v) {
-        arguments!.add(v.toString());
+        if (v is! bool) {
+          arguments!.add(v.toString());
+        } else {
+          arguments!.add(v);
+        }
       });
     }
   }

@@ -460,6 +460,19 @@ class AptosClient {
     }
   }
 
+  Future<Uint8List> signMultiSignTransaction(
+      AptosAccount aptosAccount, Uint8List rawTransaction) async {
+    try {
+      final d = Deserializer(rawTransaction);
+      final rawTxn = RawTransaction.deserialize(d);
+
+      final signingMessage = TransactionBuilder.getSigningMessage(rawTxn);
+      return aptosAccount.signBuffer(signingMessage).toUint8Array();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 //endregion
 //region Event
 
