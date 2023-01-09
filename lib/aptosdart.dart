@@ -16,3 +16,4 @@ export 'utils/deserializer/deserializer.dart';
 export 'core/account_address/account_address.dart';
 export 'core/aptos_types/multi_ed25519.dart';
 export 'core/entry_function_payload/entry_function_payload.dart';
+export 'core/transaction_builder_remote_abi/builder_utils.dart';

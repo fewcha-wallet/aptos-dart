@@ -75,14 +75,13 @@ class EntryFunctionABI extends ScriptABI {
     final moduleName = ModuleId.deserialize(deserializer);
     final doc = deserializer.deserializeStr();
     final tyArgs = Utilities.deserializeVector(deserializer, TypeArgumentABI);
-    final args =
-        Utilities.deserializeVector(deserializer, ArgumentABI);
+    final args = Utilities.deserializeVector(deserializer, ArgumentABI);
     return EntryFunctionABI(
         name: name,
         moduleName: moduleName,
         doc: doc,
         tyArgs: List<TypeArgumentABI>.from(tyArgs),
-        args: List<ArgumentABI>.from(args) );
+        args: List<ArgumentABI>.from(args));
   }
 }
 
@@ -90,6 +89,10 @@ class TypeArgumentABI {
   String name;
 
   TypeArgumentABI(this.name);
+
+  void serialize(Serializer serializer) {
+    serializer.serializeStr(name);
+  }
 
   static TypeArgumentABI deserialize(Deserializer deserializer) {
     final name = deserializer.deserializeStr();

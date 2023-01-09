@@ -3,21 +3,25 @@ import 'package:aptosdart/network/decodable.dart';
 
 class ExposedFunctions extends Decoder<ExposedFunctions> {
   String? name;
-  String? visibility;
+  String? visibility, fullName;
+  bool? isEntry;
   List<GenericTypeParams>? genericTypeParams;
   List<String>? params;
   List<String>? returnsExposed;
 
   ExposedFunctions(
       {this.name,
+      this.fullName,
       this.visibility,
       this.genericTypeParams,
       this.params,
+      this.isEntry = false,
       this.returnsExposed});
 
   ExposedFunctions.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     visibility = json['visibility'];
+    isEntry = json['is_entry'] ?? false;
     if (json['generic_type_params'] != null) {
       genericTypeParams = <GenericTypeParams>[];
       json['generic_type_params'].forEach((v) {

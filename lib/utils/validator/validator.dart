@@ -1,5 +1,8 @@
 class Validator {
+  static final alphabetic = RegExp("[_A-Za-z0-9]");
   static final removeLeadingZeros = RegExp(r"^0+(?!$)");
+  static final whiteSpace = RegExp(r"\s");
+  static final removeLeadingZerosInHex = RegExp('0[xX]0*');
   static final addressFormat = RegExp(r"^0x[a-fA-F0-9]{40,}$");
   static final amountFormat = RegExp("[0-9]");
   static final moveStructType = RegExp(r"^0x[0-9a-zA-Z:_<>]+$");

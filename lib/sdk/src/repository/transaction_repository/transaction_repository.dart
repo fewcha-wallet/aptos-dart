@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
@@ -12,7 +13,9 @@ import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
+import 'package:aptosdart/utils/file/file_utils.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
+import 'package:dio/dio.dart';
 
 class TransactionRepository with AptosSDKMixin {
   TransactionRepository();
@@ -48,16 +51,41 @@ class TransactionRepository with AptosSDKMixin {
     }
   }
 
-  Future<Transaction> submitSignedBCSTransaction(Uint8List signedTxn) async {
+  Future<Transaction> submitSignedBCSTransaction(
+    Uint8List signedTxn,
+  ) async {
     try {
+      final fileData = await FileUtils.createTemperateBinaryFile(signedTxn);
+      int len = fileData.lengthSync();
       final response = await apiClient.request(
-          body: signedTxn,
+          body: fileData.openRead(),
           route: APIRoute(
             APIType.submitSignedBCSTransaction,
           ),
+          header: {
+            Headers.contentLengthHeader: len,
+          },
           create: (response) =>
               APIResponse(createObject: Transaction(), response: response));
       return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Transaction> simulateSignedBCSTransaction(Uint8List signedTxn) async {
+    try {
+      final fileData = await FileUtils.createTemperateBinaryFile(signedTxn);
+      int len = fileData.lengthSync();
+      final response = await apiClient.request(
+          body: fileData.openRead(),
+          route: APIRoute(APIType.simulateSignedBCSTransaction),
+          header: {
+            Headers.contentLengthHeader: len,
+          },
+          create: (response) =>
+              APIListResponse(createObject: Transaction(), response: response));
+      return response.decodedData!.first;
     } catch (e) {
       rethrow;
     }

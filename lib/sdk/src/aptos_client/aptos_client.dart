@@ -6,7 +6,9 @@ import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/optional_transaction_args.dart';
 import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/core/abi_builder_config/abi_builder_config.dart';
 import 'package:aptosdart/core/account/account_data.dart';
+import 'package:aptosdart/core/account_module/account_module.dart';
 import 'package:aptosdart/core/aptos_sign_message_payload/aptos_sign_message_payload.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
@@ -21,6 +23,7 @@ import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/table_item/table_item.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_builder.dart';
+import 'package:aptosdart/core/transaction_builder_remote_abi/transaction_builder_remote_abi.dart';
 import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
 import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
 import 'package:aptosdart/sdk/src/repository/table_repository/table_repository.dart';
@@ -116,6 +119,15 @@ class AptosClient {
     }
   }
 
+  Future<List<AccountModule>> getAccountModules(String address) async {
+    try {
+      final result = await _accountRepository.getAccountModules(address);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 //endregion
   //region Transaction
   Future<String> generateSignSubmitTransaction({
@@ -155,11 +167,8 @@ class AptosClient {
           BigInt.from(extraArgs?.maxGasAmount ?? MaxNumber.defaultMaxGasAmount);
       final gasUnitPrice = BigInt.from(gasEstimate!);
 
-      final expireTimestamp = BigInt.from(
-          int.parse(Utilities.getExpirationTimeStamp())
-          /*(DateTime.now().microsecondsSinceEpoch ~/ 1000) +
-              MaxNumber.defaultTxnExpSecFromNow*/
-          );
+      final expireTimestamp =
+          BigInt.from(int.parse(Utilities.getExpirationTimeStamp()));
 
       return RawTransaction(
         sequenceNumber: BigInt.parse(sequenceNumber!),
@@ -175,12 +184,58 @@ class AptosClient {
     }
   }
 
+  Future<RawTransaction> generateRawTransactionNew({
+    required String accountFrom,
+    required EntryFunctionPayload payload,
+    OptionalTransactionArgs? options,
+  }) async {
+    try {
+      RemoteABIBuilderConfig config = RemoteABIBuilderConfig(
+          sender: accountFrom, abiBuilderConfig: ABIBuilderConfig());
+      if (options?.gasUnitPrice != null) {
+        config.abiBuilderConfig!.gasUnitPrice =
+            options!.gasUnitPrice.toString();
+      }
+
+      if (options?.maxGasAmount != null) {
+        config.abiBuilderConfig!.maxGasAmount =
+            options!.maxGasAmount.toString();
+      }
+
+      // if (options?.expireTimestamp != null) {
+      //   final timestamp = int.parse(options!.expireTimestamp.toString(),radix: 10);
+      //   config.expSecFromNow = timestamp - Math.floor(Date.now() / 1000);
+      // }
+
+      final builder =
+          TransactionBuilderRemoteABI(aptosClient: this, builderConfig: config);
+
+      return await builder.build(
+          func: payload.function,
+          tyTags: payload.typeArguments!,
+          args: payload.arguments!);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Uint8List> generateBCSTransaction(
       AptosAccount accountFrom, RawTransaction rawTxn) async {
     final txnBuilder = TransactionBuilderEd25519((Uint8List uint8list) {
       final buffer = accountFrom.signBuffer(uint8list);
 
       final ed25519Signature = Ed25519Signature(buffer.toUint8Array());
+      return ed25519Signature;
+    }, accountFrom.publicKeyInHex().toUint8Array());
+    return await txnBuilder.sign(rawTxn);
+  }
+
+  Future<Uint8List> generateBCSSimulation(
+      AptosAccount accountFrom, RawTransaction rawTxn) async {
+    final txnBuilder = TransactionBuilderEd25519((Uint8List uint8list) {
+      final invalidSigBytes = Uint8List(64);
+
+      final ed25519Signature = Ed25519Signature(invalidSigBytes);
       return ed25519Signature;
     }, accountFrom.publicKeyInHex().toUint8Array());
     return await txnBuilder.sign(rawTxn);
@@ -298,7 +353,9 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> submitRawTransaction(Uint8List rawTransaction) async {
+  Future<Transaction> submitRawTransaction(
+    Uint8List rawTransaction,
+  ) async {
     try {
       final result = await _transactionRepository
           .submitSignedBCSTransaction(rawTransaction);
@@ -312,6 +369,16 @@ class AptosClient {
     try {
       final result =
           await _transactionRepository.submitSignedBCSTransaction(signedTxn);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Transaction> simulateSignedBCSTransaction(Uint8List signedTxn) async {
+    try {
+      final result =
+          await _transactionRepository.simulateSignedBCSTransaction(signedTxn);
       return result;
     } catch (e) {
       rethrow;
@@ -390,16 +457,8 @@ class AptosClient {
   Future<Uint8List> signRawTransaction(
       AptosAccount aptosAccount, RawTransaction rawTransaction) async {
     try {
-      // final signMessage = await encodeSubmission(transaction);
-      // final signature = aptosAccount.signatureHex(signMessage.trimPrefix());
-      // return TransactionSignature(
-      //     type: AppConstants.ed25519Signature,
-      //     publicKey: aptosAccount.publicKeyInHex(),
-      //     signature: signature.trimPrefix());
       final result = await generateBCSTransaction(aptosAccount, rawTransaction);
-      final temp = Uint8List.fromList(result).getRange(0, 236).toList();
-      final raw = Uint8List.fromList(temp);
-      return raw;
+      return result;
     } catch (e) {
       rethrow;
     }

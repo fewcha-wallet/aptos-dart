@@ -9,6 +9,7 @@ enum APIType {
   getTransactions,
   submitTransaction,
   submitSignedBCSTransaction,
+  simulateSignedBCSTransaction,
   simulateTransaction,
   getTransactionByHash,
   getTransactionByVersion,

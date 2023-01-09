@@ -59,7 +59,7 @@ class AptosAccountRepository with AptosSDKMixin {
       final response = await apiClient.request(
           route: APIRoute(
             APIType.getAccountModules,
-            routeParams: address.trimPrefix(),
+            routeParams: address,
           ),
           create: (response) => APIListResponse(
               createObject: AccountModule(), response: response));

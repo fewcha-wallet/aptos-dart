@@ -84,6 +84,11 @@ class APIRoute implements APIRouteConfigurable {
         path = '/$_transactions';
         headers = HeadersApi.signedTransactionHeaders;
         break;
+      case APIType.simulateSignedBCSTransaction:
+        method = APIMethod.post;
+        path = '/$_transactions/$_simulate';
+        headers = HeadersApi.signedTransactionHeaders;
+        break;
       case APIType.simulateTransaction:
         method = APIMethod.post;
         path = '/$_transactions/$_simulate';
