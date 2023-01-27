@@ -5,6 +5,7 @@ enum APIType {
   getAccountResources,
   getResourcesByType,
   getAccountModules,
+  faucetSUI,
   getAccountModuleByID,
   getTransactions,
   submitTransaction,
@@ -35,6 +36,7 @@ enum APIErrorType {
 enum RPCFunction {
   suiGetObjectsOwnedByAddress,
   suiGetObject,
+  suiFaucet,
   getTransactionsByAddress,
   suiGetTransaction,
 }

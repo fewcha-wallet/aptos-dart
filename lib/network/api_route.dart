@@ -34,6 +34,7 @@ class APIRoute implements APIRouteConfigurable {
   final String _tables = 'tables';
   final String _estimateGasPrice = 'estimate_gas_price';
   final String _item = 'item';
+  final String _gas = 'gas';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -98,6 +99,8 @@ class APIRoute implements APIRouteConfigurable {
         break;
       case APIType.getTransactionByVersion:
         path = '/$_transactions/$_byVersion/$routeParams';
+        method = APIMethod.post;
+
         break;
       case APIType.getAccountTransactions:
         if (AptosCurrentConfig.shared.transactionHistoryGraphQL!.isNotEmpty) {
@@ -134,6 +137,11 @@ class APIRoute implements APIRouteConfigurable {
         path = '/$_estimateGasPrice';
         break;
       case APIType.getListDApps:
+        break;
+      case APIType.faucetSUI:
+        method = APIMethod.post;
+        baseUrl = AptosCurrentConfig.shared.faucetUrl;
+
         break;
     }
     final options = Options(

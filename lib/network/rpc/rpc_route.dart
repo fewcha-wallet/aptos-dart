@@ -1,4 +1,5 @@
 import 'package:aptosdart/constant/api_method.dart';
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:dio/dio.dart';
@@ -31,6 +32,8 @@ class RPCRoute implements APIRouteConfigurable {
       case RPCFunction.getTransactionsByAddress:
         break;
       case RPCFunction.suiGetTransaction:
+        break;
+      case RPCFunction.suiFaucet:
         break;
     }
     final options = Options(

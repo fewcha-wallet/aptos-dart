@@ -6,7 +6,7 @@ import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
-import 'package:aptosdart/core/sui_objects/sui_objects.dart';
+import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
@@ -40,13 +40,16 @@ class SUIClient {
       final arg = AccountArg(
           privateKeyBytes: privateKeyBytes, privateKeyHex: privateKeyHex);
       suiAccount = await compute(_computeSUIAccount, arg);
-
-      // if (privateKeyBytes != null) {
-      //   suiAccount = SUIAccount(privateKeyBytes: privateKeyBytes);
-      // } else {
-      //   suiAccount = SUIAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
-      // }
       return suiAccount;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future faucet(String address) async {
+    try {
+      final result = await _suiRepository.faucet(address);
+      print(result);
     } catch (e) {
       rethrow;
     }
@@ -70,11 +73,13 @@ class SUIClient {
     }
   }
 
-  Future<TransactionPagination> getTransactionsToAddress(
-      {required String address}) async {
+  Future<TransactionPagination> getTransactionsByAddress(
+      {required String address, bool isToAddress = false}) async {
     try {
       final result = await _suiRepository.getTransactionsByAddress(
-          address: address, function: SUIConstants.suiGetTransactions);
+          address: address,
+          function: SUIConstants.suiGetTransactions,
+          isToAddress: isToAddress);
       return result;
     } catch (e) {
       rethrow;
@@ -85,9 +90,15 @@ class SUIClient {
     try {
       List<Transaction> listTrans = [];
       final transactionsFromAddress =
-          await getTransactionsToAddress(address: address);
-      if (transactionsFromAddress.data!.isNotEmpty) {
-        for (var element in transactionsFromAddress.data!) {
+          await getTransactionsByAddress(address: address);
+      final transactionsToAddress =
+          await getTransactionsByAddress(address: address, isToAddress: true);
+      final transactionMerge = <dynamic>{
+        ...transactionsFromAddress.data!,
+        ...transactionsToAddress.data!
+      };
+      if (transactionMerge.isNotEmpty) {
+        for (var element in transactionMerge) {
           final trans = await getTransactionWithEffectsBatch(element);
           listTrans.add(trans);
         }

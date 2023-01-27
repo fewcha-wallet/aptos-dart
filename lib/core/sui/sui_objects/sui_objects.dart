@@ -409,7 +409,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   String getTokenAmount() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.getAmount() /*?.amount.toString() ?? '0'*/;
+      return temp.first.getAmount();
     }
     return '0';
   }
@@ -492,9 +492,8 @@ class SUICertificateData extends Decoder<SUICertificateData> {
     if (json['transactions'] != null) {
       transactions = <SUITransferAbstract>[];
       json['transactions'].forEach((v) {
-        if (v['TransferObject'] != null) {
-          transactions!
-              .add(SUITransferObjectData.fromJson(v['TransferObject']));
+        if (v['PaySui'] != null) {
+          transactions!.add(SUIPay.fromJson(v['PaySui']));
         } else {
           transactions!.add(SUITransfer.fromJson(v));
         }
@@ -617,6 +616,52 @@ class SUITransferObjectData extends SUITransferAbstract {
   @override
   String getRecipient() {
     return recipient ?? '';
+  }
+}
+
+class SUIPay extends SUITransferAbstract {
+  int? amount;
+  String? recipients;
+
+  SUIPay({this.amount, this.recipients});
+
+  SUIPay.fromJson(Map<String, dynamic> json) {
+    amount = json['amounts'] != null ? _parseAmount(json['amounts']) : 0;
+    recipients =
+        json['recipients'] != null ? _parseRecipients(json['recipients']) : '';
+  }
+  int _parseAmount(List<dynamic> listData) {
+    int temp = 0;
+    for (var v in listData) {
+      temp += int.parse(v.toString());
+    }
+    return temp;
+  }
+
+  String _parseRecipients(List<dynamic> listData) {
+    final recipients = listData.toSet().first;
+    return recipients;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['recipient'] = amount;
+    return data;
+  }
+
+  @override
+  SUIPay decode(Map<String, dynamic> json) {
+    return SUIPay.fromJson(json);
+  }
+
+  @override
+  String getAmount() {
+    return amount.toString();
+  }
+
+  @override
+  String getRecipient() {
+    return recipients ?? '';
   }
 }
 

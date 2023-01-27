@@ -4,9 +4,12 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
-import 'package:aptosdart/core/sui_objects/sui_objects.dart';
+import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
+
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
+import 'package:aptosdart/network/api_response.dart';
+import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:aptosdart/network/rpc/rpc_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
@@ -20,6 +23,25 @@ class SUIRepository with AptosSDKMixin {
           ),
           function: SUIConstants.suiGetObjectsOwnedByAddress,
           arg: [address],
+          create: (response) => RPCListResponse(
+              createObject: ObjectsOwned(), response: response));
+
+      return result.decodedData!;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<List<ObjectsOwned>> faucet(String address) async {
+    try {
+      final body = {
+        "FixedAmountRequest": {"recipient": address}
+      };
+      final result = await apiClient.request(
+          route: APIRoute(
+            APIType.faucetSUI,
+          ),
+          body: body,
           create: (response) => RPCListResponse(
               createObject: ObjectsOwned(), response: response));
 
@@ -48,16 +70,18 @@ class SUIRepository with AptosSDKMixin {
   }
 
   Future<TransactionPagination> getTransactionsByAddress(
-      {required String address, required String function}) async {
+      {required String address,
+      required String function,
+      bool isToAddress = false}) async {
     try {
-      final addressMap = {"FromAddress": address};
+      final addressMap = {isToAddress ? "ToAddress" : "FromAddress": address};
       final result = await rpcClient.request(
           isBatch: true,
           route: RPCRoute(
             RPCFunction.getTransactionsByAddress,
           ),
           function: function,
-          arg: [addressMap, null, 10, "Ascending"],
+          arg: [addressMap, null, 10, true],
           create: (response) => RPCResponse(
               createObject: TransactionPagination(), response: response));
       return result.decodedData;

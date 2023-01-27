@@ -14,8 +14,7 @@ class HostUrl {
 
   static const faucetAptosDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
   static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
-  static const faucetSUIDevnetUrl =
-      'https://discord.com/channels/916379725201563759/971488439931392130';
+  static const faucetSUIDevnetUrl = 'https://faucet.devnet.sui.io/gas';
   static const iosSchemeURLSUIDevnet =
       'discord:///channels/916379725201563759/971488439931392130';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';

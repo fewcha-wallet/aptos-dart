@@ -1,5 +1,5 @@
 import 'package:aptosdart/constant/enums.dart';
-import 'package:aptosdart/core/sui_objects/sui_objects.dart';
+import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 
 class ComputeSUIObjectArg {
   ComputeSUIObjectType computeSUIObjectType;
