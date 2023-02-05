@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 class AccountArg {
   Uint8List? privateKeyBytes;
-  String? privateKeyHex;
+  String? privateKeyHex, mnemonics;
 
-  AccountArg({required this.privateKeyBytes, required this.privateKeyHex});
+  AccountArg({this.privateKeyBytes, this.privateKeyHex, this.mnemonics});
 }

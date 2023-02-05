@@ -86,8 +86,8 @@ extension DecimalFormatNumber on String {
     }
   }
 
-  String formatBalance() {
-    final temp = decimalFormat();
+  String formatBalance({int? decimal}) {
+    final temp = decimalFormat(decimal: decimal);
     final toDouble = double.parse(temp);
 
     final format = formatWithComma(value: toDouble);

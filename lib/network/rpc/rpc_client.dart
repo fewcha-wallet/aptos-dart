@@ -98,11 +98,11 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
       }
 
       ///If you want to use another object type such as primitive type, but you need to ensure that the response type will match your expected type
-      if (result.data is T) {
-        return result.data;
+      if (result._data is T) {
+        return result._data;
       } else {
         throw ErrorResponse.fromSystem(APIErrorType.unknown,
-            "Can not match the $T type with ${result.data.runtimeType}");
+            "Can not match the $T type with ${result._data.runtimeType}");
       }
     } on DioError catch (e) {
       if (e.response?.data != null) {

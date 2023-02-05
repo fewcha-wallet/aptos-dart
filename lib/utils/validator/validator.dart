@@ -13,6 +13,7 @@ class Validator {
   static const String suiTypeArgRegex = r'(?<=\<).+?(?=\>)';
   static const String suiTokenTypeArgRegex =
       r'^0x2::coin::Coin<(.+)::Coin::COIN>$';
+  static final pathRegex = RegExp(r"^m(\/[0-9]+')+$");
 
   static bool validatorByRegex(
       {required RegExp regExp, required String? data}) {

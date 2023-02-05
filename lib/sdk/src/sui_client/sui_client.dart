@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/sui_argument/compute_sui_object_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
@@ -7,6 +5,7 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
+import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
@@ -23,8 +22,8 @@ class SUIClient {
   }
   Future<SUIAccount> _computeSUIAccount(AccountArg arg) async {
     SUIAccount suiAccount;
-    if (arg.privateKeyBytes != null) {
-      suiAccount = SUIAccount(privateKeyBytes: arg.privateKeyBytes);
+    if (arg.mnemonics != null) {
+      suiAccount = SUIAccount(mnemonics: arg.mnemonics!);
     } else {
       suiAccount = SUIAccount.fromPrivateKey(arg.privateKeyHex!.trimPrefix());
     }
@@ -32,13 +31,13 @@ class SUIClient {
   }
 
   Future<SUIAccount> createSUIAccount({
-    Uint8List? privateKeyBytes,
+    String? mnemonics,
     String? privateKeyHex,
   }) async {
     try {
       SUIAccount suiAccount;
-      final arg = AccountArg(
-          privateKeyBytes: privateKeyBytes, privateKeyHex: privateKeyHex);
+      final arg =
+          AccountArg(mnemonics: mnemonics, privateKeyHex: privateKeyHex);
       suiAccount = await compute(_computeSUIAccount, arg);
       return suiAccount;
     } catch (e) {
@@ -46,10 +45,10 @@ class SUIClient {
     }
   }
 
-  Future faucet(String address) async {
+  Future<TransferredGasObject> faucet(String address) async {
     try {
       final result = await _suiRepository.faucet(address);
-      print(result);
+      return result;
     } catch (e) {
       rethrow;
     }

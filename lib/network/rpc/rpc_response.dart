@@ -151,6 +151,6 @@ class RPCErrorResponse extends BaseRPCResponseWrapper<Response, dynamic>
 
   @override
   String toString() {
-    return 'ErrorResponse: $error $statusMessage ${originalResponse?.data?.toString()}}';
+    return 'ErrorResponse: $error $statusMessage ${originalResponse?._data?.toString()}}';
   }
 }

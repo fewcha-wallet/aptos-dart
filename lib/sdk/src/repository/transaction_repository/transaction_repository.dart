@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
@@ -76,8 +75,11 @@ class TransactionRepository with AptosSDKMixin {
   Future<Transaction> simulateSignedBCSTransaction(Uint8List signedTxn) async {
     try {
       final fileData = await FileUtils.createTemperateBinaryFile(signedTxn);
+      String param =
+          '?estimate_gas_unit_price=true&estimate_max_gas_amount=true&estimate_prioritized_gas_unit_price=false';
       int len = fileData.lengthSync();
       final response = await apiClient.request(
+          extraPath: param,
           body: fileData.openRead(),
           route: APIRoute(APIType.simulateSignedBCSTransaction),
           header: {

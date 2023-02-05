@@ -2,11 +2,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/core/account/abstract_account.dart';
-import 'package:aptosdart/utils/extensions/hex_string.dart';
+import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart';
-import 'package:sha3/sha3.dart';
-import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 import 'package:hex/hex.dart';
 
 class SUIAccount implements AbstractAccount {
@@ -15,26 +13,29 @@ class SUIAccount implements AbstractAccount {
 
   SUIAccount._(this._privateKey, this._accountAddress, this._authenKey);
 
-  factory SUIAccount({Uint8List? privateKeyBytes, String? address}) {
+  factory SUIAccount({required String mnemonics}) {
+    Ed25519Keypair ed25519keypair = Ed25519Keypair.deriveKeypair(mnemonics);
+
     List<int> privateKey = [];
-    if (privateKeyBytes != null) {
-      privateKey = ed.newKeyFromSeed(privateKeyBytes.sublist(0, 32)).bytes;
-    } else {
-      privateKey = getKeyPair().privateKey.bytes;
-    }
-    String authenKey = authKey(public(PrivateKey(privateKey)).bytes);
-    String accountAddress = address ?? authenKey;
+    privateKey = ed25519keypair.getPrivateKey();
+    String accountAddress = ed25519keypair.getPublicKey().toSuiAddress();
     return SUIAccount._(
       privateKey,
       accountAddress,
-      authenKey,
+      '',
     );
   }
   factory SUIAccount.fromPrivateKey(String privateKeyHex) {
-    final privateKey = HEX.decode(privateKeyHex.trimPrefix());
+    final privateKey = HEX.decode(privateKeyHex);
 
-    final list = Utilities.toUint8List(privateKey);
-    return SUIAccount(privateKeyBytes: list);
+    final list = Uint8List.fromList(privateKey);
+
+    Ed25519Keypair ds = Ed25519Keypair.fromSecretKey(list);
+    return SUIAccount._(
+      ds.getPrivateKey(),
+      ds.getPublicKey().toSuiAddress(),
+      '',
+    );
   }
 
   @override
@@ -47,44 +48,35 @@ class SUIAccount implements AbstractAccount {
     return _privateKey;
   }
 
-  static KeyPair getKeyPair() {
-    return ed.generateKey();
-  }
-
-  /// Also use to create Address
-  static String authKey(List<int> publicKey) {
-    SHA3 sh3 = SHA3(256, SHA3_PADDING, 256);
-    sh3.update(utf8.encode('\x00'));
-    final result1 = sh3.update(publicKey);
-    var hash = result1.digest();
-    return HEX.encode(hash.getRange(0, 20).toList()).toHexString();
-  }
-
   /// Get public key in Hex
   @override
   String publicKeyInHex() {
-    final buffer =
-        Utilities.buffer(public(PrivateKey(_privateKey)).bytes).join('');
-    return buffer.toHexString();
+    Ed25519Keypair ed25519keypair =
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
+    final key = ed25519keypair.getPublicKey().toBase64();
+    return key;
   }
 
   String publicKeyInBase64() {
-    return base64Encode(public(PrivateKey(_privateKey)).bytes);
+    Ed25519Keypair ed25519keypair =
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
+    final key = ed25519keypair.getPublicKey().toBase64();
+    return key;
   }
 
   /// Get private key in Hex
   @override
   String privateKeyInHex() {
-    final getRange = _privateKey.getRange(0, 32).toList();
-    final buffer = Utilities.buffer(getRange).join('');
-    return buffer.toHexString();
+    Ed25519Keypair ed25519keypair =
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
+    final key = ed25519keypair.getPrivateKey();
+    return Utilities.fromUint8Array(key);
   }
 
   @override
   String signBuffer(Uint8List buffer) {
     final signed = detached(buffer);
     return base64Encode(signed);
-    // return signed.fromBytesToString().substring(0, 128).toHexString();
   }
 
   String signatureBase64(String hexString) {

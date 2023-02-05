@@ -5,6 +5,7 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
+import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
 import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
@@ -32,7 +33,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<List<ObjectsOwned>> faucet(String address) async {
+  Future<TransferredGasObject> faucet(String address) async {
     try {
       final body = {
         "FixedAmountRequest": {"recipient": address}
@@ -42,12 +43,12 @@ class SUIRepository with AptosSDKMixin {
             APIType.faucetSUI,
           ),
           body: body,
-          create: (response) => RPCListResponse(
-              createObject: ObjectsOwned(), response: response));
+          create: (response) => APIResponse(
+              createObject: TransferredGasObject(), response: response));
 
       return result.decodedData!;
     } catch (e) {
-      return [];
+      rethrow;
     }
   }
 

@@ -26,7 +26,8 @@ class BaseAPIResponseWrapper<R, E> {
   void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
     status = formatResponse[AppConstants.rootAPIStatusFormat];
     hasError = formatResponse[AppConstants.rootAPIStatusFormat] != 200 &&
-        formatResponse[AppConstants.rootAPIStatusFormat] != 202;
+        formatResponse[AppConstants.rootAPIStatusFormat] != 202 &&
+        formatResponse[AppConstants.rootAPIStatusFormat] != 201;
     statusMessage = formatResponse[AppConstants.rootAPIStatusMessageFormat];
   }
 }

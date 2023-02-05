@@ -25,46 +25,43 @@ class NetWorkRepository {
         explorerParam: HostUrl.testnet,
         explorerBaseURL: HostUrl.aptosExplorerBaseURL,
       );
-      final suiDevNet = NetworkType(
-        networkURL: HostUrl.suiDevnetUrl,
-        networkName: HostUrl.suiDevnet,
-        faucetURL: HostUrl.faucetSUIDevnetUrl,
-        coinCurrency: AppConstants.suiDefaultCurrency,
-        transactionHistoryGraphQL: '',
-        coinType: CoinType.sui,
-        explorerParam: '',
-        explorerBaseURL: HostUrl.suiExplorerBaseURL,
-      );
-      final aptosMainnet = NetworkType(
-        networkURL: HostUrl.aptosMainNetUrl,
-        networkName: HostUrl.aptosMainnet,
-        faucetURL: '',
-        coinCurrency: AppConstants.aptosDefaultCurrency,
-        transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
-        coinType: CoinType.aptos,
-        explorerParam: HostUrl.mainNet,
-        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
-      );
-      final aptosMainnet2 = NetworkType(
-        networkURL: HostUrl.aptosMainNet2Url,
-        networkName: HostUrl.aptosMainnet2,
-        faucetURL: '',
-        coinCurrency: AppConstants.aptosDefaultCurrency,
-        transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
-        coinType: CoinType.aptos,
-        explorerParam: HostUrl.mainNet,
-        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
-      );
+      final aptosMainnet = defaultAptosNetwork();
+      final suiDevNet = defaultSUINetwork();
 
       return [
         aptosDevNet,
         aptosTestNet,
-        suiDevNet,
         aptosMainnet,
-        aptosMainnet2
+        suiDevNet,
       ];
     } catch (e) {
       rethrow;
     }
+  }
+
+  NetworkType defaultAptosNetwork() {
+    return NetworkType(
+      networkURL: HostUrl.aptosMainNetUrl,
+      networkName: HostUrl.aptosMainnet,
+      faucetURL: '',
+      coinCurrency: AppConstants.aptosDefaultCurrency,
+      transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
+      coinType: CoinType.aptos,
+      explorerParam: HostUrl.mainNet,
+      explorerBaseURL: HostUrl.aptosExplorerBaseURL,
+    );
+  }
+
+  NetworkType defaultSUINetwork() {
+    return NetworkType(
+      networkURL: HostUrl.suiDevnetUrl,
+      networkName: HostUrl.suiDevnet,
+      faucetURL: HostUrl.faucetSUIDevnetUrl,
+      coinCurrency: AppConstants.suiDefaultCurrency,
+      transactionHistoryGraphQL: '',
+      coinType: CoinType.sui,
+      explorerParam: '',
+      explorerBaseURL: HostUrl.suiExplorerBaseURL,
+    );
   }
 }

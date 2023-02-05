@@ -171,7 +171,7 @@ class SUIFields extends Decoder<SUIFields> {
   });
 
   SUIFields.fromJson(Map<String, dynamic> json) {
-    balance = json['balance'] ?? 0;
+    balance = json['balance'] != null ? int.parse(json['balance']) : 0;
     description = json['description'];
     name = json['name'];
     url = json['url'];

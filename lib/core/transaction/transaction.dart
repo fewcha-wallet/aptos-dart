@@ -191,7 +191,7 @@ class Transaction extends Decoder<Transaction> {
   }
 
   String getGasFeeRemoveTrailingZeros() {
-    if (gasUsed != null) return gasUsed!.removeTrailingZeros();
+    if (gasUsed != null) return aptosCalculateGasFee().removeTrailingZeros();
     return (maxGasAmount ?? '0').removeTrailingZeros();
   }
 
@@ -214,6 +214,11 @@ class Transaction extends Decoder<Transaction> {
       }
     }
     return '';
+  }
+
+  String aptosCalculateGasFee() {
+    int result = int.parse(gasUsed ?? '0') * int.parse(gasUnitPrice ?? '0');
+    return result.toString();
   }
 }
 
@@ -633,5 +638,25 @@ class RawTransaction {
       expirationTimestampSecs: expirationTimestampSecs,
       chainId: chainId,
     );
+  }
+
+  void updateDataFromSimulate(
+      {required String? sequenceNumberInput,
+      required String? maxGasAmountInput,
+      required String? gasUnitPriceInput,
+      required String? expirationTimestampSecsInput}) {
+    sequenceNumber = sequenceNumberInput != null
+        ? BigInt.parse(sequenceNumberInput)
+        : sequenceNumber;
+    maxGasAmount = maxGasAmountInput != null
+        ? BigInt.parse(maxGasAmountInput)
+        : maxGasAmount;
+    gasUnitPrice = gasUnitPriceInput != null
+        ? BigInt.parse(gasUnitPriceInput)
+        : gasUnitPrice;
+
+    expirationTimestampSecs = expirationTimestampSecsInput != null
+        ? BigInt.parse(expirationTimestampSecsInput)
+        : expirationTimestampSecs;
   }
 }

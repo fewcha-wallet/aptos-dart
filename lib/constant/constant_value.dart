@@ -148,6 +148,8 @@ class SUIConstants {
   static const String coinJoinFuncName = 'join';
   static const String suiConstruct = '0x2::sui::SUI';
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
+  static const hardenedOffset = 0x80000000;
+  static const String defaultEd25519DerivationPath = "m/44'/784'/0'/0'/0'";
 }
 
 class Abis {
