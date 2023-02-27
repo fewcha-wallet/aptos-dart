@@ -26,13 +26,24 @@ class NetWorkRepository {
         explorerBaseURL: HostUrl.aptosExplorerBaseURL,
       );
       final aptosMainnet = defaultAptosNetwork();
-      final suiDevNet = defaultSUINetwork();
 
+      final suiDevNet = defaultSUINetwork();
+      final suiTestNet = NetworkType(
+        networkURL: HostUrl.suiTestnetUrl,
+        networkName: HostUrl.suiTestnet,
+        faucetURL: HostUrl.faucetSUITestnetUrl,
+        coinCurrency: AppConstants.suiDefaultCurrency,
+        transactionHistoryGraphQL: '',
+        coinType: CoinType.sui,
+        explorerParam: HostUrl.testnet,
+        explorerBaseURL: HostUrl.suiExplorerBaseURL,
+      );
       return [
         aptosDevNet,
         aptosTestNet,
         aptosMainnet,
         suiDevNet,
+        suiTestNet,
       ];
     } catch (e) {
       rethrow;
@@ -60,7 +71,7 @@ class NetWorkRepository {
       coinCurrency: AppConstants.suiDefaultCurrency,
       transactionHistoryGraphQL: '',
       coinType: CoinType.sui,
-      explorerParam: '',
+      explorerParam: HostUrl.devNet,
       explorerBaseURL: HostUrl.suiExplorerBaseURL,
     );
   }

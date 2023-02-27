@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/core/account/abstract_account.dart';
+import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
 import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
+import 'package:aptosdart/core/sui/publickey/public_key.dart' as suiPK;
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart';
 import 'package:hex/hex.dart';
@@ -26,7 +29,7 @@ class SUIAccount implements AbstractAccount {
     );
   }
   factory SUIAccount.fromPrivateKey(String privateKeyHex) {
-    final privateKey = HEX.decode(privateKeyHex);
+    final privateKey = HEX.decode(privateKeyHex.trimPrefix());
 
     final list = Uint8List.fromList(privateKey);
 
@@ -57,6 +60,13 @@ class SUIAccount implements AbstractAccount {
     return key;
   }
 
+  suiPK.PublicKey publicKeyByte() {
+    Ed25519Keypair ed25519keypair =
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
+    final key = ed25519keypair.getPublicKey();
+    return key;
+  }
+
   String publicKeyInBase64() {
     Ed25519Keypair ed25519keypair =
         Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
@@ -76,6 +86,8 @@ class SUIAccount implements AbstractAccount {
   @override
   String signBuffer(Uint8List buffer) {
     final signed = detached(buffer);
+    Base64DataBuffer(signed);
+
     return base64Encode(signed);
   }
 

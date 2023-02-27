@@ -9,7 +9,7 @@ class Validator {
   static final coinStructType =
       RegExp(r"0x1::coin::CoinStore<(0x[0-9A-Fa-f]+::[^>]+)>");
   static final removingTrailingZeros = RegExp(r'([.]*0)(?!.*\d)');
-  static const String suiCoinTypeArgRegex = r'0x2::coin::Coin<(.+)::sui::SUI>$';
+  static const String suiCoinTypeArgRegex = r'0x2::coin::Coin<(.+)>$';
   static const String suiTypeArgRegex = r'(?<=\<).+?(?=\>)';
   static const String suiTokenTypeArgRegex =
       r'^0x2::coin::Coin<(.+)::Coin::COIN>$';
@@ -44,13 +44,14 @@ class Validator {
     return result;
   }
 
-  static String? getMatchData({required RegExp regExp, String? str}) {
+  static String? getMatchData(
+      {required RegExp regExp, required String? str, int groupIndex = 0}) {
     if (str == null) return null;
     if (str.trim().isEmpty) return null;
 
     final match = regExp.firstMatch(str);
     if (match != null) {
-      return match.group(0);
+      return match.group(groupIndex);
     }
     return null;
   }

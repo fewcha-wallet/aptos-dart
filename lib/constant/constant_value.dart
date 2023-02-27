@@ -4,22 +4,27 @@ class HostUrl {
   static const aptosDevnet = 'Aptos Devnet';
   static const aptosTestnet = 'Aptos Testnet';
   static const aptosMainnet = 'Aptos Mainnet';
-  static const aptosMainnet2 = 'Aptos Mainnet 2';
   static const suiDevnet = "SUI Devnet";
+  static const suiTestnet = "SUI Testnet";
 
-  static const aptosDevUrl = 'https://fullnode.devnet.aptoslabs.com/v1';
-  static const aptosTestNetUrl = 'https://fullnode.testnet.aptoslabs.com/v1';
-  static const aptosMainNetUrl = 'https://fullnode.mainnet.aptoslabs.com/v1';
-  static const aptosMainNet2Url = 'https://mainnet.aptoslabs.com/v1';
+  static const aptosDevUrl = 'https://devnet.aptoslabs.com/v1';
+  static const aptosTestNetUrl = 'https://testnet.aptoslabs.com/v1';
+  static const aptosMainNetUrl = 'https://mainnet.aptoslabs.com/v1';
 
   static const faucetAptosDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
   static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
+
   static const faucetSUIDevnetUrl = 'https://faucet.devnet.sui.io/gas';
+  static const faucetSUITestnetUrl = 'https://faucet.testnet.sui.io/gas';
+
   static const iosSchemeURLSUIDevnet =
       'discord:///channels/916379725201563759/971488439931392130';
   static const ipfsFewcha = 'https://ipfs.fewcha.app/ipfs/';
+  static const ipfsSUI = 'https://ipfs.io/ipfs/';
 
   static const String suiDevnetUrl = "https://fullnode.devnet.sui.io";
+  static const String suiTestnetUrl =
+      "https://fullnode-explorer.testnet.sui.io:443";
 
   static const String aptosMainnetGraphql =
       'https://indexer.mainnet.aptoslabs.com/v1/graphql';
@@ -27,30 +32,12 @@ class HostUrl {
       'https://indexer-testnet.staging.gcp.aptosdev.com/v1/graphql';
   static const String aptosDevnetGraphql =
       'https://indexer-devnet.staging.gcp.aptosdev.com/v1/graphql';
+
   static const String aptosExplorerBaseURL = "https://explorer.aptoslabs.com";
-  static const String suiExplorerBaseURL = "https://explorer.devnet.sui.io";
+  static const String suiExplorerBaseURL = "https://explorer.sui.io";
   static const String devNet = "Devnet";
   static const String testnet = "Testnet";
   static const String mainNet = "Mainnet";
-
-  static const Map<String, String> hostUrlMap = {
-    aptosDevnet: aptosDevUrl,
-    aptosTestnet: aptosTestNetUrl,
-    aptosMainnet: aptosMainNetUrl,
-    suiDevnet: suiDevnetUrl,
-  };
-  static const Map<String, String> faucetUrlMap = {
-    aptosDevnet: faucetAptosDevnetUrl,
-    aptosTestnet: faucetAptosTestnetUrl,
-    aptosMainnet: '',
-    suiDevnet: faucetSUIDevnetUrl,
-  };
-  static const Map<String, String> transactionHistoryGraphQLUrlMap = {
-    aptosDevnet: aptosDevnetGraphql,
-    aptosTestnet: aptosTestnetGraphql,
-    aptosMainnet: aptosMainnetGraphql,
-    suiDevnet: '',
-  };
 }
 
 class ExtraKeys {
@@ -89,7 +76,8 @@ class AppConstants {
   static const String tokenDepositEvent0x3 = "0x3::token::DepositEvent";
   static const String mintTokenEvent0x3 = "0x3::token::MintTokenEvent";
   static const String gasFeeEvent = "0x1::aptos_coin::GasFeeEvent";
-
+  static const String kanaAggregatorv1 =
+      "kana_aggregatorv1::intermediate_route";
   static const String tokenTransfersClaimScript =
       '0x3::token_transfers::claim_script';
   static const String optInDirectTransfer =
@@ -131,13 +119,18 @@ class SUIConstants {
   static const String suiTransferSui = 'sui_transferSui';
   static const String suiTransferObject = 'sui_transferObject';
   static const String suiDryRunTransaction = 'sui_dryRunTransaction';
+  static const String suiPaySui = 'sui_paySui';
   static const String suiExecuteTransaction = 'sui_executeTransaction';
+  static const String suiExecuteTransactionSerializedSig =
+      'sui_executeTransactionSerializedSig';
+  static const String waitForLocalExecution = 'WaitForLocalExecution';
   static const String gateway = 'gateway';
   static const String fullnode = 'fullnode';
   static const String success = 'success';
 
-  static const int defaultGasBudgetForTransferSui = 100;
+  static const int defaultGasBudgetForTransferSui = 110;
   static const int defaultGasBudgetForTransfer = 100;
+  static const int defaultGasBudgetForPay = 150;
 
   static const int defaultGasBudgetForMerge = 5000;
   static const int defaultGasBudgetForSplit = 1000;
@@ -146,6 +139,7 @@ class SUIConstants {
   static const String coinModuleName = 'coin';
   static const String coinSplitVecFuncName = 'split_vec';
   static const String coinJoinFuncName = 'join';
+  static const String moveObject = 'moveObject';
   static const String suiConstruct = '0x2::sui::SUI';
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
   static const hardenedOffset = 0x80000000;
@@ -189,30 +183,34 @@ class GraphQLConstant {
   static const String getAccountCoinActivity = 'getAccountCoinActivity';
   static const String getAccountTokenActivity = 'getAccountTokenActivity';
   static const String getAccountCoinQuery = r""" 
-     query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {
-      coin_activities(
-      where: { owner_address: { _eq: $address } }
-      limit: $limit
-      offset: $offset
-      order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]
-      ) {
-      ...CoinActivityFields
-      }
-    }
-    fragment CoinActivityFields on coin_activities {
-    transaction_timestamp
-    transaction_version
-    amount
-    activity_type
-    coin_type
-    is_gas_fee
-    is_transaction_success
-    event_account_address
-    event_creation_number
-    event_sequence_number
-    entry_function_id_str
-    block_height
-    }""";
+   query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {
+  coin_activities(
+    where: {owner_address: {_eq: $address}}
+    limit: $limit
+    offset: $offset
+    order_by: [{transaction_version: desc}, {event_account_address: desc}, {event_creation_number: desc}, {event_sequence_number: desc}]
+  ) {
+    ...CoinActivityFields
+    __typename
+  }
+}
+
+fragment CoinActivityFields on coin_activities {
+  transaction_timestamp
+  transaction_version
+  amount
+  activity_type
+  coin_type
+  is_gas_fee
+  is_transaction_success
+  event_account_address
+  event_creation_number
+  event_sequence_number
+  entry_function_id_str
+  block_height
+  __typename
+}
+""";
   static const String getAccountTokenQuery =
       r'query getAccountTokenActivity($address: String!, $offset: Int, $limit: Int) { token_activities( where: { _or: [{ from_address: { _eq: $address } }, { to_address: { _eq: $address } }] } limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {  ...TokenActivityFields } }  fragment TokenActivityFields on token_activities { coin_amount   coin_type   collection_data_id_hash    collection_name   creator_address   event_account_address   event_creation_number   from_address   event_sequence_number    name   property_version   to_address   token_amount  token_data_id_hash   transaction_timestamp   transaction_version   transfer_type }';
 }

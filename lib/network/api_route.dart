@@ -34,7 +34,6 @@ class APIRoute implements APIRouteConfigurable {
   final String _tables = 'tables';
   final String _estimateGasPrice = 'estimate_gas_price';
   final String _item = 'item';
-  final String _gas = 'gas';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -99,7 +98,7 @@ class APIRoute implements APIRouteConfigurable {
         break;
       case APIType.getTransactionByVersion:
         path = '/$_transactions/$_byVersion/$routeParams';
-        method = APIMethod.post;
+        method = APIMethod.get;
 
         break;
       case APIType.getAccountTransactions:

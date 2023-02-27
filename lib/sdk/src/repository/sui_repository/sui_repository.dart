@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
+import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
+import 'package:aptosdart/core/sui/coin/sui_coin.dart';
+import 'package:aptosdart/core/sui/publickey/public_key.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
@@ -13,7 +19,12 @@ import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:aptosdart/network/rpc/rpc_route.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
+import 'package:aptosdart/utils/extensions/list_extension.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
+import 'package:aptosdart/utils/serializer/serializer.dart';
+import 'package:aptosdart/utils/utilities.dart';
+import 'package:hex/hex.dart';
 
 class SUIRepository with AptosSDKMixin {
   Future<List<ObjectsOwned>> getObjectsOwnedByAddress(String address) async {
@@ -82,7 +93,7 @@ class SUIRepository with AptosSDKMixin {
             RPCFunction.getTransactionsByAddress,
           ),
           function: function,
-          arg: [addressMap, null, 10, true],
+          arg: [addressMap, null, null, true],
           create: (response) => RPCResponse(
               createObject: TransactionPagination(), response: response));
       return result.decodedData;
@@ -111,6 +122,7 @@ class SUIRepository with AptosSDKMixin {
           gasCurrencyCode: AppConstants.suiDefaultCurrency,
           timestamp: temp.getTimeStamp(),
           hash: temp.getHash(),
+          sender: temp.getSender(),
           gasUsed: temp.getTotalGasUsed().toString(),
           payload: Payload(arguments: [
             temp.getTokenAmount(),
@@ -156,7 +168,7 @@ class SUIRepository with AptosSDKMixin {
       final arg =
           SUIArgument(txBytes: (results).txBytes, suiAccount: suiAccount);
 
-      final signResult = await signAndExecuteTransaction(arg);
+      final signResult = await executeTransaction(arg);
       return signResult;
     } catch (e) {
       rethrow;
@@ -191,7 +203,7 @@ class SUIRepository with AptosSDKMixin {
           txBytes: (result.decodedData as SUITransactionBytes).txBytes,
           suiAccount: suiAccount);
 
-      final signResult = await signAndExecuteTransaction(arg);
+      final signResult = await executeTransaction(arg);
       return signResult;
     } catch (e) {
       rethrow;
@@ -232,7 +244,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<EffectsCert> signAndExecuteTransaction(
+  Future<EffectsCert> executeTransaction(
     SUIArgument suiArgument,
   ) async {
     try {
@@ -250,6 +262,53 @@ class SUIRepository with AptosSDKMixin {
           ],
           create: (response) =>
               RPCResponse(createObject: EffectsCert(), response: response));
+      return result.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransaction> signAndExecuteTransaction(
+    SUIArgument suiArgument,
+  ) async {
+    try {
+      final intentBytes = [0, 0, 0];
+      final txBytes = Base64DataBuffer(suiArgument.txBytes);
+      final intentMessage1 = Uint8List(
+        intentBytes.length + txBytes.getLength(),
+      );
+      intentMessage1.setAll(0, intentBytes);
+      intentMessage1.setAll(intentBytes.length, txBytes.getData());
+
+      final dataToSign = Base64DataBuffer(intentMessage1);
+      final sig =
+          suiArgument.suiAccount!.signatureBase64(dataToSign.toString());
+
+      ///
+      final signature = Base64DataBuffer(sig);
+
+      final intentMessage = Uint8List(
+        1 +
+            signature.getLength() +
+            suiArgument.suiAccount!.publicKeyByte().toBytes().length,
+      );
+
+      intentMessage.setAll(0, intentBytes);
+      intentMessage.setAll(1, signature.getData());
+      intentMessage.setAll(1 + signature.getLength(),
+          suiArgument.suiAccount!.publicKeyByte().toBytes());
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiExecuteTransactionSerializedSig,
+          arg: [
+            suiArgument.txBytes,
+            Base64DataBuffer(intentMessage).toString(),
+            SUIConstants.waitForLocalExecution
+          ],
+          create: (response) =>
+              RPCResponse(createObject: SUITransaction(), response: response));
       return result.decodedData!;
     } catch (e) {
       rethrow;
@@ -276,8 +335,7 @@ class SUIRepository with AptosSDKMixin {
     try {
       final txBytes = await newTransferObject(suiArgument);
 
-      final result =
-          await signAndExecuteTransaction(suiArgument..txBytes = txBytes);
+      final result = await executeTransaction(suiArgument..txBytes = txBytes);
       return result;
     } catch (e) {
       rethrow;
@@ -304,8 +362,7 @@ class SUIRepository with AptosSDKMixin {
     try {
       final txBytes = await newTransferSui(suiArgument);
 
-      final result =
-          await signAndExecuteTransaction(suiArgument..txBytes = txBytes);
+      final result = await executeTransaction(suiArgument..txBytes = txBytes);
       return result;
     } catch (e) {
       rethrow;
@@ -365,28 +422,121 @@ class SUIRepository with AptosSDKMixin {
   ) async {
     try {
       final result = await dryRunTransaction(
-          suiArgument.txBytes!,
-          SUIConstants.ed25519,
+        suiArgument.txBytes!,
+        /* SUIConstants.ed25519,
           suiArgument.suiAccount!.signatureBase64(suiArgument.txBytes!),
-          suiArgument.suiAccount!.publicKeyInBase64());
+          suiArgument.suiAccount!.publicKeyInBase64()*/
+      );
       return result;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<SUIEffects> dryRunTransaction(String txnBytes, String signatureScheme,
-      String signature, String pubkey) async {
+  Future<SUIEffects> dryRunTransaction(String txnBytes) async {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
             RPCFunction.suiGetTransaction,
           ),
           function: SUIConstants.suiDryRunTransaction,
-          arg: [txnBytes, signatureScheme, signature, pubkey],
+          arg: [txnBytes],
           create: (response) =>
               RPCResponse(createObject: SUIEffects(), response: response));
       return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransactionBytes> paySui({
+    required String accountAddress,
+    required String recipients,
+    required List<String> inputCoins,
+    required num amounts,
+    required int gasBudget,
+  }) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiPaySui,
+          arg: [
+            accountAddress,
+            inputCoins,
+            [recipients],
+            [amounts],
+            gasBudget
+          ],
+          create: (response) => RPCResponse(
+              createObject: SUITransactionBytes(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransactionBytes> newPayTransaction({
+    required List<SUIObjects> allCoins,
+    required String coinTypeArg,
+    required String recipient,
+    required String accountAddress,
+    required num amountToSend,
+    required int gasBudget,
+  }) async {
+    try {
+      bool isSuiTransfer = coinTypeArg == SUIConstants.suiConstruct;
+      final coinsOfTransferType = allCoins
+          .where(
+            (aCoin) => SUICoin.getCoinTypeArg(aCoin) == coinTypeArg,
+          )
+          .toList();
+
+      List<SUIObjects> coinsOfGas = isSuiTransfer
+          ? coinsOfTransferType
+          : allCoins.where((aCoin) => SUICoin.isSUI(aCoin)).toList();
+
+      SUIObjects? gasCoin = SUICoin.selectCoinWithBalanceGreaterThanOrEqual(
+        coins: coinsOfGas,
+        amount: (gasBudget),
+      );
+
+      if (gasCoin == null) {
+        throw (' Unable to find a coin to cover the gas budget $gasBudget');
+      }
+      int totalAmountIncludingGas = amountToSend.toInt() +
+          (isSuiTransfer
+              ? // subtract from the total the balance of the gasCoin as it's going be the first element of the inputCoins
+              (gasBudget) - (SUICoin.getBalance(gasCoin) ?? 0)
+              : 0);
+
+      List<SUIObjects> inputCoinObjs = totalAmountIncludingGas > 0
+          ? SUICoin.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
+              coins: coinsOfTransferType,
+              amount: totalAmountIncludingGas,
+              exclude: isSuiTransfer ? [SUICoin.getID(gasCoin)] : [],
+            )
+          : [];
+      if (totalAmountIncludingGas > 0 && !inputCoinObjs.isNotEmpty) {
+        final totalBalanceOfTransferType =
+            SUICoin.totalBalance(coinsOfTransferType);
+        final suggestedAmountToSend =
+            totalBalanceOfTransferType - (isSuiTransfer ? gasBudget : 0);
+        // TODO: denomination for values?
+        throw ('Coin balance $totalBalanceOfTransferType is not sufficient to cover the transfer amount' +
+            '$amountToSend. Try reducing the transfer amount to $suggestedAmountToSend.');
+      }
+      if (isSuiTransfer) {
+        inputCoinObjs.insertAll(0, [gasCoin]);
+      }
+      final result = await paySui(
+          amounts: amountToSend,
+          recipients: recipient,
+          gasBudget: gasBudget,
+          inputCoins: inputCoinObjs.map((e) => e.getID()).toList(),
+          accountAddress: accountAddress);
+      return result;
     } catch (e) {
       rethrow;
     }

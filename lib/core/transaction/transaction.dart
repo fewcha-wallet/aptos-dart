@@ -145,15 +145,23 @@ class Transaction extends Decoder<Transaction> {
   }
 
   String tokenAmount() {
-    if (payload?.arguments != null) {
+    try {
+      if (payload?.arguments == null) return '0';
+      if (payload!.arguments!.isEmpty) return '0';
+
+      if ((payload?.function ?? '').contains(AppConstants.kanaAggregatorv1)) {
+        return payload!.arguments![7];
+      }
       if (payload!.arguments!.isNotEmpty) {
         final s = payload!.arguments!.firstWhere(
-            (element) => Utilities.isNumeric(element),
+            (element) => Utilities.isNumeric(element.toString()),
             orElse: () => '0');
         return s;
       }
+      return '0';
+    } catch (e) {
+      return '0';
     }
-    return '0';
   }
 
   String recipientAddress() {
@@ -195,6 +203,11 @@ class Transaction extends Decoder<Transaction> {
     return (maxGasAmount ?? '0').removeTrailingZeros();
   }
 
+  String getAptosGasFee() {
+    if (gasUsed != null) return aptosCalculateGasFee();
+    return (maxGasAmount ?? '0');
+  }
+
   String tokenAmountInDecimalFormat() {
     return tokenAmount().decimalFormat();
   }
@@ -217,7 +230,7 @@ class Transaction extends Decoder<Transaction> {
   }
 
   String aptosCalculateGasFee() {
-    int result = int.parse(gasUsed ?? '0') * int.parse(gasUnitPrice ?? '0');
+    int result = int.parse(gasUsed ?? '0') * int.parse(gasUnitPrice ?? '1');
     return result.toString();
   }
 }

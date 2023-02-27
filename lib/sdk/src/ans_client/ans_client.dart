@@ -15,4 +15,14 @@ class ANSClient {
       rethrow;
     }
   }
+
+  Future<ANSProfile> getSUINFT(String address) async {
+    try {
+      final add = address.split('/').last;
+      final result = await _ipfsRepo.getANSProfile(add);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

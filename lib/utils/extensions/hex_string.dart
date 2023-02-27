@@ -74,7 +74,7 @@ extension DecimalFormatNumber on String {
     final number = double.parse(this);
     final powDecimal = pow(10, -decimal);
     final result = (number * powDecimal).toStringAsFixed(8);
-    return result;
+    return removeTrailing(result);
   }
 
   String removeTrailingZeros({int? decimal}) {
@@ -86,12 +86,20 @@ extension DecimalFormatNumber on String {
     }
   }
 
+  String removeTrailing(String number) {
+    if (number.contains('.')) {
+      return number.replaceAll(RegExp(r"([.]*0+)(?!.*\d)"), "");
+    } else {
+      return number.toString();
+    }
+  }
+
   String formatBalance({int? decimal}) {
     final temp = decimalFormat(decimal: decimal);
     final toDouble = double.parse(temp);
 
     final format = formatWithComma(value: toDouble);
-    return format;
+    return removeTrailing(format);
   }
 
   String formatWithComma({double? value}) {
@@ -134,6 +142,10 @@ extension NumberExtension on num {
     if (!haveDot && suffix.isNotEmpty) {
       result =
           "$result.${List.generate(suffix.length, (index) => "0").join("")}";
+    }
+    if (result.startsWith('.')) {
+      final temp = "0$result";
+      return temp;
     }
     return result;
   }

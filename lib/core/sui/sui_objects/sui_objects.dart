@@ -33,6 +33,10 @@ class SUIObjects extends Decoder<SUIObjects> {
     return details?.data?.fields?.balance ?? 0;
   }
 
+  SUIFields? getFields() {
+    return details?.data?.fields;
+  }
+
   void addBalance(int balance) {
     details?.data?.fields?.balance =
         (details?.data?.fields?.balance ?? 0) + balance;
@@ -42,8 +46,16 @@ class SUIObjects extends Decoder<SUIObjects> {
     return details?.data?.fields?.id?.id ?? '';
   }
 
+  String? getReferenceObjectID() {
+    return details?.reference?.objectId;
+  }
+
   String getType() {
     return details?.data?.type ?? '';
+  }
+
+  String getDataType() {
+    return details?.data?.dataType ?? '';
   }
 
   String getSUITokenSymbol() {
@@ -52,6 +64,10 @@ class SUIObjects extends Decoder<SUIObjects> {
 
   bool isSUICoinObject() {
     return Validator.isSUICoinObject(details?.data?.type);
+  }
+
+  bool isSUIMoveObject() {
+    return getDataType() == SUIConstants.moveObject;
   }
 
   bool isSUITokenObject() {
@@ -66,12 +82,20 @@ class SUIObjects extends Decoder<SUIObjects> {
     return details?.data?.fields?.name ?? '';
   }
 
+  String getNFTAmount() {
+    return details?.data?.fields?.balance.toString() ?? '0';
+  }
+
   String getNFTDes() {
     return details?.data?.fields?.description ?? '';
   }
 
   String getNFTUrl() {
-    return details?.data?.fields?.url ?? '';
+    if (details?.data?.fields?.url == null) return '';
+    String url = HostUrl.ipfsSUI +
+        '${details?.data?.fields?.url!.replaceFirst('ipfs://', '')}';
+    return url;
+    // return details?.data?.fields?.url ?? '';
   }
 
   String getSUITypeArg() {
@@ -384,7 +408,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   }
 
   String? getHash() {
-    return effects?.transactionDigest;
+    return suiCertificate?.transactionDigest;
   }
 
   num getTotalGasUsed() {
@@ -404,6 +428,11 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     }
 
     return null;
+  }
+
+  String? getSender() {
+    final temp = suiCertificate?.data?.sender;
+    return temp;
   }
 
   String getTokenAmount() {
@@ -451,6 +480,10 @@ class SUIEffects extends Decoder<SUIEffects> {
     return data;
   }
 
+  bool isSucceed() {
+    return status?.status != 'failure';
+  }
+
   @override
   SUIEffects decode(Map<String, dynamic> json) {
     return SUIEffects.fromJson(json);
@@ -459,12 +492,14 @@ class SUIEffects extends Decoder<SUIEffects> {
 
 class SUICertificate extends Decoder<SUICertificate> {
   SUICertificateData? data;
-
-  SUICertificate({this.data});
+  String? transactionDigest;
+  SUICertificate({this.data, this.transactionDigest});
 
   SUICertificate.fromJson(Map<String, dynamic> json) {
     data =
         json['data'] != null ? SUICertificateData.fromJson(json['data']) : null;
+    transactionDigest =
+        json['transactionDigest'] != null ? json['transactionDigest'] : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -773,5 +808,20 @@ class SUITransactionBytes extends Decoder<SUITransactionBytes> {
   @override
   SUITransactionBytes decode(Map<String, dynamic> json) {
     return SUITransactionBytes.fromJson(json);
+  }
+}
+
+class SUITransactionSimulateResult extends Decoder<SUITransactionBytes> {
+  String? txBytes;
+  int? gas;
+  SUITransactionSimulateResult({
+    required this.txBytes,
+    required this.gas,
+  });
+
+  @override
+  SUITransactionBytes decode(Map<String, dynamic> json) {
+    // TODO: implement decode
+    throw UnimplementedError();
   }
 }
