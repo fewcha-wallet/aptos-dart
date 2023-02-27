@@ -95,7 +95,6 @@ class SUIObjects extends Decoder<SUIObjects> {
     String url = HostUrl.ipfsSUI +
         '${details?.data?.fields?.url!.replaceFirst('ipfs://', '')}';
     return url;
-    // return details?.data?.fields?.url ?? '';
   }
 
   String getSUITypeArg() {
@@ -323,11 +322,6 @@ class SUITransaction extends Decoder<SUITransaction> {
     return false;
   }
 
-  // String? getTimeStamp() {
-  //   if (timestampMs != null) return (timestampMs! * 1000).toString();
-  //   return '0';
-  // }
-
   String? getHash() {
     return effects?.transactionDigest;
   }
@@ -343,7 +337,7 @@ class SUITransaction extends Decoder<SUITransaction> {
   String getToAddress() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.getRecipient() /*?.recipient ?? ''*/;
+      return temp.first.getRecipient();
     }
 
     return '';
@@ -352,7 +346,7 @@ class SUITransaction extends Decoder<SUITransaction> {
   String getTokenAmount() {
     final temp = suiCertificate?.data?.transactions;
     if (temp != null) {
-      return temp.first.getAmount() /*?.amount.toString() ?? '0'*/;
+      return temp.first.getAmount();
     }
     return '0';
   }
@@ -540,9 +534,6 @@ class SUICertificateData extends Decoder<SUICertificateData> {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    // if (transactions != null) {
-    //   data['transactions'] = transactions!.map((v) => v.toJson()).toList();
-    // }
     data['sender'] = sender;
     data['gasBudget'] = gasBudget;
     return data;

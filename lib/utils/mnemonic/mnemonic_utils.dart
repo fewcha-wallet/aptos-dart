@@ -48,10 +48,8 @@ class MnemonicUtils {
 
     final indexByte = buffer;
     final zero = Uint8List.fromList([0]);
-    // print(keys.key);
 
     final data = Uint8List.fromList([...zero, ...keys.key, ...indexByte]);
-    // print(data);
 
     final I = crypto.Hmac(crypto.sha512, keys.chainCode).convert(data).bytes;
     final first = I.getRange(0, 32).toList();
@@ -64,7 +62,6 @@ class MnemonicUtils {
       return false;
     }
     final lsitSplit = path.split("/");
-    // print(lsitSplit.getRange(1, lsitSplit.length).map(replaceDerive));
     return !lsitSplit
         .getRange(1, lsitSplit.length)
         .map(replaceDerive)

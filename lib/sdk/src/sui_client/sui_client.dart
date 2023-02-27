@@ -340,17 +340,6 @@ class SUIClient {
     }
   }
 
-  // Future<SUITransactionBytes> simulateTransaction({
-  //   required SUIArgument suiArgument,
-  // }) async {
-  //   try {
-  //     final result = await paySui(suiArgument: suiArgument);
-  //     return result;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
-
   Future<SUIEffects?> simulateSendTokenTransaction({
     required SUIArgument suiArgument,
   }) async {
