@@ -24,7 +24,8 @@ class Ed25519PublicKey extends PublicKey {
     }
 
     if (_data.length != publicKeySize) {
-      throw ('Invalid public key input. Expected $publicKeySize bytes, got ${_data.length}');
+      throw ArgumentError(
+          'Invalid public key input. Expected $publicKeySize bytes, got ${_data.length}');
     }
   }
 
