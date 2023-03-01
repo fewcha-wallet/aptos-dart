@@ -51,7 +51,9 @@ class Deserializer {
   }
 
   Uint8List read(int length) {
-    if (_offset + length > _buffer.buffer.lengthInBytes) throw 'error';
+    if (_offset + length > _buffer.buffer.lengthInBytes) {
+      throw 'Reached to the end of buffer';
+    }
 
     final bytes = _buffer.getRange(_offset, _offset + length);
     _offset += length;

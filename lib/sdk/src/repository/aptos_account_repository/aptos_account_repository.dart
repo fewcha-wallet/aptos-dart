@@ -15,8 +15,7 @@ class AptosAccountRepository with AptosSDKMixin {
   Future<AccountData> getAccount(String address) async {
     try {
       final response = await apiClient.request(
-          route:
-              APIRoute(APIType.getAccount, routeParams: address.trimPrefix()),
+          route: APIRoute(APIType.getAccount, routeParams: address),
           create: (response) =>
               APIResponse(createObject: AccountData(), response: response));
       return response.decodedData!;
