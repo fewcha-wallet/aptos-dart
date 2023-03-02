@@ -5,16 +5,7 @@ import 'package:aptosdart/core/network_type/network_type.dart';
 class NetWorkRepository {
   List<NetworkType> getListNetWork() {
     try {
-      final aptosDevNet = NetworkType(
-        networkURL: HostUrl.aptosDevUrl,
-        networkName: HostUrl.aptosDevnet,
-        faucetURL: HostUrl.faucetAptosDevnetUrl,
-        coinCurrency: AppConstants.aptosDefaultCurrency,
-        transactionHistoryGraphQL: HostUrl.aptosDevnetGraphql,
-        coinType: CoinType.aptos,
-        explorerParam: HostUrl.devNet,
-        explorerBaseURL: HostUrl.aptosExplorerBaseURL,
-      );
+      final aptosDevNet = devNetAptosNetwork();
       final aptosTestNet = NetworkType(
         networkURL: HostUrl.aptosTestNetUrl,
         networkName: HostUrl.aptosTestnet,
@@ -59,6 +50,19 @@ class NetWorkRepository {
       transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
       coinType: CoinType.aptos,
       explorerParam: HostUrl.mainNet,
+      explorerBaseURL: HostUrl.aptosExplorerBaseURL,
+    );
+  }
+
+  NetworkType devNetAptosNetwork() {
+    return NetworkType(
+      networkURL: HostUrl.aptosDevUrl,
+      networkName: HostUrl.aptosDevnet,
+      faucetURL: HostUrl.faucetAptosDevnetUrl,
+      coinCurrency: AppConstants.aptosDefaultCurrency,
+      transactionHistoryGraphQL: HostUrl.aptosDevnetGraphql,
+      coinType: CoinType.aptos,
+      explorerParam: HostUrl.devNet,
       explorerBaseURL: HostUrl.aptosExplorerBaseURL,
     );
   }

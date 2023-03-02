@@ -2,11 +2,6 @@ import 'package:aptosdart/sdk/src/aptos_client/aptos_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const account = "0x1::account::Account";
-
-  const aptosCoin = "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>";
-
-  const coinTransferFunction = "0x1::coin::transfer";
   final client = AptosClient();
 
   test("gets genesis account", () async {
