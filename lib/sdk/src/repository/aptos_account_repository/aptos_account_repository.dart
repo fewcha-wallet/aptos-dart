@@ -2,15 +2,66 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/account/account_data.dart';
 import 'package:aptosdart/core/account_module/account_module.dart';
+import 'package:aptosdart/core/coin/aptos_coin_balance.dart';
+import 'package:aptosdart/core/coin/aptos_nft_balance.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
+import 'package:aptosdart/utils/graphql_utils/graphql_utils.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
 class AptosAccountRepository with AptosSDKMixin {
   AptosAccountRepository();
+
+  Future<ListAptosCoinBalance> getAccountCoinBalance(
+      {required String address, int start = 0, int? limit}) async {
+    try {
+      final payload = GraphQLUtils.createGraphQLPayload(
+        operationName: GraphQLConstant.getAccountCoinBalance,
+        query: GraphQLConstant.getAccountCoinBalanceQuery,
+        address: address,
+        offset: start,
+        limit: limit,
+      );
+
+      final response = await apiClient.request(
+          body: payload,
+          route: APIRoute(
+            APIType.getGraphQLQuery,
+            routeParams: address.trimPrefix(),
+          ),
+          create: (response) => GraphQLResponse(
+              createObject: ListAptosCoinBalance(), response: response));
+      return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ListAptosNFTBalance> getAccountListNFTs(
+      {required String address, int start = 0, int? limit}) async {
+    try {
+      final payload = GraphQLUtils.createNFTGraphQLPayload(
+        operationName: GraphQLConstant.myQuery,
+        query: GraphQLConstant.getAccountNFTBalanceQuery,
+        address: address,
+      );
+
+      final response = await apiClient.request(
+          body: payload,
+          route: APIRoute(
+            APIType.getGraphQLQuery,
+            routeParams: address.trimPrefix(),
+          ),
+          create: (response) => GraphQLResponse(
+              createObject: ListAptosNFTBalance(), response: response));
+      return response.decodedData!;
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<AccountData> getAccount(String address) async {
     try {

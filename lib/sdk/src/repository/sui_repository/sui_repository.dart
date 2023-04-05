@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
@@ -7,9 +6,9 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
+import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin.dart';
-import 'package:aptosdart/core/sui/publickey/public_key.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
@@ -19,12 +18,7 @@ import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:aptosdart/network/rpc/rpc_route.dart';
-import 'package:aptosdart/utils/extensions/hex_string.dart';
-import 'package:aptosdart/utils/extensions/list_extension.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
-import 'package:aptosdart/utils/serializer/serializer.dart';
-import 'package:aptosdart/utils/utilities.dart';
-import 'package:hex/hex.dart';
 
 class SUIRepository with AptosSDKMixin {
   Future<List<ObjectsOwned>> getObjectsOwnedByAddress(String address) async {
@@ -37,6 +31,23 @@ class SUIRepository with AptosSDKMixin {
           arg: [address],
           create: (response) => RPCListResponse(
               createObject: ObjectsOwned(), response: response));
+
+      return result.decodedData!;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<List<SUIBalances>> getAllBalances(String address) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetObjectsOwnedByAddress,
+          ),
+          function: SUIConstants.suixGetAllBalances,
+          arg: [address],
+          create: (response) =>
+              RPCListResponse(createObject: SUIBalances(), response: response));
 
       return result.decodedData!;
     } catch (e) {
@@ -524,7 +535,7 @@ class SUIRepository with AptosSDKMixin {
         final suggestedAmountToSend =
             totalBalanceOfTransferType - (isSuiTransfer ? gasBudget : 0);
         // TODO: denomination for values?
-        throw ('Coin balance $totalBalanceOfTransferType is not sufficient to cover the transfer amount' +
+        throw ('Coin balance $totalBalanceOfTransferType is not sufficient to cover the transfer amount'
             '$amountToSend. Try reducing the transfer amount to $suggestedAmountToSend.');
       }
       if (isSuiTransfer) {

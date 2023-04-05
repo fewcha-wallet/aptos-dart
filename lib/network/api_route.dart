@@ -34,6 +34,9 @@ class APIRoute implements APIRouteConfigurable {
   final String _tables = 'tables';
   final String _estimateGasPrice = 'estimate_gas_price';
   final String _item = 'item';
+  final String _totp = 'totp';
+  final String _register = 'register';
+  final String _verify = 'verify';
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
     bool authorize = true;
@@ -101,11 +104,10 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.get;
 
         break;
-      case APIType.getAccountTransactions:
+      case APIType.getGraphQLQuery:
         if (AptosCurrentConfig.shared.transactionHistoryGraphQL!.isNotEmpty) {
           baseUrl = AptosCurrentConfig.shared.transactionHistoryGraphQL;
         }
-        // path = '/$_accounts/$routeParams/$_transactions';
         method = APIMethod.post;
 
         break;
@@ -137,10 +139,17 @@ class APIRoute implements APIRouteConfigurable {
         break;
       case APIType.getListDApps:
         break;
+      case APIType.register2FA:
+        method = APIMethod.post;
+        path = '/$_totp/$_register';
+        break;
+      case APIType.verify2FA:
+        method = APIMethod.post;
+        path = '/$_totp/$_verify';
+        break;
       case APIType.faucetSUI:
         method = APIMethod.post;
         baseUrl = AptosCurrentConfig.shared.faucetUrl;
-
         break;
     }
     final options = Options(

@@ -4,6 +4,7 @@ import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
+import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
@@ -122,17 +123,11 @@ class SUIClient {
     }
   }
 
-  Future<double> getAccountBalance(String address) async {
+  Future<List<SUIBalances>> getAccountBalance(String address) async {
     try {
-      double balance = 0;
-      final result = await getAccountSUIObjectList(address);
-      if (result.isNotEmpty) {
-        final arg = ComputeSUIObjectArg(
-            computeSUIObjectType: ComputeSUIObjectType.getBalance,
-            listSUIObject: result);
-        balance = await compute(_computeSUIObject, arg) as double;
-      }
-      return balance;
+      final result = await _suiRepository.getAllBalances(address);
+      if (result.isNotEmpty) {}
+      return [];
     } catch (e) {
       rethrow;
     }

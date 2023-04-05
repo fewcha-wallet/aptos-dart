@@ -2,8 +2,7 @@ import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-String VALID_SECRET_KEY = 'mdqVWeFekT7pqy5T49+tV12jO0m+ESW7ki4zSU9JiCg=';
-String TEST_MNEMONIC =
+String testMnemonic =
     'film crazy soon outside stand loop subway crumble thrive popular green nuclear struggle pistol arm wife phrase warfare march wheat nephew ask sunny firm';
 main() {
   group('ed25519-keypair', () {
@@ -14,7 +13,7 @@ main() {
 
     test('Keypair derived from mnemonic', () {
       Ed25519Keypair ed25519keypair =
-          Ed25519Keypair.deriveKeypair(TEST_MNEMONIC);
+          Ed25519Keypair.deriveKeypair(testMnemonic);
 
       expect(ed25519keypair.getPublicKey().toSuiAddress(),
           '8867068daf9111ee013450eea1b1e10ffd62fc87'.toHexString());

@@ -13,6 +13,7 @@ import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/file/file_utils.dart';
+import 'package:aptosdart/utils/graphql_utils/graphql_utils.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:dio/dio.dart';
 
@@ -117,7 +118,7 @@ class TransactionRepository with AptosSDKMixin {
       int start = 0,
       int? limit}) async {
     try {
-      final payload = _createTransactionGraphQLPayload(
+      final payload = GraphQLUtils.createGraphQLPayload(
         operationName: operationName,
         query: query,
         address: address,
@@ -128,10 +129,10 @@ class TransactionRepository with AptosSDKMixin {
       final response = await apiClient.request(
           body: payload,
           route: APIRoute(
-            APIType.getAccountTransactions,
+            APIType.getGraphQLQuery,
           ),
-          create: (response) => GraphQLListResponse(
-              createObject: CoinHistory(), response: response));
+          create: (response) =>
+              GraphQLResponse(createObject: CoinHistory(), response: response));
       List<Transaction> listTransaction = [];
       for (var item in response.decodedData!.coinActivities!) {
         if (item.activityType != AppConstants.gasFeeEvent) {
@@ -160,7 +161,7 @@ class TransactionRepository with AptosSDKMixin {
       int start = 0,
       int? limit}) async {
     try {
-      final payload = _createTransactionGraphQLPayload(
+      final payload = GraphQLUtils.createGraphQLPayload(
         operationName: operationName,
         query: query,
         address: address,
@@ -171,10 +172,10 @@ class TransactionRepository with AptosSDKMixin {
       final response = await apiClient.request(
           body: payload,
           route: APIRoute(
-            APIType.getAccountTransactions,
+            APIType.getGraphQLQuery,
             routeParams: address.trimPrefix(),
           ),
-          create: (response) => GraphQLListResponse(
+          create: (response) => GraphQLResponse(
               createObject: TokenHistory(), response: response));
       return response.decodedData!.tokenActivities ?? [];
     } catch (e) {
@@ -261,24 +262,5 @@ class TransactionRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
-
-  Map<String, dynamic> _createTransactionGraphQLPayload({
-    required String operationName,
-    required String address,
-    required String query,
-    int? offset,
-    int? limit,
-  }) {
-    final map = {
-      "operationName": operationName,
-      "variables": {
-        "address": address,
-        "offset": offset,
-        "limit": limit,
-      },
-      "query": query,
-    };
-    return map;
   }
 }

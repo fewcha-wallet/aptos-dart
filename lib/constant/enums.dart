@@ -14,7 +14,7 @@ enum APIType {
   simulateTransaction,
   getTransactionByHash,
   getTransactionByVersion,
-  getAccountTransactions,
+  getGraphQLQuery,
   signingMessage,
   encodeSubmission,
   estimateGasPrice,
@@ -23,6 +23,8 @@ enum APIType {
   getTableItem,
   getIPFSProfile,
   getListDApps,
+  register2FA,
+  verify2FA,
 }
 enum APIErrorType {
   invalidLedger,

@@ -8,11 +8,14 @@ import 'package:aptosdart/sdk/src/repository/network_repository/network_reposito
 
 class AptosDartSDKInternal {
   late APIClient _apiClient;
+  late APIClient _twoFactorClient;
   late RPCClient _rpcClient;
   late IPFSClient _ipfsClient;
   late String _network;
+  late NetworkType currentNetwork;
   final AptosCurrentConfig _aptosCurrentConfig = AptosCurrentConfig.shared;
   APIClient get api => _apiClient;
+  APIClient get twoFactorClient => _twoFactorClient;
   RPCClient get rpc => _rpcClient;
   IPFSClient get ipfsClient => _ipfsClient;
   AptosCurrentConfig get aptosCurrentConfig => _aptosCurrentConfig;
@@ -32,6 +35,11 @@ class AptosDartSDKInternal {
     _aptosCurrentConfig.logStatus = logStatus;
 
     _apiClient = APIClient(logStatus: logStatus, baseUrl: _network);
+
+    /// 2FA
+    _twoFactorClient = APIClient(
+        logStatus: logStatus,
+        baseUrl: getCurrentNetWork().twoFactorAuthenticatorURL);
     _ipfsClient = IPFSClient(logStatus: logStatus);
     _rpcClient = RPCClient(_network);
   }
@@ -48,10 +56,18 @@ class AptosDartSDKInternal {
 
   void setNetWork(NetworkType networkType) {
     _network = networkType.networkURL;
+
+    /// Set api client
     _apiClient.options.baseUrl = _network;
     _aptosCurrentConfig.faucetUrl = networkType.faucetURL;
+
+    /// Set 2FA client network
+    _twoFactorClient.options.baseUrl = networkType.twoFactorAuthenticatorURL;
+
+    /// Set Transaction history network
     _aptosCurrentConfig.transactionHistoryGraphQL =
         networkType.transactionHistoryGraphQL;
+
     _rpcClient = RPCClient(_network);
   }
 

@@ -78,8 +78,8 @@ class APIListResponse<T> extends BaseAPIResponseWrapper<Response, List<T>> {
   }
 }
 
-class GraphQLListResponse<T> extends BaseAPIResponseWrapper<Response, T> {
-  GraphQLListResponse({T? createObject, Response? response})
+class GraphQLResponse<T> extends BaseAPIResponseWrapper<Response, T> {
+  GraphQLResponse({T? createObject, Response? response})
       : super(
           originalResponse: response,
         ) {

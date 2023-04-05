@@ -11,6 +11,8 @@ import 'package:aptosdart/core/account/account_data.dart';
 import 'package:aptosdart/core/account_module/account_module.dart';
 import 'package:aptosdart/core/aptos_sign_message_payload/aptos_sign_message_payload.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
+import 'package:aptosdart/core/coin/aptos_coin_balance.dart';
+import 'package:aptosdart/core/coin/aptos_nft_balance.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
@@ -31,6 +33,7 @@ import 'package:aptosdart/sdk/src/repository/transaction_repository/transaction_
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 
 class AptosClient {
   late AptosAccountRepository _accountRepository;
@@ -57,11 +60,6 @@ class AptosClient {
           privateKeyBytes: privateKeyBytes, privateKeyHex: privateKeyHex);
       AptosAccount aptosAccount;
       aptosAccount = await compute(_computeAptosAccount, arg);
-      // if (privateKeyBytes != null) {
-      //   aptosAccount = AptosAccount(privateKeyBytes: privateKeyBytes);
-      // } else {
-      //   aptosAccount = AptosAccount.fromPrivateKey(privateKeyHex!.trimPrefix());
-      // }
       return aptosAccount;
     } catch (e) {
       rethrow;
@@ -86,6 +84,45 @@ class AptosClient {
       return result;
     } catch (e) {
       rethrow;
+    }
+  }
+
+  Future<ListAptosCoinBalance> getAccountListCoins(String address) async {
+    try {
+      final result = await _accountRepository.getAccountCoinBalance(
+        address: address,
+      );
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<ListAptosNFTBalance> getAccountListNFTs(String address) async {
+    try {
+      final result = await _accountRepository.getAccountListNFTs(
+        address: address,
+      );
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<int> getAccountBalance(String address) async {
+    try {
+      final result = await getAccountListCoins(address);
+      final listCoins = result.listCoinBalances ?? [];
+      if (listCoins.isEmpty) return 0;
+
+      final aptosCoin = listCoins
+          .firstWhereOrNull((element) => element.coinInfo!.isAptosCoin);
+      if (aptosCoin != null) {
+        return aptosCoin.getAmount;
+      }
+      return 0;
+    } catch (e) {
+      return 0;
     }
   }
 
@@ -478,8 +515,9 @@ class AptosClient {
     }
   }
 
-  Future<AptosSignMessageResponse> signMessage(AptosAccount aptosAccount,
-      AptosSignMessagePayload message, String? domain) async {
+  Future<AptosSignMessageResponse> signMessage(
+      AptosAccount aptosAccount, AptosSignMessagePayload message,
+      {String? domain}) async {
     try {
       String prefix = "APTOS";
       String messageToBeSigned = prefix;

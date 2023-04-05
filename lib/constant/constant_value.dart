@@ -38,6 +38,13 @@ class HostUrl {
   static const String devNet = "Devnet";
   static const String testnet = "Testnet";
   static const String mainNet = "Mainnet";
+
+  /// 2FA
+  static const String baseUrl2FA = "https://api.fewcha.app";
+
+  static const String testNet2FAUrl = "$baseUrl2FA/testnet";
+  static const String devNet2FAUrl = "$baseUrl2FA/devnet";
+  static const String mainNet2FAUrl = "$baseUrl2FA/mainnet";
 }
 
 class ExtraKeys {
@@ -88,6 +95,7 @@ class AppConstants {
   static const String userTransaction = 'user_transaction';
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
+  static const String signMessage = "Fewcha Login";
 }
 
 class ErrorMessages {
@@ -107,6 +115,7 @@ class HeadersApi {
 class SUIConstants {
   static const String suiGetObjectsOwnedByAddress =
       'sui_getObjectsOwnedByAddress';
+  static const String suixGetAllBalances = 'suix_getAllBalances';
   static const String suiGetObject = 'sui_getObject';
   static const String suiGetTransactionsFromAddress =
       'sui_getTransactionsFromAddress';
@@ -176,12 +185,14 @@ class MaxNumber {
   static num maxU16Number = pow(2, 16) - 1;
   static BigInt maxU64BigInt = BigInt.from(2).pow((64)) - BigInt.from(1);
   static int defaultMaxGasAmount = 200000;
-  static int defaultTxnExpSecFromNow = 20;
+  static int defaultTxnExpSecFromNow = 50;
 }
 
 class GraphQLConstant {
   static const String getAccountCoinActivity = 'getAccountCoinActivity';
   static const String getAccountTokenActivity = 'getAccountTokenActivity';
+  static const String getAccountCoinBalance = 'getAccountCoinBalance';
+  static const String myQuery = 'MyQuery';
   static const String getAccountCoinQuery = r""" 
    query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {
   coin_activities(
@@ -213,4 +224,42 @@ fragment CoinActivityFields on coin_activities {
 """;
   static const String getAccountTokenQuery =
       r'query getAccountTokenActivity($address: String!, $offset: Int, $limit: Int) { token_activities( where: { _or: [{ from_address: { _eq: $address } }, { to_address: { _eq: $address } }] } limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {  ...TokenActivityFields } }  fragment TokenActivityFields on token_activities { coin_amount   coin_type   collection_data_id_hash    collection_name   creator_address   event_account_address   event_creation_number   from_address   event_sequence_number    name   property_version   to_address   token_amount  token_data_id_hash   transaction_timestamp   transaction_version   transfer_type }';
+
+  static const String getAccountCoinBalanceQuery =
+      r''' query getAccountCoinBalance($address: String!, $offset: Int, $limit: Int) {
+    current_coin_balances(where: { owner_address: { _eq: $address } }, limit: $limit, offset: $offset) {
+      amount
+      owner_address
+      coin_info {
+        coin_type
+        name
+        decimals
+        creator_address
+        symbol
+      }
+    }
+  }''';
+  static const String getAccountNFTBalanceQuery =
+      r''' query MyQuery($account_address: String!) {
+    current_token_ownerships(
+      where: { owner_address: { _eq: $account_address }, amount: { _gte: "1" } }
+      limit: 100
+      offset: 0
+      order_by: { last_transaction_timestamp: desc }
+    ) {
+      amount
+      collection_name
+      creator_address
+      last_transaction_timestamp
+      last_transaction_version
+      name
+      owner_address
+      property_version
+      token_data_id_hash
+      current_token_data {
+        description
+        metadata_uri
+      }
+    }
+  }''';
 }

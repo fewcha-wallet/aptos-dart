@@ -15,6 +15,7 @@ class NetWorkRepository {
         coinType: CoinType.aptos,
         explorerParam: HostUrl.testnet,
         explorerBaseURL: HostUrl.aptosExplorerBaseURL,
+        twoFactorAuthenticatorURL: HostUrl.testNet2FAUrl,
       );
       final aptosMainnet = defaultAptosNetwork();
 
@@ -28,6 +29,7 @@ class NetWorkRepository {
         coinType: CoinType.sui,
         explorerParam: HostUrl.testnet,
         explorerBaseURL: HostUrl.suiExplorerBaseURL,
+        twoFactorAuthenticatorURL: '',
       );
       return [
         aptosDevNet,
@@ -51,6 +53,7 @@ class NetWorkRepository {
       coinType: CoinType.aptos,
       explorerParam: HostUrl.mainNet,
       explorerBaseURL: HostUrl.aptosExplorerBaseURL,
+      twoFactorAuthenticatorURL: HostUrl.mainNet2FAUrl,
     );
   }
 
@@ -64,6 +67,7 @@ class NetWorkRepository {
       coinType: CoinType.aptos,
       explorerParam: HostUrl.devNet,
       explorerBaseURL: HostUrl.aptosExplorerBaseURL,
+      twoFactorAuthenticatorURL: HostUrl.devNet2FAUrl,
     );
   }
 
@@ -77,6 +81,7 @@ class NetWorkRepository {
       coinType: CoinType.sui,
       explorerParam: HostUrl.devNet,
       explorerBaseURL: HostUrl.suiExplorerBaseURL,
+      twoFactorAuthenticatorURL: '',
     );
   }
 }

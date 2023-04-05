@@ -8,7 +8,8 @@ class NetworkType extends Decoder<NetworkType> {
       coinCurrency,
       transactionHistoryGraphQL,
       explorerBaseURL,
-      explorerParam;
+      explorerParam,
+      twoFactorAuthenticatorURL;
 
   CoinType coinType;
   bool isSelected;
@@ -21,6 +22,7 @@ class NetworkType extends Decoder<NetworkType> {
     required this.transactionHistoryGraphQL,
     required this.explorerBaseURL,
     required this.explorerParam,
+    required this.twoFactorAuthenticatorURL,
     this.isSelected = false,
   });
 

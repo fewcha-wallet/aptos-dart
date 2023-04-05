@@ -6,4 +6,5 @@ mixin AptosSDKMixin {
   APIClient get apiClient => AptosDartSDK().getAptosInternal.api;
   RPCClient get rpcClient => AptosDartSDK().getAptosInternal.rpc;
   IPFSClient get ipfsClient => AptosDartSDK().getAptosInternal.ipfsClient;
+  APIClient get twoFactorClient => AptosDartSDK().getAptosInternal.twoFactorClient;
 }

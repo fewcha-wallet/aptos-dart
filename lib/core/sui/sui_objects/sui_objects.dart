@@ -492,8 +492,7 @@ class SUICertificate extends Decoder<SUICertificate> {
   SUICertificate.fromJson(Map<String, dynamic> json) {
     data =
         json['data'] != null ? SUICertificateData.fromJson(json['data']) : null;
-    transactionDigest =
-        json['transactionDigest'] != null ? json['transactionDigest'] : null;
+    transactionDigest = json['transactionDigest'];
   }
 
   Map<String, dynamic> toJson() {
