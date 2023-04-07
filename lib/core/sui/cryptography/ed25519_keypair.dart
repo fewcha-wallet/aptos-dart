@@ -8,6 +8,7 @@ import 'package:aptosdart/core/sui/cryptography/ed25519_public_key.dart';
 import 'package:aptosdart/core/sui/keypair/keypair.dart';
 import 'package:aptosdart/core/sui/mnemonics/mnemonics.dart';
 import 'package:aptosdart/core/sui/publickey/public_key.dart';
+import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 
 class Ed25519KeypairData {
@@ -85,18 +86,21 @@ class Ed25519Keypair implements Keypair {
   static Ed25519Keypair fromSecretKey(Uint8List secretKey,
       {bool skipValidation = false}) {
     final secretKeyLength = secretKey.length;
-    if (secretKeyLength != 64) {
-      // Many users actually wanted to invoke fromSeed(seed: Uint8Array), especially when reading from keystore.
-      if (secretKeyLength == 32) {
-        throw ('Wrong secretKey size. Expected 64 bytes, got 32. Similar function exists: fromSeed(seed: Uint8Array)');
-      }
-      throw ('Wrong secretKey size. Expected 64 bytes, got $secretKeyLength.');
+    if (secretKeyLength != AppConstants.privateKeySize) {
+      throw ('Wrong secretKey size. Expected ${AppConstants.privateKeySize} bytes, got $secretKeyLength.');
     }
-    Ed25519KeypairData keypair = Ed25519KeypairData(
-        secretKey: secretKey,
-        publicKey:
-            Uint8List.fromList(ed.public(ed.PrivateKey(secretKey)).bytes));
 
+    // Ed25519KeypairData keypair = Ed25519KeypairData(
+    //     secretKey: secretKey,
+    //     publicKey:
+    //         Uint8List.fromList(ed.public(ed.PrivateKey(secretKey)).bytes));
+    final privateKey = ed.newKeyFromSeed(secretKey.sublist(0, 32)).bytes;
+    // final buffer =
+    // Utilities.buffer(ed.public(ed.PrivateKey(privateKey)).bytes).join('');
+    Ed25519KeypairData keypair = Ed25519KeypairData(
+        secretKey: Uint8List.fromList(privateKey),
+        publicKey:
+            Uint8List.fromList(ed.public(ed.PrivateKey(privateKey)).bytes));
     if (skipValidation) {
       final signData = utf8.encode('sui validation');
       final signature =
@@ -135,13 +139,13 @@ class Ed25519Keypair implements Keypair {
       throw ('Invalid derivation path');
     }
     Keys keys = MnemonicUtils.derivePath(path, mnemonicToSeedHex(mnemonics));
-    final pubkey = MnemonicUtils.getPublicKey(keys.key, withZeroByte: false);
-    // Ed25519 private key returned here has 32 bytes. NaCl expects 64 bytes where the last 32 bytes are the public key.
-    Uint8List fullPrivateKey = Uint8List(64);
-    fullPrivateKey.setAll(0, keys.key);
-    fullPrivateKey.setAll(32, pubkey);
-
-    return Ed25519Keypair(
-        Ed25519KeypairData(publicKey: pubkey, secretKey: fullPrivateKey));
+    // final pubkey = MnemonicUtils.getPublicKey(keys.key, withZeroByte: false);
+    // // Ed25519 private key returned here has 32 bytes. NaCl expects 64 bytes where the last 32 bytes are the public key.
+    // Uint8List fullPrivateKey = Uint8List(64);
+    // fullPrivateKey.setAll(0, keys.key);
+    // fullPrivateKey.setAll(32, pubkey);
+    // return Ed25519Keypair(
+    //     Ed25519KeypairData(publicKey: pubkey, secretKey: fullPrivateKey));
+    return Ed25519Keypair.fromSecretKey(keys.key);
   }
 }

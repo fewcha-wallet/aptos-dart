@@ -29,10 +29,11 @@ class SUIAccount implements AbstractAccount {
     );
   }
   factory SUIAccount.fromPrivateKey(String privateKeyHex) {
-    final privateKey = HEX.decode(privateKeyHex.trimPrefix());
+    // final privateKey = HEX.decode(privateKeyHex.trimPrefix());
 
-    final list = Uint8List.fromList(privateKey);
-
+    // final list = Uint8List.fromList(privateKey);
+    final bytes = Utilities.hexToBytes(privateKeyHex.trimPrefix());
+    final list = Uint8List.fromList(bytes.getRange(0, 32).toList());
     Ed25519Keypair ds = Ed25519Keypair.fromSecretKey(list);
     return SUIAccount._(
       ds.getPrivateKey(),
@@ -54,22 +55,29 @@ class SUIAccount implements AbstractAccount {
   /// Get public key in Hex
   @override
   String publicKeyInHex() {
+    final list = Uint8List.fromList(_privateKey.getRange(0, 32).toList());
+
     Ed25519Keypair ed25519keypair =
-        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
-    final key = ed25519keypair.getPublicKey().toBase64();
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(list));
+    final key = Utilities.bytesToHex(ed25519keypair.getPublicKey().toBytes())
+        .toHexString();
     return key;
   }
 
   suiPK.PublicKey publicKeyByte() {
+    final list = Uint8List.fromList(_privateKey.getRange(0, 32).toList());
+
     Ed25519Keypair ed25519keypair =
-        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(list));
     final key = ed25519keypair.getPublicKey();
     return key;
   }
 
   String publicKeyInBase64() {
+    final list = Uint8List.fromList(_privateKey.getRange(0, 32).toList());
+
     Ed25519Keypair ed25519keypair =
-        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
+        Ed25519Keypair.fromSecretKey(Uint8List.fromList(list));
     final key = ed25519keypair.getPublicKey().toBase64();
     return key;
   }
@@ -77,10 +85,9 @@ class SUIAccount implements AbstractAccount {
   /// Get private key in Hex
   @override
   String privateKeyInHex() {
-    Ed25519Keypair ed25519keypair =
-        Ed25519Keypair.fromSecretKey(Uint8List.fromList(_privateKey));
-    final key = ed25519keypair.getPrivateKey();
-    return Utilities.fromUint8Array(key);
+    final privateKey = Utilities.bytesToHex(Uint8List.fromList(_privateKey));
+
+    return privateKey;
   }
 
   @override

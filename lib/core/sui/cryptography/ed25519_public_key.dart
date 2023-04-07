@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/publickey/public_key.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
+import 'package:aptosdart/utils/utilities.dart';
+import 'package:blake2b/blake2b_hash.dart';
 import 'package:hex/hex.dart';
 import 'package:sha3/sha3.dart';
 
@@ -60,10 +62,11 @@ class Ed25519PublicKey extends PublicKey {
     tmp.setAll(0, [signatureSchemeToFlag['ED25519']]);
     tmp.setAll(1, toBytes());
 
-    SHA3 sh3 = SHA3(256, SHA3_PADDING, 256);
+    /// This function equal to blake2b(tmp, { dkLen: 32 }); in javascript
+    final string = HEX.encode(tmp);
+    final d = Blake2bHash.hashHexString(string);
 
-    final result1 = sh3.update(tmp);
-    var hash = result1.digest();
-    return HEX.encode(hash).substring(0, 40).toHexString();
+    ///
+    return Utilities.bytesToHex(d).toShortString();
   }
 }

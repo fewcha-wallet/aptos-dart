@@ -52,6 +52,7 @@ class ExtraKeys {
 }
 
 class AppConstants {
+  static const int privateKeySize = 32;
   static const String rootAPIDataFormat = "data";
   static const String entryFunctionPayload = "entry_function_payload";
   static const String aptosDefaultCurrency = "APT";
@@ -113,6 +114,7 @@ class HeadersApi {
 }
 
 class SUIConstants {
+  static const int PRIVATE_KEY_SIZE = 32;
   static const String suiGetObjectsOwnedByAddress =
       'sui_getObjectsOwnedByAddress';
   static const String suixGetAllBalances = 'suix_getAllBalances';
