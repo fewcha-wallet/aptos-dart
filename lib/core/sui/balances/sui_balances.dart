@@ -1,3 +1,4 @@
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class SUIBalances extends Decoder<SUIBalances> {
@@ -23,4 +24,10 @@ class SUIBalances extends Decoder<SUIBalances> {
   SUIBalances decode(Map<String, dynamic> json) {
     return SUIBalances.fromJson(json);
   }
+
+  bool get isSuiCoin => coinType == SUIConstants.suiConstruct;
+  int get getAmount => totalBalance ?? 0;
+  String get getCoinType => coinType ?? '';
+  int get getTotalBalance => totalBalance ?? 0;
+  String get getCoinName => (coinType ?? '').split('::').last;
 }

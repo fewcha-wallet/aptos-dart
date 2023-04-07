@@ -114,15 +114,16 @@ class HeadersApi {
 }
 
 class SUIConstants {
-  static const int PRIVATE_KEY_SIZE = 32;
   static const String suiGetObjectsOwnedByAddress =
       'sui_getObjectsOwnedByAddress';
   static const String suixGetAllBalances = 'suix_getAllBalances';
   static const String suiGetObject = 'sui_getObject';
   static const String suiGetTransactionsFromAddress =
       'sui_getTransactionsFromAddress';
-  static const String suiGetTransactions = 'sui_getTransactions';
-  static const String suiGetTransaction = 'sui_getTransaction';
+  static const String suixQueryTransactionBlocks =
+      'suix_queryTransactionBlocks';
+  static const String suiMultiGetTransactionBlocks =
+      'sui_multiGetTransactionBlocks';
   static const String suiSyncAccountState = 'sui_syncAccountState';
   static const String suiMergeCoins = 'sui_mergeCoins';
   static const String suiSplitCoin = 'sui_splitCoin';

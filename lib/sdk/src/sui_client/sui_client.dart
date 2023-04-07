@@ -4,6 +4,7 @@ import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
+import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
@@ -80,8 +81,9 @@ class SUIClient {
     try {
       final result = await _suiRepository.getTransactionsByAddress(
           address: address,
-          function: SUIConstants.suiGetTransactions,
+          function: SUIConstants.suixQueryTransactionBlocks,
           isToAddress: isToAddress);
+
       return result;
     } catch (e) {
       rethrow;
@@ -96,15 +98,14 @@ class SUIClient {
           await getTransactionsByAddress(address: address);
       final transactionsToAddress =
           await getTransactionsByAddress(address: address, isToAddress: true);
-      final transactionMerge = <dynamic>{
+
+      List<String> transactionMerge = [
         ...transactionsFromAddress.data!,
         ...transactionsToAddress.data!
-      };
+      ];
       if (transactionMerge.isNotEmpty) {
-        for (var element in transactionMerge) {
-          final trans = await getTransactionWithEffectsBatch(element);
-          listTrans.add(trans);
-        }
+        listTrans =
+            await multiGetTransactionBlocks(transactionMerge.toSet().toList());
       }
       return listTrans.reversed.toList();
     } catch (e) {
@@ -112,24 +113,55 @@ class SUIClient {
     }
   }
 
-  Future<Transaction> getTransactionWithEffectsBatch(
-      String transactionID) async {
+  Future<List<Transaction>> multiGetTransactionBlocks(
+      List<String> transactionIDs) async {
     try {
+      List<Transaction> listTnx = [];
       final result =
-          await _suiRepository.getTransactionWithEffectsBatch(transactionID);
-      return result;
+          await _suiRepository.getMultiTransactionBlocks(transactionIDs);
+      for (var item in result) {
+        listTnx.add(Transaction(
+          success: item.isSucceed(),
+          vmStatus: item.getStatus(),
+          gasCurrencyCode: AppConstants.suiDefaultCurrency,
+          timestamp: item.getTimeStamp(),
+          hash: item.getHash(),
+          sender: item.getSender(),
+          gasUsed: item.getTotalGasUsed().toString(),
+          payload: Payload(arguments: [
+            item.getTokenAmount(),
+            item.getToAddress().toString()
+          ]),
+        ));
+      }
+      return listTnx;
     } catch (e) {
-      rethrow;
+      return [];
     }
   }
 
-  Future<List<SUIBalances>> getAccountBalance(String address) async {
+  Future<int> getAccountBalance(String address) async {
     try {
-      final result = await _suiRepository.getAllBalances(address);
-      if (result.isNotEmpty) {}
-      return [];
+      final listCoins = await _suiRepository.getSUITokens(address);
+      if (listCoins.isEmpty) return 0;
+
+      final suiCoin =
+          listCoins.firstWhereOrNull((element) => element.isSuiCoin);
+      if (suiCoin != null) {
+        return suiCoin.getAmount;
+      }
+      return 0;
     } catch (e) {
-      rethrow;
+      return 0;
+    }
+  }
+
+  Future<List<SUIBalances>> getAccountTokens(String address) async {
+    try {
+      final listCoins = await _suiRepository.getSUITokens(address);
+      return listCoins;
+    } catch (e) {
+      return [];
     }
   }
 

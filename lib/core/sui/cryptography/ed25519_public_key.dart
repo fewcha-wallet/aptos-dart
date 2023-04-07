@@ -6,7 +6,6 @@ import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:blake2b/blake2b_hash.dart';
 import 'package:hex/hex.dart';
-import 'package:sha3/sha3.dart';
 
 const int publicKeySize = 32;
 

@@ -353,18 +353,27 @@ class SUITransaction extends Decoder<SUITransaction> {
 }
 
 class SUITransactionHistory extends Decoder<SUITransactionHistory> {
+  String? digest, senderAddress;
+
   SUIEffects? effects;
   int? timestampMs;
-  SUICertificate? suiCertificate;
-  SUITransactionHistory({this.effects, this.timestampMs, this.suiCertificate});
+  int? amount;
+  // SUICertificate? suiCertificate;
+  SUITransactionHistory({
+    this.effects,
+    this.timestampMs,
+    // this.suiCertificate,
+    this.senderAddress,
+    this.amount,
+  });
 
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
     effects =
         json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
-    suiCertificate = json['certificate'] != null
-        ? SUICertificate.fromJson(json['certificate'])
-        : null;
-    timestampMs = json['timestamp_ms'] ?? 0;
+    timestampMs = json['timestampMs'] ?? 0;
+    digest = json['digest'] ?? 0;
+    senderAddress = json['transaction']?['data']?['sender'] ?? '';
+    amount = json['transaction']?['data']?['gasData']?['budget'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -402,7 +411,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   }
 
   String? getHash() {
-    return suiCertificate?.transactionDigest;
+    return digest;
   }
 
   num getTotalGasUsed() {
@@ -414,27 +423,19 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   }
 
   String? getToAddress() {
-    final temp = suiCertificate?.data?.transactions;
-    if (temp != null) {
-      return temp.first.getRecipient().isNotEmpty
-          ? temp.first.getRecipient()
-          : suiCertificate?.data?.sender /*?.recipient ?? ''*/;
+    final temp = effects?.created ?? [];
+    if (temp.isNotEmpty) {
+      return temp.first.owner?.addressOwner;
     }
-
     return null;
   }
 
   String? getSender() {
-    final temp = suiCertificate?.data?.sender;
-    return temp;
+    return senderAddress;
   }
 
   String getTokenAmount() {
-    final temp = suiCertificate?.data?.transactions;
-    if (temp != null) {
-      return temp.first.getAmount();
-    }
-    return '0';
+    return amount.toString();
   }
 }
 
@@ -723,9 +724,9 @@ class SUIGasUsed extends Decoder<SUIGasUsed> {
   SUIGasUsed({this.computationCost, this.storageCost, this.storageRebate});
 
   SUIGasUsed.fromJson(Map<String, dynamic> json) {
-    computationCost = json['computationCost'] ?? 0;
-    storageCost = json['storageCost'] ?? 0;
-    storageRebate = json['storageRebate'] ?? 0;
+    computationCost = _toNum(json['computationCost'] ?? 0);
+    storageCost = _toNum(json['storageCost'] ?? 0);
+    storageRebate = _toNum(json['storageRebate'] ?? 0);
   }
 
   Map<String, dynamic> toJson() {
@@ -747,6 +748,11 @@ class SUIGasUsed extends Decoder<SUIGasUsed> {
 
   num getSubmitGasUsed() {
     return (computationCost ?? 0) + (storageCost ?? 0);
+  }
+
+  num _toNum(String? data) {
+    if (data == null) return 0;
+    return int.parse(data);
   }
 }
 

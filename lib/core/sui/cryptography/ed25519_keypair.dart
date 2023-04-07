@@ -8,7 +8,6 @@ import 'package:aptosdart/core/sui/cryptography/ed25519_public_key.dart';
 import 'package:aptosdart/core/sui/keypair/keypair.dart';
 import 'package:aptosdart/core/sui/mnemonics/mnemonics.dart';
 import 'package:aptosdart/core/sui/publickey/public_key.dart';
-import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart' as ed;
 
 class Ed25519KeypairData {

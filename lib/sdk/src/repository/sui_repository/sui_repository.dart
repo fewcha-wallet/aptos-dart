@@ -5,14 +5,12 @@ import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
-import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
-import 'package:aptosdart/core/transaction/transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
@@ -38,7 +36,7 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<List<SUIBalances>> getAllBalances(String address) async {
+  Future<List<SUIBalances>> getSUITokens(String address) async {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
@@ -98,13 +96,13 @@ class SUIRepository with AptosSDKMixin {
       bool isToAddress = false}) async {
     try {
       final addressMap = {isToAddress ? "ToAddress" : "FromAddress": address};
+      final map = {'filter': addressMap};
       final result = await rpcClient.request(
-          isBatch: true,
           route: RPCRoute(
             RPCFunction.getTransactionsByAddress,
           ),
           function: function,
-          arg: [addressMap, null, null, true],
+          arg: [map, null, 20, true],
           create: (response) => RPCResponse(
               createObject: TransactionPagination(), response: response));
       return result.decodedData;
@@ -113,32 +111,27 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<Transaction> getTransactionWithEffectsBatch(
-      String transactionID) async {
+  Future<List<SUITransactionHistory>> getMultiTransactionBlocks(
+    List<String> transactionIDs, {
+    bool howEffects = true,
+    bool showEvents = true,
+    bool showInput = true,
+  }) async {
     try {
+      final mapFilter = {
+        'showEffects': howEffects,
+        'showEvents': showEvents,
+        'showInput': showInput
+      };
       final result = await rpcClient.request(
-          isBatch: true,
           route: RPCRoute(
             RPCFunction.suiGetTransaction,
           ),
-          function: SUIConstants.suiGetTransaction,
-          arg: [transactionID],
-          create: (response) => RPCResponse(
+          function: SUIConstants.suiMultiGetTransactionBlocks,
+          arg: [transactionIDs, mapFilter],
+          create: (response) => RPCListResponse(
               createObject: SUITransactionHistory(), response: response));
-      final temp = (result.decodedData as SUITransactionHistory);
-
-      return Transaction(
-          success: temp.isSucceed(),
-          vmStatus: temp.getStatus(),
-          gasCurrencyCode: AppConstants.suiDefaultCurrency,
-          timestamp: temp.getTimeStamp(),
-          hash: temp.getHash(),
-          sender: temp.getSender(),
-          gasUsed: temp.getTotalGasUsed().toString(),
-          payload: Payload(arguments: [
-            temp.getTokenAmount(),
-            temp.getToAddress().toString()
-          ]));
+      return result.decodedData;
     } catch (e) {
       rethrow;
     }
