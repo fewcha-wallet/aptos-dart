@@ -30,7 +30,11 @@ class BCS {
   /// callbacks for (de)serialization of every registered type.
   ///
   /// If the value stored is a string, it is treated as an alias.
-  Map<String, dynamic> types = {};
+  Map<String, dynamic> types = {
+    'structs': {},
+    'enums': {},
+    'aliases': {},
+  };
 
   /// Stored BcsConfig for the current instance of BCS.
   late BcsConfig schema;
@@ -54,9 +58,24 @@ class BCS {
     }
     schema = inputSchema;
 
-    // Register address type under key 'address'.
+    /// Register address type under key 'address'.
     // registerAddressType(
     //     BCS.address, schema.addressLength, schema.addressEncoding);
+    // registerVectorType(schema.vectorType);
+
+    /// Register struct types if they were passed.
+    if (schema.types != null && schema.types!['structs']) {
+      for (String name in schema.types!['structs'].keys) {
+        registerStructType(name, schema.types!['structs'][name]);
+      }
+    }
+
+    /// Register enum types if they were passed.
+    if (schema.types != null && schema.types!['enums'] != null) {
+      for (String name in schema.types!['enums'].keys) {
+        registerEnumType(name, schema.types!['enums'][name]);
+      }
+    }
     if (schema.withPrimitives != false) {
       registerPrimitives(this);
     }
@@ -74,6 +93,72 @@ class BCS {
     return types.containsKey(type);
   }
 
+  BCS registerVectorType(String typeName) {
+    var parsedTypeName = parseTypeName(typeName);
+    var name = parsedTypeName['name'];
+    var params = parsedTypeName['params'];
+    if (params.length > 1) {
+      throw Exception('Vector can have only one type parameter; got $name');
+    }
+
+    return registerType(typeName, (BcsWriter writer, dynamic data,
+        {List<TypeName>? typeParams = const [],
+        Map<String, TypeName>? typeMap = const {}}) {
+      return writer.writeVec(data, (writer, el, i, length) {
+        if (typeMap == null) throw Exception("typeMap must not be null");
+        var elementType = typeParams![0];
+        if (elementType == null) {
+          throw Exception(
+              "Incorrect number of type parameters passed a to vector '$typeName'");
+        }
+
+        var parsedType = parseTypeName(elementType);
+        var name = parsedType['name'];
+        var params = parsedType['params'];
+        if (hasType(name)) {
+          return getTypeInterface(name)._encodeRaw(writer, el, params, typeMap);
+        }
+
+        if (!typeMap.containsKey(name)) {
+          throw Exception(
+              'Unable to find a matching type definition for $name in vector; make sure you passed a generic');
+        }
+
+        var innerName = parseTypeName(typeMap[name])['name'];
+        var innerParams = parseTypeName(typeMap[name])['params'];
+
+        return getTypeInterface(innerName)
+            ._encodeRaw(writer, el, innerParams, typeMap);
+      });
+    }, (BcsReader reader, {typeParams = const [], typeMap = const {}}) {
+      return reader.readVec((reader, i, length) {
+        var elementType = typeParams[0];
+        if (elementType == null) {
+          throw Exception(
+              "Incorrect number of type parameters passed to a vector '$typeName'");
+        }
+
+        var parsedType = parseTypeName(elementType);
+        var name = parsedType['name'];
+        var params = parsedType['params'];
+        if (hasType(name)) {
+          return getTypeInterface(name)._decodeRaw(reader, params, typeMap);
+        }
+
+        if (!typeMap.containsKey(name)) {
+          throw Exception(
+              'Unable to find a matching type definition for $name in vector; make sure you passed a generic');
+        }
+
+        var innerName = parseTypeName(typeMap[name])['name'];
+        var innerParams = parseTypeName(typeMap[name])['params'];
+
+        return getTypeInterface(innerName)
+            ._decodeRaw(reader, innerParams, typeMap);
+      });
+    }, (dynamic u16) => true);
+  }
+
   BCS registerType(
       TypeName typeName,
       BcsWriter Function(BcsWriter, dynamic data,
@@ -86,7 +171,7 @@ class BCS {
     final parseTypeNameMap = parseTypeName(typeName);
 
     final name = parseTypeNameMap['name'];
-    final generics = parseTypeNameMap['generics'] ?? [];
+    final generics = parseTypeNameMap['params'] ?? [];
     types[name] = TypeExtend(
         encodeCb: encodeCb,
         generics: generics,
@@ -97,7 +182,7 @@ class BCS {
   }
 
   BcsWriter ser(TypeName type, dynamic data, {BcsWriterOptions? options}) {
-    if (type is String || type is List<String>) {
+    if (type is String || type is List) {
       final typeName = parseTypeName(type);
       List<dynamic> listParams = typeName['params'];
       return getTypeInterface(typeName['name'])
@@ -207,19 +292,17 @@ class BCS {
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read32(),
         (dynamic u32) => u32 < 4294967296);
-    bcs.registerType(
-        BCS.u64,
-        (BcsWriter writer, dynamic data,
-                {typeParams = const [], typeMap = const {}}) =>
-            writer.write64(data),
+    bcs.registerType(BCS.u64, (BcsWriter writer, dynamic data,
+            {typeParams = const [], typeMap = const {}}) {
+      return writer.write64(data.toString());
+    },
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read64(),
         (dynamic u64) => true);
-    bcs.registerType(
-        BCS.u128,
-        (BcsWriter writer, dynamic data,
-                {typeParams = const [], typeMap = const {}}) =>
-            writer.write128(data),
+    bcs.registerType(BCS.u128, (BcsWriter writer, dynamic data,
+            {typeParams = const [], typeMap = const {}}) {
+      return writer.write128(data);
+    },
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read128(),
         (dynamic u128) => true);
@@ -233,11 +316,10 @@ class BCS {
             reader.read256(),
         (dynamic u256) => true);
 
-    bcs.registerType(
-        BCS.BOOL,
-        (BcsWriter writer, dynamic data,
-                {typeParams = const [], typeMap = const {}}) =>
-            writer.write8(data),
+    bcs.registerType(BCS.BOOL, (BcsWriter writer, dynamic data,
+            {typeParams = const [], typeMap = const {}}) {
+      return writer.write8(data == true ? 1 : 0);
+    },
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read8() == 1,
         (dynamic bool) => true);
@@ -307,10 +389,9 @@ class BCS {
     var parsedTypeName = parseTypeName(typeName);
     var structName = parsedTypeName['name'];
     List<dynamic> generics = parsedTypeName['params'] ?? [];
-
     // your code for returning BCS object
     return registerType(typeName, (BcsWriter writer, dynamic data,
-        {typeParams = const [], typeMap = const {}}) {
+        {typeParams = const [], typeMap}) {
       if (data == null) {
         throw Exception('Expected $structName to be a Map, got: $data');
       }
@@ -319,7 +400,6 @@ class BCS {
         throw Exception(
             'Incorrect number of generic parameters passed; expected: ${generics.length}, got: ${typeParams.length}');
       }
-
       for (var key in canonicalOrder) {
         if (!data.containsKey(key)) {
           throw Exception(
@@ -335,7 +415,7 @@ class BCS {
             writer,
             data[key],
             fieldParams,
-            typeMap ?? {},
+            typeMap!,
           );
         } else {
           var paramIdx = generics.indexOf(fieldType);
@@ -344,6 +424,7 @@ class BCS {
           List<dynamic> params = parsedParam['params'] ?? [];
 
           if (hasType(name)) {
+            print('hasType');
             getTypeInterface(name)._encodeRaw(
               writer,
               data[key],
@@ -352,7 +433,6 @@ class BCS {
             );
             continue;
           }
-
           if (!typeMap!.containsKey(name)) {
             throw Exception(
                 'Unable to find a matching type definition for $name in $structName; make sure you passed a generic');
@@ -413,13 +493,102 @@ class BCS {
     }, (dynamic struct) => true);
   }
 
+  BCS registerEnumType(TypeName typeName, EnumTypeDefinition variants) {
+    for (var key in variants.keys) {
+      var internalName = _tempKey();
+      var value = variants[key];
+
+      if (value != null && value is! List && value is! String) {
+        variants[key] = internalName;
+        registerStructType(internalName, value as Map);
+      }
+    }
+
+    var struct = Map<String, dynamic>.unmodifiable(variants);
+
+    var canonicalOrder = struct.keys.toList();
+
+    var parsedTypeName = parseTypeName(typeName);
+    var name = parsedTypeName['name'];
+    var canonicalTypeParams = parsedTypeName['params'] ?? [];
+
+    return registerType(typeName, (BcsWriter writer, dynamic data,
+        {typeParams = const [], typeMap = const {}}) {
+      if (typeParams == null || typeMap == null) {
+        throw Exception('TypeParams and TypeMap must not be null');
+      }
+      if (data == null) {
+        throw Exception(
+            'Unable to write enum "$name", missing data.\nReceived: "$data"');
+      }
+      if (data is! Map<String, dynamic>) {
+        throw Exception(
+            'Incorrect data passed into enum "$name", expected object with properties: "${canonicalOrder.join(" | ")}".');
+      }
+
+      var key = data.keys.first;
+      if (key == null) {
+        throw Exception('Empty object passed as invariant of the enum "$name"');
+      }
+
+      var orderByte = canonicalOrder.indexOf(key);
+      if (orderByte == -1) {
+        throw Exception(
+            'Unknown invariant of the enum "$name", allowed values: "${canonicalOrder.join(" | ")}"; received "$key"');
+      }
+      var invariant = canonicalOrder[orderByte];
+      var invariantType = struct[invariant] as TypeName?;
+
+      writer.write8(orderByte);
+
+      if (invariantType == null) {
+        return writer;
+      }
+
+      var paramIndex = canonicalTypeParams.indexOf(invariantType);
+      var typeOrParam =
+          paramIndex == -1 ? invariantType : typeParams[paramIndex];
+
+      var parsedTypeMap = parseTypeName(typeOrParam);
+      final nameTypeOrParam = parsedTypeMap['name'];
+      final paramsTypeOrParam = parsedTypeMap['params'];
+
+      return getTypeInterface(nameTypeOrParam)
+          ._encodeRaw(writer, data[key], paramsTypeOrParam, typeMap);
+    }, (BcsReader reader, {typeParams = const [], typeMap = const {}}) {
+      var orderByte = reader.readULEB();
+      var invariant = canonicalOrder[orderByte];
+      var invariantType = struct[invariant] as TypeName?;
+
+      if (orderByte == -1) {
+        throw Exception(
+            'Decoding type mismatch, expected enum "$name" invariant index, received "$orderByte"');
+      }
+
+      if (invariantType == null) {
+        return {invariant: true};
+      }
+
+      var paramIndex = canonicalTypeParams.indexOf(invariantType);
+      var typeOrParam =
+          paramIndex == -1 ? invariantType : typeParams[paramIndex];
+
+      var parsedTypeOrParam = parseTypeName(typeOrParam);
+      final nameParseTypeInterface = parsedTypeOrParam['name'];
+      final paramsParseTypeInterface = parsedTypeOrParam['params'];
+
+      return {
+        invariant: getTypeInterface(nameParseTypeInterface)
+            ._decodeRaw(reader, paramsParseTypeInterface, typeMap)
+      };
+    }, (dynamic enumType) => true);
+  }
+
   TypeInterface getTypeInterface(String type) {
     var typeInterface = types[type];
 
     // Special case - string means an alias.
     // Goes through the alias chain and tracks recursion.
-    print('dqwdqwdqw' + typeInterface);
-    print(types);
     if (typeInterface is String) {
       List<String> chain = [];
       while (typeInterface is String) {
@@ -428,7 +597,6 @@ class BCS {
               'Recursive definition found: ${chain.join(' -> ')} -> $typeInterface');
         }
         chain.add(typeInterface);
-        print(chain.join());
         typeInterface = types[typeInterface];
       }
     }
@@ -457,13 +625,12 @@ class TypeExtend extends TypeInterface {
 
   @override
   _decodeRaw(BcsReader reader, List<TypeName> typeParams,
-      Map<String, dynamic> typeMap /*, Function decodeCb*/) {
+      Map<String, dynamic> typeMap) {
     return decodeCb(
       reader,
       typeParams: typeParams,
       typeMap: typeMap,
     );
-    // return Function.apply(decodeCb, [reader, typeParams, typeMap]);
   }
 
   @override
@@ -472,15 +639,9 @@ class TypeExtend extends TypeInterface {
     data,
     List<TypeName> typeParams,
     Map<String, TypeName> typeMap,
-    /*ConditionFn validateCb,
-      Function encodeCb*/
   ) {
-    /*   BcsWriter Function(BcsWriter, dynamic data,
-              {List<TypeName>? typeParams, Map<String, TypeName>? typeMap})
-          encodeCb,*/
     if (validateCb!(data)) {
       return encodeCb(writer, data, typeMap: typeMap, typeParams: typeParams);
-      // return Function.apply(encodeCb, [writer, data, typeParams, typeMap]);
     } else {
       throw ArgumentError('Validation failed , data: $data');
     }
@@ -492,12 +653,9 @@ class TypeExtend extends TypeInterface {
     Uint8List data,
     List<TypeName> typeParams,
   ) {
-    Map<String, String> typeMap = generics
-        .asMap()
-        .map((index, value) => MapEntry(value, typeParams[index]));
+    final typeMap = (generics).asMap().entries.fold<Map<String, dynamic>>(
+        {}, (acc, entry) => acc..[entry.value] = typeParams[entry.key]);
     return _decodeRaw(BcsReader(data), typeParams, typeMap);
-    // return Function.apply(
-    //     _decodeRaw, [self, BcsReader(data), typeParams, typeMap]);
   }
 
   @override
@@ -507,12 +665,12 @@ class TypeExtend extends TypeInterface {
     BcsWriterOptions? options,
     List<TypeName> typeParams,
   ) {
-    Map<String, String> typeMap = generics
-        .asMap()
-        .map((index, value) => MapEntry(value, typeParams[index]));
+    final typeMap = (generics).asMap().entries.fold<Map<String, dynamic>>(
+        {}, (acc, entry) => acc..[entry.value] = typeParams[entry.key]);
+    // Map<String, String> typeMap = generics
+    //     .asMap()
+    //     .map((index, value) => MapEntry(value, typeParams[index]));
     return _encodeRaw(BcsWriter(options: options), data, typeParams, typeMap);
-    // return Function.apply(_encodeRaw(),
-    //     [self, BcsWriter(options: options), data, typeParams, typeMap]);
   }
 }
 
@@ -535,15 +693,12 @@ abstract class TypeInterface {
     dynamic data,
     List<TypeName> typeParams,
     Map<String, TypeName> typeMap,
-    /*  ConditionFn validateCb,
-    Function encodeCb,*/
   );
 
   dynamic _decodeRaw(
     BcsReader reader,
     List<TypeName> typeParams,
     Map<String, TypeName> typeMap,
-    /*   Function decodeCb,*/
   );
 }
 

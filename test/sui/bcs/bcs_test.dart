@@ -1,5 +1,5 @@
+import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/bcs/bcs.dart';
-import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/bcs/uleb.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,42 +7,122 @@ import 'package:flutter_test/flutter_test.dart';
 import 'common_function_test.dart';
 
 main() {
-  group("BCS: Aliases", () {
-    test('should support type aliases', () {
+  group("BCS: Primitives", () {
+    test("should de/ser primitives: u8", () {
       final bcs = BCS(Uleb.getSuiMoveConfig());
-      String value = "this is a string";
 
-      bcs.registerAlias("MyString", BCS.string);
-      var d = serde(bcs, "MyString", value);
+      var d = bcs.de("u8", fromB64("AQ=="));
 
-      expect(d, 'this is a string');
+      expect(d, 1);
     });
-    test('should support recursive definitions in structs', () {
+
+    test("should ser/de u64", () {
       final bcs = BCS(Uleb.getSuiMoveConfig());
-      final value = {'name': "Billy"};
+      String exp = "AO/Nq3hWNBI=";
+      var ser = bcs.ser("u64", '1311768467750121216');
 
-      bcs.registerAlias("UserName", BCS.string);
+      expect(toB64(ser.toBytes()), exp);
 
-      var d = serde(bcs, {'name': "UserName"}, value);
-
-      expect(d, {'name': "Billy"});
+      var de = bcs.de("u64", exp, encoding: "base64");
+      expect(de, '1311768467750121216');
     });
-    test('should spot recursive definitions', () {
+
+    test("should ser/de u128", () {
       final bcs = BCS(Uleb.getSuiMoveConfig());
-      String value = "this is a string";
+      String sample = "AO9ld3CFjD48AAAAAAAAAA==";
+      String num = "1111311768467750121216";
+      var de = bcs.de("u128", sample, encoding: "base64");
 
-      bcs.registerAlias("UserName", BCS.string);
+      expect(de, '1111311768467750121216');
 
-      bcs.registerAlias("MyString", BCS.string);
-      bcs.registerAlias(BCS.string, "MyString");
+      var ser = bcs.ser("u128", num);
 
-      var error;
-      try {
-        serde(bcs, "MyString", value);
-      } catch (e) {
-        error = e;
-      }
-      expect(error is Exception, true);
+      expect(toB64(ser.toBytes()), sample);
+    });
+    test("should de/ser custom objects", () {
+      final bcs = BCS(Uleb.getSuiMoveConfig());
+      bcs.registerStructType("Coin", {
+        'value': BCS.u64,
+        'owner': BCS.string,
+        'is_locked': BCS.BOOL,
+      });
+
+      String rustBcs = "gNGxBWAAAAAOQmlnIFdhbGxldCBHdXkA";
+      Map expected = {
+        'owner': "Big Wallet Guy",
+        'value': "412412400000",
+        'is_locked': false,
+      };
+      final setBytes = bcs.ser("Coin", expected);
+      final de = bcs.de("Coin", fromB64(rustBcs));
+
+      expect(de, expected);
+      expect(toB64(setBytes.toBytes()), rustBcs);
+    });
+
+    test("should de/ser vectors", () {
+      final bcs = BCS(Uleb.getSuiMoveConfig());
+      String sample = largebcsVec();
+
+      // deserialize data with JS
+      final deserialized = bcs.de("vector<u8>", fromB64(sample));
+
+      List<int> arr = List.generate(1000, (_) => 255);
+      final serialized = bcs.ser("vector<u8>", arr);
+      expect(deserialized.length, 1000);
+
+      expect(toB64(serialized.toBytes()), largebcsVec());
+    });
+
+    test("should de/ser enums", () {
+      final bcs = BCS(Uleb.getSuiMoveConfig());
+      bcs.registerStructType("Coin", {'value': "u64"});
+      bcs.registerEnumType("Enum", {
+        'single': "Coin",
+        'multi': "vector<Coin>",
+      });
+
+      // prepare 2 examples from Rust bcs
+      final example1 = fromB64("AICWmAAAAAAA");
+      final example2 = fromB64("AQIBAAAAAAAAAAIAAAAAAAAA");
+
+      // serialize 2 objects with the same data and signature
+      final set1 = bcs.ser("Enum", {
+        'single': {'value': 10000000}
+      }).toBytes();
+      final set2 = bcs.ser("Enum", {
+        'multi': [
+          {'value': 1},
+          {'value': 2}
+        ],
+      }).toBytes();
+
+      expect(bcs.de("Enum", example1), bcs.de("Enum", set1));
+      expect(bcs.de("Enum", example2), bcs.de("Enum", set2));
+    });
+
+    test("should de/ser addresses", () {
+      final bcs = BCS(Uleb.getSuiMoveConfig()
+        ..addressEncoding = "hex"
+        ..addressLength = 16);
+
+      // Move Kitty example:
+      // Wallet { kitties: vector<Kitty>, owner: address }
+      // Kitty { id: 'u8' }
+
+      // bcs.registerAddressType('address', 16, 'base64'); // Move has 16/20/32 byte addresses
+
+      bcs.registerStructType("Kitty", {'id': "u8"});
+      bcs.registerStructType("Wallet", {
+        'kitties': "vector<Kitty>",
+        'owner': "address",
+      });
+
+      // Generated with Move CLI i.e. on the Move side
+      String sample = "AgECAAAAAAAAAAAAAAAAAMD/7g==";
+      final data = bcs.de("Wallet", fromB64(sample));
+
+      expect(data.kitties, 2);
     });
   });
 }

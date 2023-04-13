@@ -57,42 +57,42 @@ class BcsWriter {
     return this;
   }
 
-  BcsWriter write8(int value) {
+  BcsWriter write8(dynamic value) {
     ensureSizeOrGrow(1);
     dataView.setUint8(bytePosition, value);
     return shift(1);
   }
 
-  BcsWriter write16(int value) {
+  BcsWriter write16(dynamic value) {
     ensureSizeOrGrow(2);
     dataView.setUint16(bytePosition, value, Endian.little);
     return shift(2);
   }
 
-  BcsWriter write32(int value) {
+  BcsWriter write32(dynamic value) {
     ensureSizeOrGrow(4);
     dataView.setUint32(bytePosition, value, Endian.little);
     return shift(4);
   }
 
-  BcsWriter write64(int value) {
-    final littleEndianBytes = Uleb.toLittleEndian(BigInt.from(value), 8);
+  BcsWriter write64(String value) {
+    final littleEndianBytes = Uleb.toLittleEndian(BigInt.parse(value), 8);
     for (final byte in littleEndianBytes) {
       write8(byte);
     }
     return this;
   }
 
-  BcsWriter write128(int value) {
-    final littleEndianBytes = Uleb.toLittleEndian(BigInt.from(value), 16);
+  BcsWriter write128(String value) {
+    final littleEndianBytes = Uleb.toLittleEndian(BigInt.parse(value), 16);
     for (final byte in littleEndianBytes) {
       write8(byte);
     }
     return this;
   }
 
-  BcsWriter write256(int value) {
-    final littleEndianBytes = Uleb.toLittleEndian(BigInt.from(value), 32);
+  BcsWriter write256(String value) {
+    final littleEndianBytes = Uleb.toLittleEndian(BigInt.parse(value), 32);
     for (final byte in littleEndianBytes) {
       write8(byte);
     }

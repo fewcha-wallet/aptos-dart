@@ -1,7 +1,7 @@
 class BcsConfig {
   final String vectorType;
-  final int addressLength;
-  final String? addressEncoding;
+  int addressLength;
+  String? addressEncoding;
   final List<String> genericSeparators;
   final Map<String, dynamic>? types;
   final bool withPrimitives;

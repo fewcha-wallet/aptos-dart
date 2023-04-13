@@ -21,14 +21,13 @@ class Uleb {
       if (arr.isEmpty) {
         arr.add(num & 0x7f);
       } else {
-        arr[len] = num & 0x7f;
+        arr.insert(len, num & 0x7f);
       }
-      if ((num >>= 7) >= 0x80) {
+      if ((num >>= 7) != 0) {
         arr[len] |= 0x80;
       }
       len += 1;
     }
-
     return arr;
   }
 
