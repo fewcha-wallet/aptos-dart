@@ -156,6 +156,7 @@ class SUIConstants {
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
   static const hardenedOffset = 0x80000000;
   static const String defaultEd25519DerivationPath = "m/44'/784'/0'/0'/0'";
+  static const int suiAddressLength = 32;
 }
 
 class Abis {
