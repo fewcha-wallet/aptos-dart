@@ -1,7 +1,7 @@
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/bcs/bcs.dart';
+import 'package:aptosdart/core/sui/bcs/bcs_writer.dart';
 import 'package:aptosdart/core/sui/bcs/uleb.dart';
-import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'common_function_test.dart';
@@ -106,12 +106,6 @@ main() {
         ..addressEncoding = "hex"
         ..addressLength = 16);
 
-      // Move Kitty example:
-      // Wallet { kitties: vector<Kitty>, owner: address }
-      // Kitty { id: 'u8' }
-
-      // bcs.registerAddressType('address', 16, 'base64'); // Move has 16/20/32 byte addresses
-
       bcs.registerStructType("Kitty", {'id': "u8"});
       bcs.registerStructType("Wallet", {
         'kitties': "vector<Kitty>",
@@ -121,8 +115,65 @@ main() {
       // Generated with Move CLI i.e. on the Move side
       String sample = "AgECAAAAAAAAAAAAAAAAAMD/7g==";
       final data = bcs.de("Wallet", fromB64(sample));
+      Map result = (data as Map);
+      final kitties = result['kitties'];
+      final owner = result['owner'];
+      expect((kitties as List).length, 2);
+      expect(owner, '00000000000000000000000000c0ffee');
+    });
+    test("should support growing size", () {
+      final bcs = BCS(Uleb.getSuiMoveConfig());
 
-      expect(data.kitties, 2);
+      bcs.registerStructType("Coin", {
+        'value': BCS.u64,
+        'owner': BCS.string,
+        'is_locked': BCS.BOOL,
+      });
+
+      const rustBcs = "gNGxBWAAAAAOQmlnIFdhbGxldCBHdXkA";
+      const expected = {
+        'owner': "Big Wallet Guy",
+        'value': "412412400000",
+        'is_locked': false,
+      };
+
+      final setBytes = bcs.ser("Coin", expected,
+          options: BcsWriterOptions(size: 1, maxSize: 1024));
+
+      final de = bcs.de("Coin", fromB64(rustBcs));
+      final hex = toB64(setBytes.toBytes());
+
+      expect(de, expected);
+      expect(hex, rustBcs);
+    });
+
+    test("should error when attempting to grow beyond the allowed size",
+        () async {
+      final bcs = BCS(Uleb.getSuiMoveConfig());
+
+      bcs.registerStructType("Coin", {
+        'value': BCS.u64,
+        'owner': BCS.string,
+        'is_locked': BCS.BOOL,
+      });
+
+      const expected = {
+        'owner': "Big Wallet Guy",
+        'value': '412412400000n',
+        'is_locked': false,
+      };
+
+      BcsWriter serd() {
+        try {
+          final ser =
+              bcs.ser("Coin", expected, options: BcsWriterOptions(size: 1));
+          return ser;
+        } catch (e) {
+          throw const FormatException();
+        }
+      }
+
+      expect(() => serd(), throwsFormatException);
     });
   });
 }

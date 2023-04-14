@@ -8,7 +8,8 @@ import 'package:aptosdart/core/sui/bcs/bcs_writer.dart';
 import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/bcs/uleb.dart';
 import 'package:aptosdart/utils/utilities.dart';
-import 'package:bs58/bs58.dart' as base58Lib;
+// import 'package:bs58/bs58.dart' as base58Lib;
+import 'package:fast_base58/fast_base58.dart' as base58Lib;
 
 class BCS {
   /// Predefined types constants
@@ -59,12 +60,12 @@ class BCS {
     schema = inputSchema;
 
     /// Register address type under key 'address'.
-    // registerAddressType(
-    //     BCS.address, schema.addressLength, schema.addressEncoding);
-    // registerVectorType(schema.vectorType);
+    registerAddressType(BCS.address, schema.addressLength,
+        encoding: schema.addressEncoding);
+    registerVectorType(schema.vectorType);
 
     /// Register struct types if they were passed.
-    if (schema.types != null && schema.types!['structs']) {
+    if (schema.types != null && schema.types!['structs'] != null) {
       for (String name in schema.types!['structs'].keys) {
         registerStructType(name, schema.types!['structs'][name]);
       }
@@ -74,6 +75,13 @@ class BCS {
     if (schema.types != null && schema.types!['enums'] != null) {
       for (String name in schema.types!['enums'].keys) {
         registerEnumType(name, schema.types!['enums'][name]);
+      }
+    }
+
+    /// Register aliases if they were passed.
+    if (schema.types != null && schema.types!['aliases'] != null) {
+      for (String name in schema.types!['aliases'].keys) {
+        registerAlias(name, schema.types!['aliases'][name]);
       }
     }
     if (schema.withPrimitives != false) {
@@ -352,11 +360,11 @@ class BCS {
         BCS.base58,
         (BcsWriter writer, dynamic data,
                 {typeParams = const [], typeMap = const {}}) =>
-            writer.writeVec(base58Lib.base58.decode(data),
+            writer.writeVec(base58Lib.Base58Decode(data),
                 (writer, el, i, length) => writer.write8(el)),
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) {
       var bytes = reader.readVec((reader, i, length) => reader.read8());
-      return base58Lib.base58.encode(Uint8List.fromList(bytes));
+      return base58Lib.Base58Encode(Uint8List.fromList(bytes));
     }, (dynamic base58) => true);
 
     bcs.registerType(
@@ -495,12 +503,15 @@ class BCS {
 
   BCS registerEnumType(TypeName typeName, EnumTypeDefinition variants) {
     for (var key in variants.keys) {
+      print(variants[key].runtimeType);
+
       var internalName = _tempKey();
       var value = variants[key];
 
       if (value != null && value is! List && value is! String) {
         variants[key] = internalName;
-        registerStructType(internalName, value as Map);
+        registerStructType(
+            internalName, (value as Map).cast<String, dynamic>());
       }
     }
 
@@ -582,6 +593,31 @@ class BCS {
             ._decodeRaw(reader, paramsParseTypeInterface, typeMap)
       };
     }, (dynamic enumType) => true);
+  }
+
+  BCS registerAddressType(String name, int length,
+      {Encoding? encoding = 'hex'}) {
+    switch (encoding) {
+      case 'base64':
+        return registerType(name, (BcsWriter writer, dynamic data,
+                {typeParams = const [], typeMap}) {
+          return fromB64(data).fold(writer, (writer, el) => writer.write8(el));
+        },
+            (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
+                toB64(reader.readBytes(length)),
+            (dynamic struct) => true);
+      case 'hex':
+        return registerType(name, (BcsWriter writer, dynamic data,
+                {typeParams = const [], typeMap}) {
+          return Utilities.hexToBytes(data)
+              .fold(writer, (writer, el) => writer.write8(el));
+        },
+            (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
+                Utilities.bytesToHex(reader.readBytes(length)),
+            (dynamic struct) => true);
+      default:
+        throw Exception("Unsupported encoding! Use either hex or base64");
+    }
   }
 
   TypeInterface getTypeInterface(String type) {

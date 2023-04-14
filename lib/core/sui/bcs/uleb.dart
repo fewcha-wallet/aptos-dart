@@ -4,8 +4,8 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/bcs/bcs_config.dart';
 import 'package:aptosdart/utils/utilities.dart';
-import 'package:bs58/bs58.dart';
-
+// import 'package:bs58/bs58.dart';
+import 'package:fast_base58/fast_base58.dart';
 import 'package:aptosdart/core/sui/bcs/define_function.dart';
 
 class Uleb {
@@ -66,7 +66,7 @@ class Uleb {
   static String encodeStr(Uint8List data, Encoding encoding) {
     switch (encoding) {
       case "base58":
-        return base58.encode(data);
+        return Base58Encode(data);
       case "base64":
         return toB64(data);
       case "hex":
@@ -80,7 +80,7 @@ class Uleb {
   static Uint8List decodeStr(String data, Encoding encoding) {
     switch (encoding) {
       case "base58":
-        return base58.decode(data);
+        return Uint8List.fromList(Base58Decode(data));
       case "base64":
         return fromB64(data);
       case "hex":
@@ -97,5 +97,14 @@ class Uleb {
         addressLength: SUIConstants.suiAddressLength,
         vectorType: "vector",
         addressEncoding: "hex");
+  }
+
+  static BcsConfig getRustConfig() {
+    return BcsConfig(
+      genericSeparators: ["<", ">"],
+      vectorType: "Vec",
+      addressLength: SUIConstants.suiAddressLength,
+      addressEncoding: "hex",
+    );
   }
 }
