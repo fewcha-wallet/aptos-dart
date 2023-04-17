@@ -171,5 +171,25 @@ main() {
             (value['item'] as Map<String, dynamic>)['balance']['value']);
       }
     });
+    test('should serde SuiObjectRef', () {
+      final bcs = BCS(Uleb.getSuiMoveConfig());
+
+      bcs.registerStructType("SuiObjectRef", {
+        'objectId': "address",
+        'version': "u64",
+        'digest': "ObjectDigest",
+      });
+
+      bcs.registerAlias("ObjectDigest", BCS.string);
+
+      const value = {
+        'objectId':
+            "5443700000000000000000000000000000000000000000000000000000000000",
+        'version': "9180",
+        'digest': "hahahahahaha",
+      };
+
+      expect(serde(bcs, "SuiObjectRef", value), value);
+    });
   });
 }
