@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
 import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
-import 'package:aptosdart/core/sui/publickey/public_key.dart' as suiPK;
+import 'package:aptosdart/core/sui/publickey/public_key.dart' as sui_pk;
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart';
@@ -28,7 +28,6 @@ class SUIAccount implements AbstractAccount {
     );
   }
   factory SUIAccount.fromPrivateKey(String privateKeyHex) {
-
     final bytes = Utilities.hexToBytes(privateKeyHex.trimPrefix());
     final list = Uint8List.fromList(bytes.getRange(0, 32).toList());
     Ed25519Keypair ds = Ed25519Keypair.fromSecretKey(list);
@@ -61,7 +60,7 @@ class SUIAccount implements AbstractAccount {
     return key;
   }
 
-  suiPK.PublicKey publicKeyByte() {
+  sui_pk.PublicKey publicKeyByte() {
     final list = Uint8List.fromList(_privateKey.getRange(0, 32).toList());
 
     Ed25519Keypair ed25519keypair =
@@ -96,7 +95,6 @@ class SUIAccount implements AbstractAccount {
   }
 
   String signatureBase64(String hexString) {
-
     return signBuffer(base64Decode(hexString));
   }
 

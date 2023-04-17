@@ -34,7 +34,7 @@ main() {
       bcs.registerAlias("MyString", BCS.string);
       bcs.registerAlias(BCS.string, "MyString");
 
-      var error;
+      dynamic error;
       try {
         serde(bcs, "MyString", value);
       } catch (e) {

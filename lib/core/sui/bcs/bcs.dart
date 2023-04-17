@@ -8,8 +8,7 @@ import 'package:aptosdart/core/sui/bcs/bcs_writer.dart';
 import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/bcs/uleb.dart';
 import 'package:aptosdart/utils/utilities.dart';
-// import 'package:bs58/bs58.dart' as base58Lib;
-import 'package:fast_base58/fast_base58.dart' as base58Lib;
+import 'package:fast_base58/fast_base58.dart' as base58_lib;
 
 class BCS {
   /// Predefined types constants
@@ -252,20 +251,20 @@ class BCS {
     String left = separators.first;
     String right = separators.last;
 
-    int l_bound = name.indexOf(left);
-    int r_bound = name.split('').reversed.toList().indexOf(right);
+    int lBound = name.indexOf(left);
+    int rBound = name.split('').reversed.toList().indexOf(right);
 
-    if (l_bound == -1 && r_bound == -1) {
+    if (lBound == -1 && rBound == -1) {
       return {"name": name, "params": []};
     }
 
-    if (l_bound == -1 || r_bound == -1) {
+    if (lBound == -1 || rBound == -1) {
       throw Exception("Unclosed generic in name '$name'");
     }
 
-    String typeName = name.substring(0, l_bound);
+    String typeName = name.substring(0, lBound);
     List<String> params = name
-        .substring(l_bound + 1, name.length - r_bound - 1)
+        .substring(lBound + 1, name.length - rBound - 1)
         .split(",")
         .map((e) => e.trim())
         .toList();
@@ -361,11 +360,11 @@ class BCS {
         BCS.base58,
         (BcsWriter writer, dynamic data,
                 {typeParams = const [], typeMap = const {}}) =>
-            writer.writeVec(base58Lib.Base58Decode(data),
+            writer.writeVec(base58_lib.Base58Decode(data),
                 (writer, el, i, length) => writer.write8(el)),
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) {
       var bytes = reader.readVec((reader, i, length) => reader.read8());
-      return base58Lib.Base58Encode(Uint8List.fromList(bytes));
+      return base58_lib.Base58Encode(Uint8List.fromList(bytes));
     }, (dynamic base58) => true);
 
     bcs.registerType(
@@ -439,7 +438,6 @@ class BCS {
           List<dynamic> params = parsedParam['params'] ?? [];
 
           if (hasType(name)) {
-            print('hasType');
             getTypeInterface(name)._encodeRaw(
               writer,
               data[key],
@@ -543,10 +541,6 @@ class BCS {
       }
 
       var key = data.keys.first;
-      if (key == null) {
-        throw Exception('Empty object passed as invariant of the enum "$name"');
-      }
-
       var orderByte = canonicalOrder.indexOf(key);
       if (orderByte == -1) {
         throw Exception(

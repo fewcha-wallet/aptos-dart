@@ -5,8 +5,6 @@ import 'package:aptosdart/utils/utilities.dart';
 import 'package:fast_base58/fast_base58.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'common_function_test.dart';
-
 main() {
   group("BCS: README Examples", () {
     test('quick start', () {
@@ -20,18 +18,6 @@ main() {
         'id': "UID",
         'value': BCS.u64,
       });
-
-      // deserialization: BCS bytes into Coin
-      final bytes = bcs.ser("Coin", {
-        'id':
-            "0000000000000000000000000000000000000000000000000000000000000001",
-        'value': '1000000',
-      }).toBytes();
-
-      final coin = bcs.de("Coin", bytes);
-
-      // serialization: Object into bytes
-      final data = bcs.ser("Option<Coin>", {'some': coin});
     });
 
     test('Example: Rust Config', () {

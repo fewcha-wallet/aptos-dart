@@ -26,14 +26,13 @@ main() {
     });
 
     test('should fork config', () {
-      final bcs_v1 = BCS(Uleb.getSuiMoveConfig());
-      bcs_v1.registerStructType("User", {'name': "string"});
+      final bcsV1 = BCS(Uleb.getSuiMoveConfig());
+      bcsV1.registerStructType("User", {'name': "string"});
 
-      final bcs_v2 = BCS(bcs_v1);
-      bcs_v2
-          .registerStructType("Worker", {'user': "User", 'experience': "u64"});
-      final has1 = bcs_v1.hasType("Worker");
-      final has2 = bcs_v2.hasType("Worker");
+      final bcsV2 = BCS(bcsV1);
+      bcsV2.registerStructType("Worker", {'user': "User", 'experience': "u64"});
+      final has1 = bcsV1.hasType("Worker");
+      final has2 = bcsV2.hasType("Worker");
       expect(has1, true);
       expect(has2, true);
     });
