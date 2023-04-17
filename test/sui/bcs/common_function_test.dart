@@ -7,6 +7,7 @@ serde(BCS bcs, TypeName type, dynamic data) {
 
   final ser = Utilities.bytesToHex(d.toBytes());
   final de = bcs.de(type, ser, encoding: "hex");
+
   return de;
 }
 

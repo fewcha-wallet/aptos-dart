@@ -274,32 +274,33 @@ class BCS {
   }
 
   void registerPrimitives(BCS bcs) {
-    bcs.registerType(
-        BCS.u8,
-        (BcsWriter writer, dynamic data,
-                {typeParams = const [], typeMap = const {}}) =>
-            writer.write8(data),
+    bcs.registerType(BCS.u8, (BcsWriter writer, dynamic data,
+            {typeParams = const [], typeMap = const {}}) {
+      int parseData = int.parse(data.toString());
+      return writer.write8(parseData);
+    },
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read8(),
-        (dynamic u8) => u8 < 256);
+        (dynamic u8) => int.parse(u8.toString()) < 256);
 
-    bcs.registerType(
-        BCS.u16,
-        (BcsWriter writer, dynamic data,
-                {typeParams = const [], typeMap = const {}}) =>
-            writer.write16(data),
+    bcs.registerType(BCS.u16, (BcsWriter writer, dynamic data,
+            {typeParams = const [], typeMap = const {}}) {
+      int parseData = int.parse(data.toString());
+
+      return writer.write16(parseData);
+    },
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read16(),
-        (dynamic u16) => u16 < 65536);
+        (dynamic u16) => int.parse(u16.toString()) < 65536);
 
-    bcs.registerType(
-        BCS.u32,
-        (BcsWriter writer, dynamic data,
-                {typeParams = const [], typeMap = const {}}) =>
-            writer.write32(data),
+    bcs.registerType(BCS.u32, (BcsWriter writer, dynamic data,
+            {typeParams = const [], typeMap = const {}}) {
+      int parseData = int.parse(data.toString());
+      return writer.write32(parseData);
+    },
         (BcsReader reader, {typeParams = const [], typeMap = const {}}) =>
             reader.read32(),
-        (dynamic u32) => u32 < 4294967296);
+        (dynamic u32) => int.parse(u32.toString()) < 4294967296);
     bcs.registerType(BCS.u64, (BcsWriter writer, dynamic data,
             {typeParams = const [], typeMap = const {}}) {
       return writer.write64(data.toString());
@@ -380,17 +381,23 @@ class BCS {
   }
 
   BCS registerStructType(TypeName typeName, StructTypeDefinition fields) {
+    Map<String, dynamic> mapFinal = {};
+
     for (var key in fields.keys) {
       var internalName = _tempKey();
       var value = fields[key];
 
       if (value is! List && value is! String) {
-        fields[key] = internalName;
+        // fields[key] = internalName;
+        mapFinal.putIfAbsent(key, () => internalName);
         registerStructType(internalName, value as StructTypeDefinition);
+      } else {
+        mapFinal = fields;
       }
     }
 
-    var struct = Map.unmodifiable(fields);
+    var struct = Map.unmodifiable(mapFinal);
+    // var struct = Map.unmodifiable(fields);
 
     var canonicalOrder = struct.keys.toList();
 
@@ -503,8 +510,6 @@ class BCS {
 
   BCS registerEnumType(TypeName typeName, EnumTypeDefinition variants) {
     for (var key in variants.keys) {
-      print(variants[key].runtimeType);
-
       var internalName = _tempKey();
       var value = variants[key];
 
