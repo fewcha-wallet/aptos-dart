@@ -6,6 +6,7 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui/balances/sui_balances.dart';
+import 'package:aptosdart/core/sui/create_token_transfer_transaction/create_token_transfer_transaction.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 import 'package:aptosdart/core/transaction/transaction.dart';
@@ -415,34 +416,45 @@ class SUIClient {
     required SUIArgument suiArgument,
   }) async {
     try {
-      List<SUIObjects> listSUIs = [];
-      await syncAccountState(suiArgument.address!);
-
-      /// Get list SUI object
-      final getObjectOwned =
-          await getObjectsOwnedByAddress(suiArgument.address!);
-      for (var element in getObjectOwned) {
-        final objects = await getObject(element.objectId!);
-        if (objects.isSUICoinObject()) {
-          listSUIs.add(objects);
-        }
-      }
-
-      ///
-      final coin = await computeGasBudgetForPay(
-        amount: suiArgument.amount!,
-        coins: listSUIs,
-      );
-      final result = await _suiRepository.newPayTransaction(
-        allCoins: listSUIs,
-        gasBudget: coin,
-        recipient: suiArgument.recipient!,
-        coinTypeArg: '0x2::sui::SUI',
-        amountToSend: suiArgument.amount!,
-        accountAddress: suiArgument.address!,
-      );
-      // final dry = await _suiRepository.dryRunTransaction(result.txBytes!);
-      return SUITransactionSimulateResult(gas: coin, txBytes: result.txBytes!);
+      final tx =
+          await CreateTokenTransferTransaction.createTokenTransferTransaction(
+              Options(
+        to: suiArgument.recipient!.trimPrefix(),
+        amount: suiArgument.amount.toString(),
+        coinDecimals: 9,
+        coinType: SUIConstants.suiConstruct,
+        coins: [],
+      ));
+      tx.setSender(suiArgument.address!.trimPrefix());
+      await tx.build();
+      // List<SUIObjects> listSUIs = [];
+      // await syncAccountState(suiArgument.address!);
+      //
+      // /// Get list SUI object
+      // final getObjectOwned =
+      //     await getObjectsOwnedByAddress(suiArgument.address!);
+      // for (var element in getObjectOwned) {
+      //   final objects = await getObject(element.objectId!);
+      //   if (objects.isSUICoinObject()) {
+      //     listSUIs.add(objects);
+      //   }
+      // }
+      //
+      // ///
+      // final coin = await computeGasBudgetForPay(
+      //   amount: suiArgument.amount!,
+      //   coins: listSUIs,
+      // );
+      // final result = await _suiRepository.newPayTransaction(
+      //   allCoins: listSUIs,
+      //   gasBudget: coin,
+      //   recipient: suiArgument.recipient!,
+      //   coinTypeArg: '0x2::sui::SUI',
+      //   amountToSend: suiArgument.amount!,
+      //   accountAddress: suiArgument.address!,
+      // );
+      // // final dry = await _suiRepository.dryRunTransaction(result.txBytes!);
+      return SUITransactionSimulateResult(gas: 1, txBytes: 'result.txBytes!');
     } catch (e) {
       rethrow;
     }

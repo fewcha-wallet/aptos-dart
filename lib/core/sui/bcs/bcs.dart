@@ -111,7 +111,8 @@ class BCS {
     return registerType(typeName, (BcsWriter writer, dynamic data,
         {List<TypeName>? typeParams = const [],
         Map<String, TypeName>? typeMap = const {}}) {
-      return writer.writeVec(data, (writer, el, i, length) {
+      List<dynamic> list = data is List ? data : [data].cast<dynamic>();
+      return writer.writeVec(list, (writer, el, i, length) {
         if (typeMap == null) throw Exception("typeMap must not be null");
         var elementType = typeParams![0];
         if (elementType == null) {
@@ -190,6 +191,7 @@ class BCS {
 
   BcsWriter ser(TypeName type, dynamic data, {BcsWriterOptions? options}) {
     if (type is String || type is List) {
+      print('============ser========================');
       final typeName = parseTypeName(type);
       List<dynamic> listParams = typeName['params'];
       return getTypeInterface(typeName['name'])
@@ -390,10 +392,9 @@ class BCS {
         // fields[key] = internalName;
         mapFinal.putIfAbsent(key, () => internalName);
         registerStructType(internalName, value as StructTypeDefinition);
-      } else {
-        mapFinal = fields;
       }
     }
+    mapFinal = mapFinal.isEmpty ? fields : mapFinal;
 
     var struct = Map.unmodifiable(mapFinal);
     // var struct = Map.unmodifiable(fields);
@@ -507,18 +508,22 @@ class BCS {
   }
 
   BCS registerEnumType(TypeName typeName, EnumTypeDefinition variants) {
+    Map<String, dynamic> mapFinal = {};
+
     for (var key in variants.keys) {
       var internalName = _tempKey();
       var value = variants[key];
-
       if (value != null && value is! List && value is! String) {
-        variants[key] = internalName;
-        registerStructType(
-            internalName, (value as Map).cast<String, dynamic>());
+        mapFinal.putIfAbsent(key, () => internalName);
+
+        registerStructType(internalName, value as EnumTypeDefinition);
+      } else {
+        mapFinal.putIfAbsent(key, () => value);
       }
     }
+    mapFinal = mapFinal.isEmpty ? variants : mapFinal;
 
-    var struct = Map<String, dynamic>.unmodifiable(variants);
+    var struct = Map.unmodifiable(mapFinal);
 
     var canonicalOrder = struct.keys.toList();
 
@@ -535,7 +540,7 @@ class BCS {
         throw Exception(
             'Unable to write enum "$name", missing data.\nReceived: "$data"');
       }
-      if (data is! Map<String, dynamic>) {
+      if (data is! Map) {
         throw Exception(
             'Incorrect data passed into enum "$name", expected object with properties: "${canonicalOrder.join(" | ")}".');
       }
@@ -544,7 +549,7 @@ class BCS {
       var orderByte = canonicalOrder.indexOf(key);
       if (orderByte == -1) {
         throw Exception(
-            'Unknown invariant of the enum "$name", allowed values: "${canonicalOrder.join(" | ")}"; received "$key"');
+            'Unknown invariant of the enum "$name" $typeName, allowed values: "${canonicalOrder.join(" | ")}"; received "$key"');
       }
       var invariant = canonicalOrder[orderByte];
       var invariantType = struct[invariant] as TypeName?;
@@ -617,6 +622,38 @@ class BCS {
       default:
         throw Exception("Unsupported encoding! Use either hex or base64");
     }
+  }
+
+  BCS registerTypeBuilder() {
+    return registerType([ENUM_KIND, 'T'], (BcsWriter writer, dynamic data,
+        {typeParams = const [], typeMap = const {}}) {
+      final kind = (data as Map)['kind'];
+      final invariant = {kind: data};
+      final enumType = typeParams;
+      return getTypeInterface(enumType!.first)._encodeRaw(
+        writer,
+        invariant,
+        typeParams!,
+        typeMap!,
+      );
+    }, (BcsReader reader, {typeParams = const [], typeMap = const {}}) {
+      final enumType = typeParams;
+      final data = getTypeInterface(enumType.first)._decodeRaw(
+        reader,
+        typeParams,
+        typeMap,
+      );
+
+      // enum invariant can only have one `key` field
+      final kind = data[0];
+      return kind;
+    }, (dynamic data) {
+      if (data is! Object && (data['kind'] == null)) {
+        throw ('EnumKind: Missing property "kind" in the input ');
+      }
+
+      return true;
+    });
   }
 
   TypeInterface getTypeInterface(String type) {

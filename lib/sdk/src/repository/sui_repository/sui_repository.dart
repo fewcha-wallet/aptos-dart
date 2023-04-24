@@ -7,7 +7,9 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
+import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin.dart';
+import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
@@ -545,4 +547,63 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+
+  //region TransactionBlock
+  Future<String> getReferenceGasPrice() async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suixGetReferenceGasPrice,
+          arg: [],
+          create: (response) => RPCResponse<String>(response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUICoinList> getCoins(
+      {required String address, required String coinType}) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suixGetCoins,
+          arg: [address, coinType, null, null],
+          create: (response) =>
+              RPCResponse(createObject: SUICoinList(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransaction> dryRunTransactionBlock({required dynamic data}) async {
+    assert(data != String || data != Uint8List);
+    try {
+      String input;
+      if (data is String) {
+        input = data;
+      } else {
+        input = toB64(data);
+      }
+
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiDryRunTransactionBlock,
+          arg: [input],
+          create: (response) =>
+              RPCResponse(createObject: SUITransaction(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+//endregion
 }

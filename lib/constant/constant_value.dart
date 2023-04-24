@@ -132,7 +132,10 @@ class SUIConstants {
   static const String suiTransferObject = 'sui_transferObject';
   static const String suiDryRunTransaction = 'sui_dryRunTransaction';
   static const String suiPaySui = 'sui_paySui';
+  static const String suixGetReferenceGasPrice = 'suix_getReferenceGasPrice';
   static const String suiExecuteTransaction = 'sui_executeTransaction';
+  static const String suixGetCoins = 'suix_getCoins';
+  static const String suiDryRunTransactionBlock = 'sui_dryRunTransactionBlock';
   static const String suiExecuteTransactionSerializedSig =
       'sui_executeTransactionSerializedSig';
   static const String waitForLocalExecution = 'WaitForLocalExecution';
@@ -157,6 +160,10 @@ class SUIConstants {
   static const hardenedOffset = 0x80000000;
   static const String defaultEd25519DerivationPath = "m/44'/784'/0'/0'/0'";
   static const int suiAddressLength = 32;
+  static const int maxGasObjects = 256;
+  static const int transactionDataMaxSize = 128 * 1024;
+  static const int maxGas = 1000000000;
+  static const int gasOverHeadPerCoin = 10;
 }
 
 class Abis {

@@ -358,11 +358,9 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   SUIEffects? effects;
   int? timestampMs;
   int? amount;
-  // SUICertificate? suiCertificate;
   SUITransactionHistory({
     this.effects,
     this.timestampMs,
-    // this.suiCertificate,
     this.senderAddress,
     this.amount,
   });
@@ -370,10 +368,11 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
     effects =
         json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
-    timestampMs = json['timestampMs'] ?? 0;
+    timestampMs = int.parse(json['timestampMs'] ?? '0');
     digest = json['digest'] ?? 0;
     senderAddress = json['transaction']?['data']?['sender'] ?? '';
-    amount = json['transaction']?['data']?['gasData']?['budget'] ?? 0;
+    amount =
+        int.parse(json['transaction']?['data']?['gasData']?['budget'] ?? '0');
   }
 
   Map<String, dynamic> toJson() {

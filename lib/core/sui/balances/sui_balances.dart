@@ -18,7 +18,7 @@ class SUIBalances extends Decoder<SUIBalances> {
     coinObjectCount = json['coinObjectCount'] ?? 0;
     coinType = json['coinType'];
     lockedBalance = json['lockedBalance'] ?? {};
-    totalBalance = json['totalBalance'] ?? 0;
+    totalBalance = int.parse(json['totalBalance'] ?? '0');
   }
   @override
   SUIBalances decode(Map<String, dynamic> json) {

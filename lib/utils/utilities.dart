@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account_address/account_address.dart';
 import 'package:aptosdart/core/authenticator/authenticator.dart';
 import 'package:aptosdart/core/script_abi/script_abi.dart';
@@ -12,6 +13,14 @@ import 'package:ed25519_edwards/ed25519_edwards.dart';
 import 'serializer/serializer.dart';
 
 class Utilities {
+  static String normalizeSuiAddress(String value, [bool forceAdd0x = false]) {
+    String address = value.toLowerCase();
+    if (!forceAdd0x && address.startsWith('0x')) {
+      address = address.substring(2);
+    }
+    return '0x${address.padLeft(SUIConstants.suiAddressLength * 2, '0')}';
+  }
+
   static List<String> buffer(List<int> list) {
     List<String> listString = [];
     for (int item in list) {

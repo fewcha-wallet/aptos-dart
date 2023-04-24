@@ -3,7 +3,7 @@ class BcsConfig {
   int addressLength;
   String? addressEncoding;
   final List<String> genericSeparators;
-  final Map<String, dynamic>? types;
+  Map<String, dynamic>? types;
   final bool withPrimitives;
 
   BcsConfig({

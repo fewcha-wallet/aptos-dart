@@ -1,6 +1,7 @@
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/bcs/bcs.dart';
 import 'package:aptosdart/core/sui/bcs/bcs_writer.dart';
+import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/bcs/uleb.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,6 +13,15 @@ main() {
       final bcs = BCS(Uleb.getSuiMoveConfig());
 
       var d = bcs.de("u8", fromB64("AQ=="));
+
+      expect(d, 1);
+    });
+    test("TransactionData", () {
+      BCS bcs = Builder().bcs;
+      final d = bcs.de(
+          'TransactionData',
+          fromB64(
+              'AAACAAhAQg8AAAAAAAAgOvAPy36h+CwalN00eWMzM5Lony0cMHtQ4jC3NNEDJM0CAgABAQAAAQECAAABAQCtoRLPuQtEuoicxdOawr9GKB5KkfeRnGk7zZuDI+ge0gCtoRLPuQtEuoicxdOawr9GKB5KkfeRnGk7zZuDI+ge0ugDAAAAAAAAAMqaOwAAAAAA'));
 
       expect(d, 1);
     });
