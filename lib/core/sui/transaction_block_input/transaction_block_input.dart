@@ -38,7 +38,16 @@ class TransactionBlockInput extends TransactionArgumentTypes {
     // map['value'] = value;
     // map['index'] = index;
     // map['type'] = type;
-    return value;
+    return value.toJson();
+  }
+
+  Map<String, dynamic> toTransactionJson() {
+    Map<String, dynamic> map = {};
+    map['kind'] = kind;
+
+    map['index'] = index;
+
+    return map;
   }
 }
 
@@ -96,8 +105,26 @@ class SplitCoins extends TransactionType {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
     map['kind'] = 'SplitCoins';
-    map['coin'] = coin;
+    map['coin'] =
+        coin is TransactionBlockInput ? coin.toTransactionJson() : coin;
     map['amounts'] = amounts.map((e) => e.toJson()).toList();
+    return map;
+  }
+}
+
+class MergeCoins extends TransactionType {
+  String kind;
+  dynamic destination;
+  dynamic sources;
+
+  MergeCoins({this.kind = 'MergeCoins', this.destination, this.sources});
+
+  @override
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {};
+    map['kind'] = kind;
+    map['destination'] = destination.toTransactionJson();
+    map['sources'] = sources.map((e) => e.toJson()).toList();
     return map;
   }
 }
@@ -118,10 +145,4 @@ class TransferObjects extends TransactionType {
     map['address'] = address.toJson();
     return map;
   }
-}
-
-class PureTransactionArgument {
-  String type;
-
-  PureTransactionArgument(this.type) {}
 }

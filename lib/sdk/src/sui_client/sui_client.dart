@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/sui_argument/compute_sui_object_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
@@ -6,6 +8,8 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/objects_owned/objects_owned.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/sui/balances/sui_balances.dart';
+import 'package:aptosdart/core/sui/bcs/b64.dart';
+import 'package:aptosdart/core/sui/coin/sui_coin_metadata.dart';
 import 'package:aptosdart/core/sui/create_token_transfer_transaction/create_token_transfer_transaction.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
@@ -160,6 +164,7 @@ class SUIClient {
   Future<List<SUIBalances>> getAccountTokens(String address) async {
     try {
       final listCoins = await _suiRepository.getSUITokens(address);
+
       return listCoins;
     } catch (e) {
       return [];
@@ -368,44 +373,13 @@ class SUIClient {
     }
   }
 
-  Future<SUIEffects?> simulateSendTokenTransaction({
-    required SUIArgument suiArgument,
-  }) async {
-    try {
-      final result = await transferCoin(
-        toAddress: suiArgument.recipient!,
-        suiAccount: suiArgument.suiAccount!,
-        amount: suiArgument.amount!.toDouble(),
-        dryRun: true,
-      );
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<EffectsCert?> submitSendTokenTransaction({
-    required SUIArgument suiArgument,
-  }) async {
-    try {
-      final result = await transferCoin(
-        toAddress: suiArgument.recipient!,
-        suiAccount: suiArgument.suiAccount!,
-        amount: suiArgument.amount!.toDouble(),
-        dryRun: false,
-      );
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<SUITransaction?> submitTransaction({
     required SUIArgument suiArgument,
   }) async {
     try {
-      final result =
-          await _suiRepository.signAndExecuteTransaction(suiArgument);
+      Uint8List tx = fromB64(suiArgument.txBytes!);
+      final result = await _suiRepository.signAndExecuteTransactionBlock(
+          suiArgument.suiAccount!, tx);
       return result;
     } catch (e) {
       rethrow;
@@ -419,92 +393,22 @@ class SUIClient {
       final tx =
           await CreateTokenTransferTransaction.createTokenTransferTransaction(
               Options(
+        address: suiArgument.address!,
         to: suiArgument.recipient!.trimPrefix(),
         amount: suiArgument.amount.toString(),
-        coinDecimals: 9,
-        coinType: SUIConstants.suiConstruct,
+        coinDecimals: suiArgument.decimal!,
+        coinType: suiArgument.coinType!,
         coins: [],
       ));
       tx.setSender(suiArgument.address!.trimPrefix());
-      await tx.build();
-      // List<SUIObjects> listSUIs = [];
-      // await syncAccountState(suiArgument.address!);
-      //
-      // /// Get list SUI object
-      // final getObjectOwned =
-      //     await getObjectsOwnedByAddress(suiArgument.address!);
-      // for (var element in getObjectOwned) {
-      //   final objects = await getObject(element.objectId!);
-      //   if (objects.isSUICoinObject()) {
-      //     listSUIs.add(objects);
-      //   }
-      // }
-      //
-      // ///
-      // final coin = await computeGasBudgetForPay(
-      //   amount: suiArgument.amount!,
-      //   coins: listSUIs,
-      // );
-      // final result = await _suiRepository.newPayTransaction(
-      //   allCoins: listSUIs,
-      //   gasBudget: coin,
-      //   recipient: suiArgument.recipient!,
-      //   coinTypeArg: '0x2::sui::SUI',
-      //   amountToSend: suiArgument.amount!,
-      //   accountAddress: suiArgument.address!,
-      // );
-      // // final dry = await _suiRepository.dryRunTransaction(result.txBytes!);
-      return SUITransactionSimulateResult(gas: 1, txBytes: 'result.txBytes!');
-    } catch (e) {
-      rethrow;
-    }
-  }
+      Map<String, dynamic> result = {};
+      result = await tx.build();
 
-  Future<dynamic> transferSUI({
-    required String address,
-    required String toAddress,
-    required SUIAccount suiAccount,
-    required num amount,
-    num? gasBudget,
-    bool dryRun = true,
-  }) async {
-    try {
-      List<SUIObjects> listSUIs = [];
-      await syncAccountState(address);
+      final txBytes = toB64(result['txBytes']);
+      final gas = result['gas'];
 
-      /// Get list SUI object
-      final getObjectOwned = await getObjectsOwnedByAddress(address);
-      for (var element in getObjectOwned) {
-        final objects = await getObject(element.objectId!);
-        if (objects.isSUICoinObject()) {
-          listSUIs.add(objects);
-        }
-      }
-
-      ///
-      final coin = await prepareCoinWithEnoughBalance(
-          suiAccount: suiAccount,
-          amount: amount + SUIConstants.defaultGasBudgetForTransferSui,
-          listSuiObject: listSUIs,
-          address: address);
-      if (coin != null) {
-        final arg = SUIArgument(
-          suiObjectID: coin.getID(),
-          gasBudget: gasBudget ?? SUIConstants.defaultGasBudgetForTransferSui,
-          recipient: toAddress,
-          address: address,
-          amount: amount,
-          suiAccount: suiAccount,
-        );
-        if (dryRun) {
-          final result = await _suiRepository.transferSuiDryRun(arg);
-          return result;
-        } else {
-          final result = await _suiRepository.transferSui(arg);
-          return result;
-        }
-      }
-      return null;
+      return SUITransactionSimulateResult(
+          gas: int.parse(gas), txBytes: txBytes);
     } catch (e) {
       rethrow;
     }
@@ -571,6 +475,15 @@ class SUIClient {
         }
       }
       return "";
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUICoinMetadata> getCoinMetadata(String coinType) async {
+    try {
+      final result = await _suiRepository.getCoinMetadata(coinType);
+      return result;
     } catch (e) {
       rethrow;
     }

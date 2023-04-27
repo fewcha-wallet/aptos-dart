@@ -9,7 +9,10 @@ import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin.dart';
+import 'package:aptosdart/core/sui/coin/sui_coin_metadata.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
+import 'package:aptosdart/core/sui/raw_signer/raw_signer.dart';
+import 'package:aptosdart/core/sui/sui_intent/sui_intent.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
@@ -19,6 +22,7 @@ import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/network/rpc/rpc_response.dart';
 import 'package:aptosdart/network/rpc/rpc_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
+import 'package:aptosdart/utils/utilities.dart';
 
 class SUIRepository with AptosSDKMixin {
   Future<List<ObjectsOwned>> getObjectsOwnedByAddress(String address) async {
@@ -455,94 +459,17 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<SUITransactionBytes> paySui({
-    required String accountAddress,
-    required String recipients,
-    required List<String> inputCoins,
-    required num amounts,
-    required int gasBudget,
-  }) async {
+  Future<SUICoinMetadata> getCoinMetadata(String coinType) async {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
             RPCFunction.suiGetTransaction,
           ),
-          function: SUIConstants.suiPaySui,
-          arg: [
-            accountAddress,
-            inputCoins,
-            [recipients],
-            [amounts],
-            gasBudget
-          ],
-          create: (response) => RPCResponse(
-              createObject: SUITransactionBytes(), response: response));
+          function: SUIConstants.suixGetCoinMetadata,
+          arg: [coinType],
+          create: (response) =>
+              RPCResponse(createObject: SUICoinMetadata(), response: response));
       return result.decodedData;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<SUITransactionBytes> newPayTransaction({
-    required List<SUIObjects> allCoins,
-    required String coinTypeArg,
-    required String recipient,
-    required String accountAddress,
-    required num amountToSend,
-    required int gasBudget,
-  }) async {
-    try {
-      bool isSuiTransfer = coinTypeArg == SUIConstants.suiConstruct;
-      final coinsOfTransferType = allCoins
-          .where(
-            (aCoin) => SUICoin.getCoinTypeArg(aCoin) == coinTypeArg,
-          )
-          .toList();
-
-      List<SUIObjects> coinsOfGas = isSuiTransfer
-          ? coinsOfTransferType
-          : allCoins.where((aCoin) => SUICoin.isSUI(aCoin)).toList();
-
-      SUIObjects? gasCoin = SUICoin.selectCoinWithBalanceGreaterThanOrEqual(
-        coins: coinsOfGas,
-        amount: (gasBudget),
-      );
-
-      if (gasCoin == null) {
-        throw (' Unable to find a coin to cover the gas budget $gasBudget');
-      }
-      int totalAmountIncludingGas = amountToSend.toInt() +
-          (isSuiTransfer
-              ? // subtract from the total the balance of the gasCoin as it's going be the first element of the inputCoins
-              (gasBudget) - (SUICoin.getBalance(gasCoin) ?? 0)
-              : 0);
-
-      List<SUIObjects> inputCoinObjs = totalAmountIncludingGas > 0
-          ? SUICoin.selectCoinSetWithCombinedBalanceGreaterThanOrEqual(
-              coins: coinsOfTransferType,
-              amount: totalAmountIncludingGas,
-              exclude: isSuiTransfer ? [SUICoin.getID(gasCoin)] : [],
-            )
-          : [];
-      if (totalAmountIncludingGas > 0 && !inputCoinObjs.isNotEmpty) {
-        final totalBalanceOfTransferType =
-            SUICoin.totalBalance(coinsOfTransferType);
-        final suggestedAmountToSend =
-            totalBalanceOfTransferType - (isSuiTransfer ? gasBudget : 0);
-        // TODO: denomination for values?
-        throw ('Coin balance $totalBalanceOfTransferType is not sufficient to cover the transfer amount'
-            '$amountToSend. Try reducing the transfer amount to $suggestedAmountToSend.');
-      }
-      if (isSuiTransfer) {
-        inputCoinObjs.insertAll(0, [gasCoin]);
-      }
-      final result = await paySui(
-          amounts: amountToSend,
-          recipients: recipient,
-          gasBudget: gasBudget,
-          inputCoins: inputCoinObjs.map((e) => e.getID()).toList(),
-          accountAddress: accountAddress);
-      return result;
     } catch (e) {
       rethrow;
     }
@@ -600,6 +527,48 @@ class SUIRepository with AptosSDKMixin {
           create: (response) =>
               RPCResponse(createObject: SUITransaction(), response: response));
       return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUITransaction> signAndExecuteTransactionBlock(
+      SUIAccount suiAccount, Uint8List txBytes) async {
+    try {
+      final map = await signTransactionBlock(suiAccount, txBytes);
+      final transactionBlockBytes = map['transactionBlockBytes'];
+      final signature = map['signature'];
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiExecuteTransactionBlock,
+          arg: [
+            transactionBlockBytes,
+            [signature],
+            {"showInput": true, "showEffects": true, "showEvents": true},
+            'WaitForLocalExecution'
+          ],
+          create: (response) =>
+              RPCResponse(createObject: SUITransaction(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> signTransactionBlock(
+      SUIAccount suiAccount, Uint8List txBytes) async {
+    try {
+      final intentMessage = SUIIntent().messageWithIntent(
+        IntentScope.transactionData,
+        txBytes,
+      );
+      final signature = await RawSigner.signData(intentMessage, suiAccount);
+      Map<String, dynamic> map = {};
+      map['transactionBlockBytes'] = toB64(txBytes);
+      map['signature'] = signature;
+      return map;
     } catch (e) {
       rethrow;
     }

@@ -1,4 +1,5 @@
 import 'package:aptosdart/network/decodable.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 
 class SUICoinType extends Decoder<SUICoinType> {
   String? balance,
@@ -26,6 +27,13 @@ class SUICoinType extends Decoder<SUICoinType> {
     lockedUntilEpoch = json['lockedUntilEpoch'];
     previousTransaction = json['previousTransaction'];
     version = json['version'];
+  }
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {};
+    map['objectId'] = coinObjectId!.trimPrefix();
+    map['digest'] = digest;
+    map['version'] = version;
+    return map;
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/bcs/bcs.dart';
 import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
@@ -56,6 +57,7 @@ class TransactionBlockDataBuilder {
       String? overridesSender,
       GasConfig? overridesGasConfig,
       bool onlyTransactionKind = false}) async {
+    print(inputs);
     final listInputs = inputs!.map((e) => e.toInputJson()).toList();
     final transactionMap = transactions!.map((e) => e.toJson()).toList();
     Map<String, dynamic> kind = {
@@ -74,7 +76,7 @@ class TransactionBlockDataBuilder {
     }
     int? exp = overridesExpiration ?? expiration;
     String getSender = overridesSender ?? sender!;
-    /*GasConfig gas = */ gasConfig!.copyWith(
+    gasConfig!.copyWith(
       inputBudget: overridesGasConfig?.budget,
       inputPrice: overridesGasConfig?.price,
       inputOwner: overridesGasConfig?.owner,
@@ -85,13 +87,14 @@ class TransactionBlockDataBuilder {
       'sender': getSender.trimPrefix(),
       'expiration': exp ?? {'None': true},
       'gasData': {
-        'payment': gasConfig!.payment,
+        'payment': gasConfig!.payment!.map((e) => e.toJson()).toList(),
         'owner': (gasConfig?.owner ?? getSender).trimPrefix(),
         'price': gasConfig!.price!,
         'budget': gasConfig!.budget!,
       },
       'kind': kind,
     };
+    print(transactionData);
     BCS bcs = Builder().bcs;
     final result = bcs
         .ser(
@@ -100,7 +103,6 @@ class TransactionBlockDataBuilder {
           options: BcsWriterOptions(size: SUIConstants.transactionDataMaxSize),
         )
         .toBytes();
-
     return result;
   }
 }
@@ -127,12 +129,6 @@ class GasConfig {
     budget = inputBudget ?? budget;
     price = inputPrice ?? price;
     owner = inputOwner ?? owner;
-    payment = inputPayment ?? payment;
-    // return GasConfig(
-    //   budget: inputBudget ?? budget,
-    //   price: inputPrice ?? price,
-    //   owner: inputOwner ?? owner,
-    //   payment: inputPayment ?? payment,
-    // );
+    payment = (inputPayment ?? []).isNotEmpty ? inputPayment : payment;
   }
 }

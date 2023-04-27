@@ -135,6 +135,10 @@ class TransactionBlock {
     return add(SplitCoins(coin: coin, amounts: amount));
   }
 
+  TransactionArgumentTypes mergeCoins(dynamic destination, dynamic sources) {
+    return add(MergeCoins(destination: destination, sources: sources));
+  }
+
   TransactionArgumentTypes transferObjects(dynamic object, dynamic address) {
     return add(TransferObjects(object: object, address: address));
   }
@@ -148,7 +152,9 @@ class TransactionBlock {
         setGasPrice(await _repository.getReferenceGasPrice());
       }
 
-      _blockData.gasConfig?.payment ??= await selectGasPayment();
+      if (_blockData.gasConfig?.payment == null) {
+        setGasPayment(await selectGasPayment());
+      }
       if (_blockData.gasConfig?.budget == null) {
         Uint8List transactionBlock = await _blockData.build(
             overridesGasConfig:
@@ -168,9 +174,12 @@ class TransactionBlock {
     }
   }
 
-  Future<Uint8List> build({bool onlyTransactionKind = false}) async {
+  Future<Map<String, dynamic>> build({bool onlyTransactionKind = false}) async {
     await prepare(onlyTransactionKind: onlyTransactionKind);
-    return _blockData.build(onlyTransactionKind: onlyTransactionKind);
+    print(getGasConfig!.budget);
+    Uint8List bytes =
+        await _blockData.build(onlyTransactionKind: onlyTransactionKind);
+    return {'gas': getGasConfig!.budget!, 'txBytes': bytes};
   }
 
 /*

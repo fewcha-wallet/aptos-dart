@@ -23,8 +23,7 @@ class HostUrl {
   static const ipfsSUI = 'https://ipfs.io/ipfs/';
 
   static const String suiDevnetUrl = "https://fullnode.devnet.sui.io";
-  static const String suiTestnetUrl =
-      "https://fullnode-explorer.testnet.sui.io:443";
+  static const String suiTestnetUrl = "https://fullnode.testnet.sui.io";
 
   static const String aptosMainnetGraphql =
       'https://indexer.mainnet.aptoslabs.com/v1/graphql';
@@ -131,11 +130,14 @@ class SUIConstants {
   static const String suiTransferSui = 'sui_transferSui';
   static const String suiTransferObject = 'sui_transferObject';
   static const String suiDryRunTransaction = 'sui_dryRunTransaction';
+  static const String suixGetCoinMetadata = 'suix_getCoinMetadata';
   static const String suiPaySui = 'sui_paySui';
   static const String suixGetReferenceGasPrice = 'suix_getReferenceGasPrice';
   static const String suiExecuteTransaction = 'sui_executeTransaction';
   static const String suixGetCoins = 'suix_getCoins';
   static const String suiDryRunTransactionBlock = 'sui_dryRunTransactionBlock';
+  static const String suiExecuteTransactionBlock =
+      'sui_executeTransactionBlock';
   static const String suiExecuteTransactionSerializedSig =
       'sui_executeTransactionSerializedSig';
   static const String waitForLocalExecution = 'WaitForLocalExecution';

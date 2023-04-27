@@ -286,9 +286,8 @@ class SUITransaction extends Decoder<SUITransaction> {
   SUITransaction({this.effects, this.suiCertificate});
 
   SUITransaction.fromJson(Map<String, dynamic> json) {
-    effects = json['effects']['effects'] != null
-        ? SUIEffects.fromJson(json['effects']['effects'])
-        : null;
+    effects =
+        json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
     suiCertificate = json['certificate'] != null
         ? SUICertificate.fromJson(json['certificate'])
         : null;
@@ -450,7 +449,7 @@ class SUIEffects extends Decoder<SUIEffects> {
     status = json['status'] != null ? SUIStatus.fromJson(json['status']) : null;
     gasUsed =
         json['gasUsed'] != null ? SUIGasUsed.fromJson(json['gasUsed']) : null;
-    transactionDigest = json['transactionEffectsDigest'];
+    transactionDigest = json['transactionDigest'];
     if (json['created'] != null) {
       created = <SUICreated>[];
       json['created'].forEach((v) {

@@ -26,6 +26,7 @@ main() {
         coinDecimals: 9,
         coinType: SUIConstants.suiConstruct,
         coins: [],
+        address: '',
       ));
       tx.setSender(
           'ada112cfb90b44ba889cc5d39ac2bf46281e4a91f7919c693bcd9b8323e81ed2');

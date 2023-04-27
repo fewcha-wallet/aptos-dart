@@ -89,9 +89,8 @@ class SUIAccount implements AbstractAccount {
   @override
   String signBuffer(Uint8List buffer) {
     final signed = detached(buffer);
-    Base64DataBuffer(signed);
 
-    return base64Encode(signed);
+    return Utilities.bytesToHex(signed);
   }
 
   String signatureBase64(String hexString) {
@@ -104,7 +103,7 @@ class SUIAccount implements AbstractAccount {
     for (var i = 0; i < sig.length; i++) {
       sig[i] = signedMsg[i];
     }
-    return sig;
+    return signedMsg;
   }
 
   @override

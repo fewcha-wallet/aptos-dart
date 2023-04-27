@@ -7,10 +7,33 @@ abstract class ObjectArg {
   Map<String, dynamic> toJson();
 }
 
-class SuiObjectRef {
+class SuiObjectRef extends ObjectArg {
   String digest, objectId, version;
 
-  SuiObjectRef(this.digest, this.objectId, this.version);
+  SuiObjectRef(
+      {required this.digest, required this.objectId, required this.version});
+
+  @override
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {};
+    map['digest'] = digest;
+    map['objectId'] = objectId;
+    map['version'] = version;
+    return map;
+  }
+}
+
+class Pure extends ObjectArg {
+  Uint8List data;
+
+  Pure(this.data);
+
+  @override
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {};
+    map['Pure'] = data;
+    return map;
+  }
 }
 
 class ImmOrOwnedSuiObjectRef extends ObjectArg {
@@ -21,7 +44,7 @@ class ImmOrOwnedSuiObjectRef extends ObjectArg {
   @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
-    map['ImmOrOwned'] = immOrOwned;
+    map['ImmOrOwned'] = immOrOwned.toJson();
     return map;
   }
 }
@@ -50,7 +73,7 @@ class ObjectCallArg extends ObjectArg {
   @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
-    map['Object'] = object;
+    map['Object'] = object.toJson();
     return map;
   }
 }
@@ -58,7 +81,15 @@ class ObjectCallArg extends ObjectArg {
 class PureCallArg {}
 
 class Inputs {
-  static Map<String, dynamic> pure(dynamic data, {String? type}) {
+  static Pure pure(dynamic data, {String? type}) {
+    dynamic result;
+    if (data is Uint8List) {
+      result = data;
+    } else {
+      result = Builder().bcs.ser(type!, data).toBytes();
+    }
+    return Pure(result);
+  } /*  static Map<String, dynamic> pure(dynamic data, {String? type}) {
     dynamic result;
     if (data is Uint8List) {
       result = data;
@@ -66,7 +97,7 @@ class Inputs {
       result = Builder().bcs.ser(type!, data).toBytes();
     }
     return {'Pure': result};
-  }
+  }*/
 
   static getIdFromCallArg(dynamic arg) {
     assert(arg != String || arg != ObjectCallArg);
@@ -76,6 +107,10 @@ class Inputs {
     }
     if (arg is ImmOrOwnedSuiObjectRef) {
       return Utilities.normalizeSuiAddress(arg.immOrOwned.objectId);
+    }
+    if (arg is ObjectCallArg) {
+      return Utilities.normalizeSuiAddress(
+          (arg.object as ImmOrOwnedSuiObjectRef).immOrOwned.objectId);
     }
 
     return Utilities.normalizeSuiAddress((arg as SharedObjectRef).objectId!);

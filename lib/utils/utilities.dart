@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
@@ -13,6 +14,13 @@ import 'package:ed25519_edwards/ed25519_edwards.dart';
 import 'serializer/serializer.dart';
 
 class Utilities {
+  static int powNumber(int number, {int? powNumber}) {
+    final powResult = pow(10, powNumber ?? 8);
+    final result = number * powResult;
+
+    return result.toInt();
+  }
+
   static String normalizeSuiAddress(String value, [bool forceAdd0x = false]) {
     String address = value.toLowerCase();
     if (!forceAdd0x && address.startsWith('0x')) {
@@ -120,7 +128,8 @@ class Utilities {
     }
   }
 
-  static Uint8List hexToBytes(String hex) {
+  static Uint8List hexToBytes(String data) {
+    String hex = data.trimPrefix();
     if (hex.length.isOdd) {
       throw ('hexToBytes: received invalid unpadded hex');
     }
