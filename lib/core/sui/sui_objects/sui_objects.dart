@@ -4,101 +4,89 @@ import 'package:aptosdart/network/decodable.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
 class SUIObjects extends Decoder<SUIObjects> {
-  String? status;
-  SUIDetails? details;
+  String? objectId, version, digest, type, owner, storageRebate;
+  SUIDisplay? display;
 
-  SUIObjects({this.status, this.details});
+  SUIObjects({
+    this.objectId,
+    this.version,
+    this.digest,
+    this.type,
+    this.owner,
+    this.storageRebate,
+    this.display,
+  });
 
   SUIObjects.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
-    details =
-        json['details'] != null ? SUIDetails.fromJson(json['details']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['status'] = status;
-    if (details != null) {
-      data['details'] = details!.toJson();
-    }
-    return data;
+    objectId = json['objectId'];
+    version = json['version'];
+    digest = json['digest'];
+    type = json['type'];
+    owner = json['owner']?['AddressOwner'];
+    storageRebate = json['storageRebate'];
+    display = json['display']?['data'] != null
+        ? SUIDisplay.fromJson(json['display']?['data'])
+        : null;
   }
 
   @override
   SUIObjects decode(Map<String, dynamic> json) {
-    return SUIObjects.fromJson(json);
+    return SUIObjects.fromJson(json['data']);
   }
 
-  num getBalance() {
-    return details?.data?.fields?.balance ?? 0;
-  }
-
-  SUIFields? getFields() {
-    return details?.data?.fields;
-  }
-
-  void addBalance(int balance) {
-    details?.data?.fields?.balance =
-        (details?.data?.fields?.balance ?? 0) + balance;
-  }
-
-  String getID() {
-    return details?.data?.fields?.id?.id ?? '';
-  }
-
-  String? getReferenceObjectID() {
-    return details?.reference?.objectId;
-  }
-
-  String getType() {
-    return details?.data?.type ?? '';
-  }
-
-  String getDataType() {
-    return details?.data?.dataType ?? '';
-  }
-
-  String getSUITokenSymbol() {
-    return SUIConstants.coinModuleName.toUpperCase();
+  bool get isNFT => display != null;
+  String getObjectId() {
+    return objectId ?? '';
   }
 
   bool isSUICoinObject() {
-    return Validator.isSUICoinObject(details?.data?.type);
-  }
-
-  bool isSUIMoveObject() {
-    return getDataType() == SUIConstants.moveObject;
+    return Validator.isSUICoinObject(type);
   }
 
   bool isSUITokenObject() {
-    return Validator.isSUITokenObject(details?.data?.type);
-  }
-
-  bool isSUINFTObject() {
-    return (details?.data?.type == SUIConstants.suiNFTType);
-  }
-
-  String getNFTName() {
-    return details?.data?.fields?.name ?? '';
-  }
-
-  String getNFTAmount() {
-    return details?.data?.fields?.balance.toString() ?? '0';
+    return Validator.isSUITokenObject(type);
   }
 
   String getNFTDes() {
-    return details?.data?.fields?.description ?? '';
+    return display?.description ?? '';
   }
 
-  String getNFTUrl() {
-    if (details?.data?.fields?.url == null) return '';
-    String url = HostUrl.ipfsSUI +
-        '${details?.data?.fields?.url!.replaceFirst('ipfs://', '')}';
-    return url;
+  String getNFTOwnerAddress() {
+    return owner ?? '';
   }
 
-  String getSUITypeArg() {
-    return Validator.getSUITypeArg(details?.data?.type);
+  String getNFTLink() {
+    return display?.link ?? '';
+  }
+
+  String getNFTImageUrl() {
+    return display?.imageUrl ?? '';
+  }
+
+  String getNFTProjectUrl() {
+    return display?.projectUrl ?? '';
+  }
+}
+
+class SUIDisplay extends Decoder<SUIDisplay> {
+  String? description, imageUrl, link, projectUrl, error;
+
+  SUIDisplay({
+    this.description,
+    this.imageUrl,
+    this.link,
+    this.projectUrl,
+    this.error,
+  });
+  SUIDisplay.fromJson(Map<String, dynamic> json) {
+    description = json['description'];
+    imageUrl = json['image_url'];
+    link = json['link'];
+    projectUrl = json['project_url'];
+  }
+  @override
+  SUIDisplay decode(Map<String, dynamic> json) {
+    return SUIDisplay.fromJson(json);
   }
 }
 
@@ -787,7 +775,7 @@ class SUICreated extends Decoder<SUICreated> {
   }
 }
 
-class SUITransactionBytes extends Decoder<SUITransactionBytes> {
+/*class SUITransactionBytes extends Decoder<SUITransactionBytes> {
   String? txBytes;
   SUIReference? gas;
   SUITransactionBytes({
@@ -803,9 +791,10 @@ class SUITransactionBytes extends Decoder<SUITransactionBytes> {
   SUITransactionBytes decode(Map<String, dynamic> json) {
     return SUITransactionBytes.fromJson(json);
   }
-}
+}*/
 
-class SUITransactionSimulateResult extends Decoder<SUITransactionBytes> {
+class SUITransactionSimulateResult
+    extends Decoder<SUITransactionSimulateResult> {
   String? txBytes;
   int? gas;
   SUITransactionSimulateResult({
@@ -814,7 +803,7 @@ class SUITransactionSimulateResult extends Decoder<SUITransactionBytes> {
   });
 
   @override
-  SUITransactionBytes decode(Map<String, dynamic> json) {
+  SUITransactionSimulateResult decode(Map<String, dynamic> json) {
     // TODO: implement decode
     throw UnimplementedError();
   }

@@ -110,7 +110,7 @@ class TransactionBlock {
     return input;
   }
 
-  pure(dynamic value, {String? type}) {
+  pure({required dynamic value, required String? type}) {
     return input(
       'pure',
       value is Uint8List
@@ -176,7 +176,6 @@ class TransactionBlock {
 
   Future<Map<String, dynamic>> build({bool onlyTransactionKind = false}) async {
     await prepare(onlyTransactionKind: onlyTransactionKind);
-    print(getGasConfig!.budget);
     Uint8List bytes =
         await _blockData.build(onlyTransactionKind: onlyTransactionKind);
     return {'gas': getGasConfig!.budget!, 'txBytes': bytes};
@@ -242,8 +241,11 @@ class TransactionBlock {
     try {
       String address = _blockData.gasConfig?.owner ?? _blockData.sender!;
       SUICoinList coinList = await _repository.getCoins(
-          address: address, coinType: SUIConstants.suiConstruct);
-      if (coinList.coinTypeList!.isEmpty) throw Exception();
+          address:
+              '0x2c3731225b2463d554ed41da45ecdc33beb0e7b96c6d7ae4e18d22b9abfd64cf',
+          coinType: SUIConstants.suiConstruct);
+      if (coinList.coinTypeList!.isEmpty)
+        throw ('No valid gas coins found for the transaction.');
 
       final list = coinList.coinTypeList!.where((element) {
         bool matchingInput =

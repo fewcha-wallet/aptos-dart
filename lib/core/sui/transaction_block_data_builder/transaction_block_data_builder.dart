@@ -57,7 +57,6 @@ class TransactionBlockDataBuilder {
       String? overridesSender,
       GasConfig? overridesGasConfig,
       bool onlyTransactionKind = false}) async {
-    print(inputs);
     final listInputs = inputs!.map((e) => e.toInputJson()).toList();
     final transactionMap = transactions!.map((e) => e.toJson()).toList();
     Map<String, dynamic> kind = {
@@ -76,7 +75,7 @@ class TransactionBlockDataBuilder {
     }
     int? exp = overridesExpiration ?? expiration;
     String getSender = overridesSender ?? sender!;
-    gasConfig!.copyWith(
+    final copyWithGasConfig = gasConfig!.copyWith(
       inputBudget: overridesGasConfig?.budget,
       inputPrice: overridesGasConfig?.price,
       inputOwner: overridesGasConfig?.owner,
@@ -87,10 +86,10 @@ class TransactionBlockDataBuilder {
       'sender': getSender.trimPrefix(),
       'expiration': exp ?? {'None': true},
       'gasData': {
-        'payment': gasConfig!.payment!.map((e) => e.toJson()).toList(),
-        'owner': (gasConfig?.owner ?? getSender).trimPrefix(),
-        'price': gasConfig!.price!,
-        'budget': gasConfig!.budget!,
+        'payment': copyWithGasConfig.payment!.map((e) => e.toJson()).toList(),
+        'owner': (copyWithGasConfig.owner ?? getSender).trimPrefix(),
+        'price': copyWithGasConfig.price!,
+        'budget': copyWithGasConfig.budget!,
       },
       'kind': kind,
     };
@@ -120,15 +119,24 @@ class GasConfig {
     return map;
   }
 
-  copyWith({
+  GasConfig copyWith({
     String? inputBudget,
     String? inputPrice,
     String? inputOwner,
     List<SUICoinType>? inputPayment,
   }) {
+    return GasConfig(
+      budget: inputBudget ?? budget,
+      price: inputPrice ?? price,
+      owner: inputOwner ?? owner,
+      payment: inputPayment ?? payment,
+    );
     budget = inputBudget ?? budget;
     price = inputPrice ?? price;
     owner = inputOwner ?? owner;
-    payment = (inputPayment ?? []).isNotEmpty ? inputPayment : payment;
+    payment = inputPayment ?? payment;
+    /*payment = */ /*inputPayment ??*/ /* (inputPayment ?? []).isNotEmpty
+        ? inputPayment
+        : payment;*/
   }
 }

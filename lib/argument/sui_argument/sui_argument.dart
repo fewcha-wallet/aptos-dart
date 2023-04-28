@@ -5,14 +5,17 @@ class SUIArgument {
   int? gasBudget, decimal;
   SUIAccount? suiAccount;
   String? amount;
-  SUIArgument(
-      {this.address,
-      this.suiObjectID,
-      this.suiAccount,
-      this.coinType,
-      this.txBytes,
-      this.decimal,
-      this.recipient,
-      this.gasBudget,
-      this.amount});
+  bool isSendNFT;
+  SUIArgument({
+    this.address,
+    this.suiObjectID,
+    this.suiAccount,
+    this.coinType,
+    this.txBytes,
+    this.decimal,
+    this.recipient,
+    this.gasBudget,
+    this.amount,
+    this.isSendNFT = false,
+  });
 }

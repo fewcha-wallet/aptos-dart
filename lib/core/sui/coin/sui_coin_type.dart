@@ -28,6 +28,13 @@ class SUICoinType extends Decoder<SUICoinType> {
     previousTransaction = json['previousTransaction'];
     version = json['version'];
   }
+  SUICoinType.fromNFTJson(Map<String, dynamic> json) {
+    coinObjectId = json['objectId'];
+
+    digest = json['digest'];
+
+    version = json['version'];
+  }
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {};
     map['objectId'] = coinObjectId!.trimPrefix();
@@ -55,13 +62,17 @@ class SUICoinList extends Decoder<SUICoinList> {
   SUICoinList.fromJson(Map<String, dynamic> json) {
     hasNextPage = json['hasNextPage'] ?? false;
     nextCursor = json['nextCursor'];
-    coinTypeList = json['data'] != null ? _getListCoinType(json['data']) : null;
+    coinTypeList = json['data'] != null ? _getListCoinType(json['data']) : [];
   }
   List<SUICoinType> _getListCoinType(List<dynamic> json) {
     List<SUICoinType> list = [];
     if (json.isEmpty) return [];
     for (var element in json) {
-      list.add(SUICoinType.fromJson(element));
+      if (element['data'] != null) {
+        list.add(SUICoinType.fromNFTJson(element['data']));
+      } else {
+        list.add(SUICoinType.fromJson(element));
+      }
     }
     return list;
   }

@@ -9,19 +9,13 @@ class CreateTokenTransferTransaction {
   static Future<TransactionBlock> createTokenTransferTransaction(
       Options options) async {
     final tx = TransactionBlock();
-    String parseAmount = options
-            .amount /*(BigInt.parse((BigInt.parse(options.amount) *
-                BigInt.from(10).pow(options.coinDecimals!))
-            .toInt()
-            .toString()))
-        .toString()*/
-        ;
-
+    String parseAmount = options.amount;
     if (options.isPayAllSui && options.coinType == SUIConstants.suiConstruct) {}
 
     if (options.coinType == SUIConstants.suiConstruct) {
-      final coin = tx.splitCoins(tx.gas, [tx.pure(parseAmount, type: BCS.u64)]);
-      tx.transferObjects([coin], tx.pure(options.to, type: BCS.address));
+      final coin =
+          tx.splitCoins(tx.gas, [tx.pure(value: parseAmount, type: BCS.u64)]);
+      tx.transferObjects([coin], tx.pure(value: options.to, type: BCS.address));
     } else {
       final result = await SUIRepository()
           .getCoins(address: options.address, coinType: options.coinType);
@@ -48,9 +42,9 @@ class CreateTokenTransferTransaction {
               .toList(),
         );
       }
-      final coin = tx
-          .splitCoins(primaryCoinInput, [tx.pure(parseAmount, type: BCS.u64)]);
-      tx.transferObjects([coin], tx.pure(options.to, type: BCS.address));
+      final coin = tx.splitCoins(
+          primaryCoinInput, [tx.pure(value: parseAmount, type: BCS.u64)]);
+      tx.transferObjects([coin], tx.pure(value: options.to, type: BCS.address));
     }
     return tx;
   }
@@ -58,8 +52,10 @@ class CreateTokenTransferTransaction {
 
 class Options {
   String coinType, to, amount, address;
+  String? objectId;
   int? coinDecimals;
   bool isPayAllSui;
+
   List<SUICoinType>? coins;
 
   Options({
@@ -70,5 +66,6 @@ class Options {
     this.isPayAllSui = false,
     required this.coins,
     required this.address,
+    this.objectId,
   });
 }

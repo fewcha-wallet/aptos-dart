@@ -25,6 +25,7 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:aptosdart/utils/utilities.dart';
 
 class SUIRepository with AptosSDKMixin {
+/*
   Future<List<ObjectsOwned>> getObjectsOwnedByAddress(String address) async {
     try {
       final result = await rpcClient.request(
@@ -41,6 +42,7 @@ class SUIRepository with AptosSDKMixin {
       return [];
     }
   }
+*/
 
   Future<List<SUIBalances>> getSUITokens(String address) async {
     try {
@@ -142,7 +144,7 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
-
+/*
   Future syncAccountState(String address) async {
     try {
       await rpcClient.request(
@@ -155,8 +157,9 @@ class SUIRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
+/*
   Future<EffectsCert> mergeCoin({
     required SUIAccount suiAccount,
     required String suiAddress,
@@ -184,7 +187,9 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
+/*
   Future<EffectsCert> splitCoin({
     required SUIAccount suiAccount,
     required String suiAddress,
@@ -219,7 +224,9 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
+/*
   Future<SUITransactionBytes> moveCall({
     required String suiAddress,
     required String packageObjectId,
@@ -253,7 +260,9 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
+/*
   Future<EffectsCert> executeTransaction(
     SUIArgument suiArgument,
   ) async {
@@ -277,7 +286,9 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
+/*
   Future<SUITransaction> signAndExecuteTransaction(
     SUIArgument suiArgument,
   ) async {
@@ -324,8 +335,9 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
-  Future<SUIEffects> transferObjectDryRun(
+/*  Future<SUIEffects> transferObjectDryRun(
     SUIArgument suiArgument,
   ) async {
     try {
@@ -337,9 +349,9 @@ class SUIRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
-  Future<EffectsCert> transferObjectWithRequestType(
+/*  Future<EffectsCert> transferObjectWithRequestType(
     SUIArgument suiArgument,
   ) async {
     try {
@@ -350,22 +362,23 @@ class SUIRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
-  Future<SUIEffects> transferSuiDryRun(
-    SUIArgument suiArgument,
-  ) async {
-    try {
-      final txBytes = await newTransferSui(suiArgument);
+  // Future<SUIEffects> transferSuiDryRun(
+  //   SUIArgument suiArgument,
+  // ) async {
+  //   try {
+  //     final txBytes = await newTransferSui(suiArgument);
+  //
+  //     final result =
+  //         await signAndDryRunTransaction(suiArgument..txBytes = txBytes);
+  //     return result;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
-      final result =
-          await signAndDryRunTransaction(suiArgument..txBytes = txBytes);
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
+/*
   Future<EffectsCert> transferSui(
     SUIArgument suiArgument,
   ) async {
@@ -378,7 +391,8 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
-
+*/
+/*
   Future<String> newTransferSui(
     SUIArgument suiArgument,
   ) async {
@@ -401,9 +415,9 @@ class SUIRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
-  Future<String> newTransferObject(
+/*  Future<String> newTransferObject(
     SUIArgument suiArgument,
   ) async {
     try {
@@ -425,7 +439,8 @@ class SUIRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
+/*
 
   Future<SUIEffects> signAndDryRunTransaction(
     SUIArgument suiArgument,
@@ -433,16 +448,20 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await dryRunTransaction(
         suiArgument.txBytes!,
-        /* SUIConstants.ed25519,
+        */
+/* SUIConstants.ed25519,
           suiArgument.suiAccount!.signatureBase64(suiArgument.txBytes!),
-          suiArgument.suiAccount!.publicKeyInBase64()*/
+          suiArgument.suiAccount!.publicKeyInBase64()*/ /*
+
       );
       return result;
     } catch (e) {
       rethrow;
     }
   }
+*/
 
+/*
   Future<SUIEffects> dryRunTransaction(String txnBytes) async {
     try {
       final result = await rpcClient.request(
@@ -458,6 +477,7 @@ class SUIRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
   Future<SUICoinMetadata> getCoinMetadata(String coinType) async {
     try {
@@ -469,6 +489,49 @@ class SUIRepository with AptosSDKMixin {
           arg: [coinType],
           create: (response) =>
               RPCResponse(createObject: SUICoinMetadata(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<SUICoinList> getOwnedObjects(String address) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suixGetOwnedObjects,
+          arg: [address],
+          create: (response) =>
+              RPCResponse(createObject: SUICoinList(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SUIObjects>> multiGetObjects(List<String> listIds) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(
+            RPCFunction.suiGetTransaction,
+          ),
+          function: SUIConstants.suiMultiGetObjects,
+          arg: [
+            listIds,
+            {
+              "showType": true,
+              "showOwner": true,
+              "showPreviousTransaction": true,
+              "showDisplay": true,
+              "showContent": true,
+              "showBcs": false,
+              "showStorageRebate": true
+            }
+          ],
+          create: (response) =>
+              RPCListResponse(createObject: SUIObjects(), response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;

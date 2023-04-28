@@ -135,6 +135,8 @@ class SUIConstants {
   static const String suixGetReferenceGasPrice = 'suix_getReferenceGasPrice';
   static const String suiExecuteTransaction = 'sui_executeTransaction';
   static const String suixGetCoins = 'suix_getCoins';
+  static const String suixGetOwnedObjects = 'suix_getOwnedObjects';
+  static const String suiMultiGetObjects = 'sui_multiGetObjects';
   static const String suiDryRunTransactionBlock = 'sui_dryRunTransactionBlock';
   static const String suiExecuteTransactionBlock =
       'sui_executeTransactionBlock';
