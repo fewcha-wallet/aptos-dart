@@ -191,7 +191,6 @@ class BCS {
 
   BcsWriter ser(TypeName type, dynamic data, {BcsWriterOptions? options}) {
     if (type is String || type is List) {
-      print('============ser========================');
       final typeName = parseTypeName(type);
       List<dynamic> listParams = typeName['params'];
       return getTypeInterface(typeName['name'])

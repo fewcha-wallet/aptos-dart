@@ -41,7 +41,6 @@ class Transaction extends Decoder<Transaction> {
   TransactionSignature? signature;
   List<TransactionEvent>? events;
   String? timestamp;
-  List<String>? secondarySigners;
 
   Transaction({
     this.type,
@@ -65,7 +64,6 @@ class Transaction extends Decoder<Transaction> {
     this.events,
     this.timestamp,
     this.entryFunctionIdStr,
-    this.secondarySigners,
   });
   @override
   Transaction decode(Map<String, dynamic> json) {
@@ -132,9 +130,6 @@ class Transaction extends Decoder<Transaction> {
     }
     if (signature != null) {
       data['signature'] = signature!.toJson();
-    }
-    if (secondarySigners != null) {
-      data['secondary_signers'] = secondarySigners;
     }
     if (events != null) {
       data['events'] = events!.map((e) => e.toJson()).toList();

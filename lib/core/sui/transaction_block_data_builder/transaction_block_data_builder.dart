@@ -48,8 +48,6 @@ class TransactionBlockDataBuilder {
       'gasConfig': data['gasData'],
       'transactions': programmableTx['transactions'],
     };
-
-    // return TransactionBlockDataBuilder.restore(serialized);
   }
 
   Future<Uint8List> build(
@@ -131,10 +129,10 @@ class GasConfig {
       owner: inputOwner ?? owner,
       payment: inputPayment ?? payment,
     );
-    budget = inputBudget ?? budget;
-    price = inputPrice ?? price;
-    owner = inputOwner ?? owner;
-    payment = inputPayment ?? payment;
+    // budget = inputBudget ?? budget;
+    // price = inputPrice ?? price;
+    // owner = inputOwner ?? owner;
+    // payment = inputPayment ?? payment;
     /*payment = */ /*inputPayment ??*/ /* (inputPayment ?? []).isNotEmpty
         ? inputPayment
         : payment;*/

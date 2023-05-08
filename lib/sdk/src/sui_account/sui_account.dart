@@ -81,7 +81,9 @@ class SUIAccount implements AbstractAccount {
   /// Get private key in Hex
   @override
   String privateKeyInHex() {
-    final privateKey = Utilities.bytesToHex(Uint8List.fromList(_privateKey));
+    final privateKey = Utilities.bytesToHex(
+            Uint8List.fromList(_privateKey.getRange(0, 32).toList()))
+        .toHexString();
 
     return privateKey;
   }

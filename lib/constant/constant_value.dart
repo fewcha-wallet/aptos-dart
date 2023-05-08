@@ -166,7 +166,7 @@ class SUIConstants {
   static const int suiAddressLength = 32;
   static const int maxGasObjects = 256;
   static const int transactionDataMaxSize = 128 * 1024;
-  static const int maxGas = 1000000000;
+  static const int maxGas = 50000000000;
   static const int gasOverHeadPerCoin = 10;
 }
 

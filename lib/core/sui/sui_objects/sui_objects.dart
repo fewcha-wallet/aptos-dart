@@ -2,6 +2,7 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/owner/owner.dart';
 import 'package:aptosdart/network/decodable.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
+import 'package:collection/collection.dart';
 
 class SUIObjects extends Decoder<SUIObjects> {
   String? objectId, version, digest, type, owner, storageRebate;
@@ -355,11 +356,10 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
     effects =
         json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
-    timestampMs = int.parse(json['timestampMs'] ?? '0');
+    timestampMs = int.parse(json['timestampMs']);
     digest = json['digest'] ?? 0;
     senderAddress = json['transaction']?['data']?['sender'] ?? '';
-    amount =
-        int.parse(json['transaction']?['data']?['gasData']?['budget'] ?? '0');
+    amount = parseAmount(json);
   }
 
   Map<String, dynamic> toJson() {
@@ -369,6 +369,15 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     }
     data['timestamp_ms'] = timestampMs;
     return data;
+  }
+
+  int parseAmount(Map<String, dynamic> json) {
+    if (json['transaction'] == null) return 0;
+    List data = json['transaction']?['data']?['transaction']?['inputs'] ?? [];
+    Map<String, dynamic>? result =
+        data.firstWhereOrNull((element) => element['valueType'] == 'u64');
+    String amount = result?['value'] ?? '0';
+    return int.parse(amount);
   }
 
   @override
@@ -393,7 +402,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
 
   String? getTimeStamp() {
     if (timestampMs != null) return (timestampMs! * 1000).toString();
-    return '0';
+    return DateTime.now().microsecondsSinceEpoch.toString();
   }
 
   String? getHash() {
