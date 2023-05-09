@@ -129,7 +129,8 @@ class SUIRepository with AptosSDKMixin {
       final mapFilter = {
         'showEffects': howEffects,
         'showEvents': showEvents,
-        'showInput': showInput
+        'showInput': showInput,
+        "showBalanceChanges": true,
       };
       final result = await rpcClient.request(
           route: RPCRoute(

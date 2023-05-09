@@ -4,7 +4,7 @@ import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/abi_builder_config/abi_builder_config.dart';
 import 'package:aptosdart/core/module_id/module_id.dart';
 import 'package:aptosdart/core/script_abi/script_abi.dart';
-import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_argument.dart';
 import 'package:aptosdart/core/transaction_builder_remote_abi/builder_utils.dart';
 import 'package:aptosdart/core/type_tag/type_tag.dart';

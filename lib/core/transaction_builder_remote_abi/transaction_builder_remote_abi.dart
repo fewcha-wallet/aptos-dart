@@ -3,11 +3,11 @@ import 'package:aptosdart/core/abi_builder_config/abi_builder_config.dart';
 import 'package:aptosdart/core/exposed_functions/exposed_functions.dart';
 import 'package:aptosdart/core/module_id/module_id.dart';
 import 'package:aptosdart/core/script_abi/script_abi.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/sdk/src/transaction_builder_abi/transaction_builder_abi.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
-import '../transaction/transaction.dart';
 
 class TransactionBuilderRemoteABI {
   late AptosClient _aptosClient;

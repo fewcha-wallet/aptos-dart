@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
-import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_argument.dart';
 import 'package:aptosdart/core/transaction/transaction_builder.dart';
 import 'package:aptosdart/core/type_tag/type_tag.dart';

@@ -346,11 +346,14 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
   SUIEffects? effects;
   int? timestampMs;
   int? amount;
+  BalanceChanges? balanceChanges;
+
   SUITransactionHistory({
     this.effects,
     this.timestampMs,
     this.senderAddress,
     this.amount,
+    this.balanceChanges,
   });
 
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
@@ -360,6 +363,9 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     digest = json['digest'] ?? 0;
     senderAddress = json['transaction']?['data']?['sender'] ?? '';
     amount = parseAmount(json);
+    balanceChanges = json['balanceChanges'] != null
+        ? BalanceChanges.fromJson(json['balanceChanges'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -387,6 +393,10 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
 
   String? getStatus() {
     return effects?.status?.status;
+  }
+
+  String? getCoinType() {
+    return balanceChanges?.coinType;
   }
 
   bool? getStatusInBool() {
@@ -431,6 +441,25 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
 
   String getTokenAmount() {
     return amount.toString();
+  }
+}
+
+class BalanceChanges extends Decoder<BalanceChanges> {
+  String? coinType;
+
+  BalanceChanges({this.coinType});
+
+  @override
+  BalanceChanges decode(Map<String, dynamic> json) {
+    throw UnimplementedError();
+    // return BalanceChanges.fromJson(json);
+  }
+
+  BalanceChanges.fromJson(List<dynamic> json) {
+    if (json.isEmpty) coinType = null;
+    final type = (json).firstWhereOrNull(
+        (element) => element?['coinType'] != SUIConstants.suiConstruct);
+    coinType = type?['coinType'];
   }
 }
 

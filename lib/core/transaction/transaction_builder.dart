@@ -2,13 +2,12 @@ import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/sdk/src/transaction_builder_abi/transaction_builder_abi.dart';
 import 'package:aptosdart/typedef/common_typedef.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:sha3/sha3.dart';
-
-import 'transaction.dart';
 
 class TransactionBuilder {
   late SigningFn signingFunction;

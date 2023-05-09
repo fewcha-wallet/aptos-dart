@@ -23,7 +23,7 @@ import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/table_item/table_item.dart';
-import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_builder.dart';
 import 'package:aptosdart/core/transaction_builder_remote_abi/transaction_builder_remote_abi.dart';
 import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
@@ -278,7 +278,7 @@ class AptosClient {
     return await txnBuilder.sign(rawTxn);
   }
 
-  Future<Transaction?> transactionPending(String txnHashOrVersion) async {
+  Future<AptosTransaction?> transactionPending(String txnHashOrVersion) async {
     try {
       final result =
           await _transactionRepository.getTransactionByHash(txnHashOrVersion);
@@ -292,9 +292,9 @@ class AptosClient {
     }
   }
 
-  Future<Transaction?> waitForTransaction(String txnHashOrVersion) async {
+  Future<AptosTransaction?> waitForTransaction(String txnHashOrVersion) async {
     int count = 0;
-    Transaction? transaction;
+    AptosTransaction? transaction;
     try {
       while (count < 10) {
         transaction = await transactionPending(txnHashOrVersion);
@@ -319,7 +319,7 @@ class AptosClient {
     }
   }
 
-  Future<List<Transaction>> getTransactions(
+  Future<List<AptosTransaction>> getTransactions(
       {int start = 0, int limit = 25}) async {
     try {
       final result = await _transactionRepository.getTransactions(
@@ -330,7 +330,7 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> getTransactionByHash(String txnHashOrVersion) async {
+  Future<AptosTransaction> getTransactionByHash(String txnHashOrVersion) async {
     try {
       final result =
           await _transactionRepository.getTransactionByHash(txnHashOrVersion);
@@ -340,7 +340,8 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> getTransactionByVersion(String txnHashOrVersion) async {
+  Future<AptosTransaction> getTransactionByVersion(
+      String txnHashOrVersion) async {
     try {
       final result = await _transactionRepository
           .getTransactionByVersion(txnHashOrVersion);
@@ -350,7 +351,7 @@ class AptosClient {
     }
   }
 
-  Future<List<Transaction>> getAccountCoinTransactions(
+  Future<List<AptosTransaction>> getAccountCoinTransactions(
       {required String address, int start = 0, int? limit}) async {
     try {
       final result = await _transactionRepository.getAccountCoinTransactions(
@@ -380,7 +381,8 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> submitTransaction(Transaction transaction) async {
+  Future<AptosTransaction> submitTransaction(
+      AptosTransaction transaction) async {
     try {
       final result =
           await _transactionRepository.submitTransaction(transaction);
@@ -390,7 +392,7 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> submitRawTransaction(
+  Future<AptosTransaction> submitRawTransaction(
     Uint8List rawTransaction,
   ) async {
     try {
@@ -402,7 +404,8 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> submitSignedBCSTransaction(Uint8List signedTxn) async {
+  Future<AptosTransaction> submitSignedBCSTransaction(
+      Uint8List signedTxn) async {
     try {
       final result =
           await _transactionRepository.submitSignedBCSTransaction(signedTxn);
@@ -412,7 +415,8 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> simulateSignedBCSTransaction(Uint8List signedTxn) async {
+  Future<AptosTransaction> simulateSignedBCSTransaction(
+      Uint8List signedTxn) async {
     try {
       final result =
           await _transactionRepository.simulateSignedBCSTransaction(signedTxn);
@@ -422,8 +426,8 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> simulateTransaction(
-      AptosAccount aptosAccount, Transaction transaction) async {
+  Future<AptosTransaction> simulateTransaction(
+      AptosAccount aptosAccount, AptosTransaction transaction) async {
     try {
       final transactionSignature = TransactionSignature(
           type: AppConstants.ed25519Signature,
@@ -437,7 +441,8 @@ class AptosClient {
     }
   }
 
-  Future<SigningMessage> createSigningMessage(Transaction transaction) async {
+  Future<SigningMessage> createSigningMessage(
+      AptosTransaction transaction) async {
     try {
       final result =
           await _transactionRepository.createSigningMessage(transaction);
@@ -447,7 +452,7 @@ class AptosClient {
     }
   }
 
-  Future<String> encodeSubmission(Transaction transaction) async {
+  Future<String> encodeSubmission(AptosTransaction transaction) async {
     try {
       final result = await _transactionRepository.encodeSubmission(transaction);
       return result;
@@ -456,7 +461,7 @@ class AptosClient {
     }
   }
 
-  Future<Transaction> generateTransaction(
+  Future<AptosTransaction> generateTransaction(
     String address,
     Payload payload,
     String maximumUserBalance, {
@@ -464,7 +469,7 @@ class AptosClient {
   }) async {
     try {
       final account = await getAccount(address);
-      return Transaction(
+      return AptosTransaction(
         sender: address.toHexString(),
         sequenceNumber: account.sequenceNumber,
         maxGasAmount: maximumUserBalance,
@@ -478,7 +483,7 @@ class AptosClient {
   }
 
   Future<TransactionSignature> signTransaction(
-      AptosAccount aptosAccount, Transaction transaction) async {
+      AptosAccount aptosAccount, AptosTransaction transaction) async {
     try {
       final signMessage = await encodeSubmission(transaction);
       final signature = aptosAccount.signatureHex(signMessage.trimPrefix());

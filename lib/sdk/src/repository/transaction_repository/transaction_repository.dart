@@ -8,7 +8,7 @@ import 'package:aptosdart/core/graphql/token_activities.dart';
 import 'package:aptosdart/core/graphql/token_history.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/signing_message/signing_message.dart';
-import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
@@ -19,7 +19,7 @@ import 'package:dio/dio.dart';
 
 class TransactionRepository with AptosSDKMixin {
   TransactionRepository();
-  Future<List<Transaction>> getTransactions(
+  Future<List<AptosTransaction>> getTransactions(
       {int start = 0, int limit = 10}) async {
     try {
       final param = {'start': start.toString(), 'limit': limit.toString()};
@@ -28,30 +28,31 @@ class TransactionRepository with AptosSDKMixin {
           route: APIRoute(
             APIType.getTransactions,
           ),
-          create: (response) =>
-              APIListResponse(createObject: Transaction(), response: response));
+          create: (response) => APIListResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Transaction> submitTransaction(Transaction transaction) async {
+  Future<AptosTransaction> submitTransaction(
+      AptosTransaction transaction) async {
     try {
       final response = await apiClient.request(
           body: transaction.toJson(),
           route: APIRoute(
             APIType.submitTransaction,
           ),
-          create: (response) =>
-              APIResponse(createObject: Transaction(), response: response));
+          create: (response) => APIResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Transaction> submitSignedBCSTransaction(
+  Future<AptosTransaction> submitSignedBCSTransaction(
     Uint8List signedTxn,
   ) async {
     try {
@@ -65,15 +66,16 @@ class TransactionRepository with AptosSDKMixin {
           header: {
             Headers.contentLengthHeader: len,
           },
-          create: (response) =>
-              APIResponse(createObject: Transaction(), response: response));
+          create: (response) => APIResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Transaction> simulateSignedBCSTransaction(Uint8List signedTxn) async {
+  Future<AptosTransaction> simulateSignedBCSTransaction(
+      Uint8List signedTxn) async {
     try {
       final fileData = await FileUtils.createTemperateBinaryFile(signedTxn);
       String param =
@@ -86,15 +88,16 @@ class TransactionRepository with AptosSDKMixin {
           header: {
             Headers.contentLengthHeader: len,
           },
-          create: (response) =>
-              APIListResponse(createObject: Transaction(), response: response));
+          create: (response) => APIListResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!.first;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<Transaction>> simulateTransaction(Transaction transaction) async {
+  Future<List<AptosTransaction>> simulateTransaction(
+      AptosTransaction transaction) async {
     try {
       const path = '?estimate_gas_unit_price=true&estimate_max_gas_amount=true';
       final response = await apiClient.request(
@@ -103,15 +106,15 @@ class TransactionRepository with AptosSDKMixin {
           route: APIRoute(
             APIType.simulateTransaction,
           ),
-          create: (response) =>
-              APIListResponse(createObject: Transaction(), response: response));
+          create: (response) => APIListResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<Transaction>> getAccountCoinTransactions(
+  Future<List<AptosTransaction>> getAccountCoinTransactions(
       {required String address,
       required String operationName,
       required String query,
@@ -133,10 +136,10 @@ class TransactionRepository with AptosSDKMixin {
           ),
           create: (response) =>
               GraphQLResponse(createObject: CoinHistory(), response: response));
-      List<Transaction> listTransaction = [];
+      List<AptosTransaction> listTransaction = [];
       for (var item in response.decodedData!.coinActivities!) {
         if (item.activityType != AppConstants.gasFeeEvent) {
-          listTransaction.add(Transaction(
+          listTransaction.add(AptosTransaction(
             hash: item.transactionVersion.toString(),
             success: item.isTransactionSuccess,
             vmStatus: item.getStatus(),
@@ -183,7 +186,7 @@ class TransactionRepository with AptosSDKMixin {
     }
   }
 
-  Future<Transaction> getTransactionByHash(
+  Future<AptosTransaction> getTransactionByHash(
     String txnHashOrVersion,
   ) async {
     try {
@@ -192,15 +195,15 @@ class TransactionRepository with AptosSDKMixin {
             APIType.getTransactionByHash,
             routeParams: txnHashOrVersion,
           ),
-          create: (response) =>
-              APIResponse(createObject: Transaction(), response: response));
+          create: (response) => APIResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<Transaction> getTransactionByVersion(
+  Future<AptosTransaction> getTransactionByVersion(
     String txnHashOrVersion,
   ) async {
     try {
@@ -209,8 +212,8 @@ class TransactionRepository with AptosSDKMixin {
             APIType.getTransactionByVersion,
             routeParams: txnHashOrVersion,
           ),
-          create: (response) =>
-              APIResponse(createObject: Transaction(), response: response));
+          create: (response) => APIResponse(
+              createObject: AptosTransaction(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;
@@ -218,7 +221,7 @@ class TransactionRepository with AptosSDKMixin {
   }
 
   Future<SigningMessage> createSigningMessage(
-    Transaction transaction,
+    AptosTransaction transaction,
   ) async {
     try {
       final response = await apiClient.request(
@@ -235,7 +238,7 @@ class TransactionRepository with AptosSDKMixin {
   }
 
   Future<String> encodeSubmission(
-    Transaction transaction,
+    AptosTransaction transaction,
   ) async {
     try {
       final response = await apiClient.request(

@@ -19,7 +19,7 @@ import 'package:aptosdart/utils/serializer/serializer.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
-class Transaction extends Decoder<Transaction> {
+class AptosTransaction extends Decoder<AptosTransaction> {
   String? type;
   String? version;
   String? hash;
@@ -37,12 +37,13 @@ class Transaction extends Decoder<Transaction> {
   String? expirationTimestampSecs;
   String? gasCurrencyCode;
   String? entryFunctionIdStr;
+  String? coinType;
   Payload? payload;
   TransactionSignature? signature;
   List<TransactionEvent>? events;
   String? timestamp;
 
-  Transaction({
+  AptosTransaction({
     this.type,
     this.version,
     this.hash,
@@ -51,6 +52,7 @@ class Transaction extends Decoder<Transaction> {
     this.gasUsed,
     this.success,
     this.vmStatus,
+    this.coinType,
     this.accumulatorRootHash,
     this.changes,
     this.sender,
@@ -66,11 +68,11 @@ class Transaction extends Decoder<Transaction> {
     this.entryFunctionIdStr,
   });
   @override
-  Transaction decode(Map<String, dynamic> json) {
-    return Transaction.fromJson(json);
+  AptosTransaction decode(Map<String, dynamic> json) {
+    return AptosTransaction.fromJson(json);
   }
 
-  Transaction.fromJson(Map<String, dynamic> json) {
+  AptosTransaction.fromJson(Map<String, dynamic> json) {
     type = json['type'];
     version = json['version'];
     hash = json['hash'];

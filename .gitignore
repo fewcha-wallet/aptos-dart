@@ -29,3 +29,6 @@
 build/
 .flutter-plugins-dependencies
 .flutter-plugins
+.flutter-plugins
+.flutter-plugins-dependencies
+coverage/lcov.info

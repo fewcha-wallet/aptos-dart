@@ -13,7 +13,7 @@ import 'package:aptosdart/core/sui/create_token_transfer_transaction/create_toke
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transaction_block/transaction_block.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
-import 'package:aptosdart/core/transaction/transaction.dart';
+import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
 import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';
@@ -95,8 +95,8 @@ class SUIClient {
     }
   }
 
-  Future<List<Transaction>> getListTransactions(String address) async {
-    List<Transaction> listTrans = [];
+  Future<List<AptosTransaction>> getListTransactions(String address) async {
+    List<AptosTransaction> listTrans = [];
 
     try {
       final transactionsFromAddress =
@@ -118,20 +118,21 @@ class SUIClient {
     }
   }
 
-  Future<List<Transaction>> multiGetTransactionBlocks(
+  Future<List<AptosTransaction>> multiGetTransactionBlocks(
       List<String> transactionIDs) async {
     try {
-      List<Transaction> listTnx = [];
+      List<AptosTransaction> listTnx = [];
       final result =
           await _suiRepository.getMultiTransactionBlocks(transactionIDs);
       for (var item in result) {
-        listTnx.add(Transaction(
+        listTnx.add(AptosTransaction(
           success: item.isSucceed(),
           vmStatus: item.getStatus(),
           gasCurrencyCode: AppConstants.suiDefaultCurrency,
           timestamp: item.getTimeStamp(),
           hash: item.getHash(),
           sender: item.getSender(),
+          coinType: item.getCoinType(),
           gasUsed: item.getTotalGasUsed().toString(),
           payload: Payload(arguments: [
             item.getTokenAmount(),
