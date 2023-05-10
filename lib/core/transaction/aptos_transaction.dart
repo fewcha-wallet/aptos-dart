@@ -19,7 +19,9 @@ import 'package:aptosdart/utils/serializer/serializer.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
-class AptosTransaction extends Decoder<AptosTransaction> {
+abstract class BaseTransaction extends Decoder<BaseTransaction> {}
+
+class AptosTransaction extends BaseTransaction {
   String? type;
   String? version;
   String? hash;
@@ -191,9 +193,9 @@ class AptosTransaction extends Decoder<AptosTransaction> {
     return gasCurrencyCode!;
   }
 
-  String getTokenAmountRemoveTrailingZeros({int? decimal}) {
-    return tokenAmount().removeTrailingZeros(decimal: decimal);
-  }
+  // String getTokenAmountRemoveTrailingZeros({int? decimal}) {
+  //   return tokenAmount().removeTrailingZeros(decimal: decimal);
+  // }
 
   String getGasFeeRemoveTrailingZeros() {
     if (gasUsed != null) return aptosCalculateGasFee().removeTrailingZeros();
@@ -205,13 +207,13 @@ class AptosTransaction extends Decoder<AptosTransaction> {
     return (maxGasAmount ?? '0');
   }
 
-  String tokenAmountInDecimalFormat() {
-    return tokenAmount().decimalFormat();
-  }
+  // String tokenAmountInDecimalFormat() {
+  //   return tokenAmount().decimalFormat();
+  // }
 
-  String maxGasAmountInDecimalFormat() {
+/*  String maxGasAmountInDecimalFormat() {
     return (maxGasAmount ?? '0').decimalFormat();
-  }
+  }*/
 
   String getNFTName() {
     if (payload?.arguments != null) {

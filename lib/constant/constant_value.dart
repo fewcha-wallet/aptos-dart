@@ -6,6 +6,7 @@ class HostUrl {
   static const aptosMainnet = 'Aptos Mainnet';
   static const suiDevnet = "SUI Devnet";
   static const suiTestnet = "SUI Testnet";
+  static const suiMainNet = "SUI Mainnet";
 
   static const aptosDevUrl = 'https://devnet.aptoslabs.com/v1';
   static const aptosTestNetUrl = 'https://testnet.aptoslabs.com/v1';
@@ -24,6 +25,7 @@ class HostUrl {
 
   static const String suiDevnetUrl = "https://fullnode.devnet.sui.io";
   static const String suiTestnetUrl = "https://fullnode.testnet.sui.io";
+  static const String suiMainNetUrl = "https://fullnode.mainnet.sui.io";
 
   static const String aptosMainnetGraphql =
       'https://indexer.mainnet.aptoslabs.com/v1/graphql';

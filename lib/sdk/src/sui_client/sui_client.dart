@@ -125,20 +125,22 @@ class SUIClient {
       final result =
           await _suiRepository.getMultiTransactionBlocks(transactionIDs);
       for (var item in result) {
-        listTnx.add(AptosTransaction(
-          success: item.isSucceed(),
-          vmStatus: item.getStatus(),
-          gasCurrencyCode: AppConstants.suiDefaultCurrency,
-          timestamp: item.getTimeStamp(),
-          hash: item.getHash(),
-          sender: item.getSender(),
-          coinType: item.getCoinType(),
-          gasUsed: item.getTotalGasUsed().toString(),
-          payload: Payload(arguments: [
-            item.getTokenAmount(),
-            item.getToAddress().toString()
-          ]),
-        ));
+        listTnx.add(
+          AptosTransaction(
+            success: item.isSucceed(),
+            vmStatus: item.getStatus(),
+            gasCurrencyCode: AppConstants.suiDefaultCurrency,
+            timestamp: item.getTimeStamp(),
+            hash: item.getHash(),
+            sender: item.getSender(),
+            coinType: item.getCoinType(),
+            gasUsed: item.getTotalGasUsed().toString(),
+            payload: Payload(arguments: [
+              item.getTokenAmount(),
+              item.getToAddress().toString()
+            ]),
+          ),
+        );
       }
       return listTnx;
     } catch (e) {

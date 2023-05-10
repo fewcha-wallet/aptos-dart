@@ -18,8 +18,8 @@ class NetWorkRepository {
         twoFactorAuthenticatorURL: HostUrl.testNet2FAUrl,
       );
       final aptosMainnet = defaultAptosNetwork();
-
-      final suiDevNet = defaultSUINetwork();
+      final suiMainnet = defaultSUINetwork();
+      final suiDevNet = devnetSUINetwork();
       final suiTestNet = NetworkType(
         networkURL: HostUrl.suiTestnetUrl,
         networkName: HostUrl.suiTestnet,
@@ -35,6 +35,7 @@ class NetWorkRepository {
         aptosDevNet,
         aptosTestNet,
         aptosMainnet,
+        suiMainnet,
         suiDevNet,
         suiTestNet,
       ];
@@ -72,6 +73,20 @@ class NetWorkRepository {
   }
 
   NetworkType defaultSUINetwork() {
+    return NetworkType(
+      networkURL: HostUrl.suiMainNetUrl,
+      networkName: HostUrl.suiMainNet,
+      faucetURL: '',
+      coinCurrency: AppConstants.suiDefaultCurrency,
+      transactionHistoryGraphQL: '',
+      coinType: CoinType.sui,
+      explorerParam: HostUrl.mainNet,
+      explorerBaseURL: HostUrl.suiExplorerBaseURL,
+      twoFactorAuthenticatorURL: '',
+    );
+  }
+
+  NetworkType devnetSUINetwork() {
     return NetworkType(
       networkURL: HostUrl.suiDevnetUrl,
       networkName: HostUrl.suiDevnet,
