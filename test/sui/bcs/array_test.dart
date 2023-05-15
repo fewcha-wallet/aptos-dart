@@ -1,5 +1,4 @@
 import 'package:aptosdart/core/sui/bcs/bcs.dart';
-import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/bcs/uleb.dart';
 import 'package:flutter_test/flutter_test.dart';
 

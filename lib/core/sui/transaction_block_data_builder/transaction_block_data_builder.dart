@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
-import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/bcs/bcs.dart';
 import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
@@ -40,14 +39,6 @@ class TransactionBlockDataBuilder {
     if (data == null || programmableTx == null) {
       throw ('Unable to deserialize from bytes.');
     }
-
-    final serialized = {
-      'version': 1,
-      'sender': data['sender'],
-      'expiration': data['expiration'],
-      'gasConfig': data['gasData'],
-      'transactions': programmableTx['transactions'],
-    };
   }
 
   Future<Uint8List> build(
@@ -91,7 +82,6 @@ class TransactionBlockDataBuilder {
       },
       'kind': kind,
     };
-    print(transactionData);
     BCS bcs = Builder().bcs;
     final result = bcs
         .ser(

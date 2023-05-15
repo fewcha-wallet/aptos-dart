@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/core/account/abstract_account.dart';
-import 'package:aptosdart/core/sui/base64_data_buffer/base64_data_buffer.dart';
 import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
 import 'package:aptosdart/core/sui/publickey/public_key.dart' as sui_pk;
 import 'package:aptosdart/utils/extensions/hex_string.dart';

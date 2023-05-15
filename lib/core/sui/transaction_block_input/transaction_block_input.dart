@@ -1,6 +1,3 @@
-import 'package:aptosdart/core/sui/bcs/bcs.dart';
-import 'package:aptosdart/core/sui/bcs/inputs.dart';
-
 typedef TransactionArgument = TransactionArgumentTypes;
 typedef ObjectTransactionArgument = TransactionArgumentTypes;
 

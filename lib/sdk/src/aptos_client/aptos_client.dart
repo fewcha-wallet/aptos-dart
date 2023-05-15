@@ -21,7 +21,6 @@ import 'package:aptosdart/core/ledger/ledger.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
-import 'package:aptosdart/core/signing_message/signing_message.dart';
 import 'package:aptosdart/core/table_item/table_item.dart';
 import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_builder.dart';
@@ -33,7 +32,6 @@ import 'package:aptosdart/sdk/src/repository/transaction_repository/transaction_
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
-import 'package:collection/collection.dart';
 
 class AptosClient {
   late AptosAccountRepository _accountRepository;
