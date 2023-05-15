@@ -138,7 +138,7 @@ class TransactionRepository with AptosSDKMixin {
               GraphQLResponse(createObject: CoinHistory(), response: response));
       List<AptosTransaction> listTransaction = [];
       for (var item in response.decodedData!.coinActivities!) {
-        if (item.activityType != AppConstants.gasFeeEvent) {
+        if (!item.isGasFee!) {
           listTransaction.add(AptosTransaction(
             hash: item.transactionVersion.toString(),
             success: item.isTransactionSuccess,
@@ -146,6 +146,7 @@ class TransactionRepository with AptosSDKMixin {
             gasCurrencyCode: item.getCurrency(),
             timestamp: item.getTimeStamp(),
             type: item.activityType,
+            coinType: item.coinType,
             entryFunctionIdStr: item.entryFunctionIdStr,
             payload: Payload(arguments: [item.amount.toString(), '']),
           ));

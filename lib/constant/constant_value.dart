@@ -69,7 +69,7 @@ class AppConstants {
   static const String coinEvents = '0x1::coin::CoinEvents';
   static const String guidGenerator = '0x1::guid::Generator';
   static const String coinInfo = '0x1::coin::CoinInfo';
-  static const String aptosCoin0x1 = '0x1::aptos_coin::AptosCoin';
+  static const String aptosCoinConstructor = '0x1::aptos_coin::AptosCoin';
 
   static const String account = '0x1::account::Account';
   static const String ansProfile = 'Ans::AnsProfile';
@@ -98,6 +98,8 @@ class AppConstants {
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
   static const String signMessage = "Fewcha Login";
+  static const int aptosDecimal = 8;
+  static const int suiDecimal = 9;
 }
 
 class ErrorMessages {
@@ -163,6 +165,7 @@ class SUIConstants {
   static const String moveObject = 'moveObject';
   static const String suiConstruct = '0x2::sui::SUI';
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
+  static const sui = "SUI";
   static const hardenedOffset = 0x80000000;
   static const String defaultEd25519DerivationPath = "m/44'/784'/0'/0'/0'";
   static const int suiAddressLength = 32;
@@ -212,32 +215,30 @@ class GraphQLConstant {
   static const String myQuery = 'MyQuery';
   static const String getAccountCoinQuery = r""" 
    query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {
-  coin_activities(
-    where: {owner_address: {_eq: $address}}
-    limit: $limit
-    offset: $offset
-    order_by: [{transaction_version: desc}, {event_account_address: desc}, {event_creation_number: desc}, {event_sequence_number: desc}]
-  ) {
-    ...CoinActivityFields
-    __typename
+    coin_activities(
+      where: { owner_address: { _eq: $address } }
+      limit: $limit
+      offset: $offset
+      order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]
+    ) {
+      ...CoinActivityFields
+    }
   }
-}
 
-fragment CoinActivityFields on coin_activities {
-  transaction_timestamp
-  transaction_version
-  amount
-  activity_type
-  coin_type
-  is_gas_fee
-  is_transaction_success
-  event_account_address
-  event_creation_number
-  event_sequence_number
-  entry_function_id_str
-  block_height
-  __typename
-}
+  fragment CoinActivityFields on coin_activities {
+    transaction_timestamp
+    transaction_version
+    amount
+    activity_type
+    coin_type
+    is_gas_fee
+    is_transaction_success
+    event_account_address
+    event_creation_number
+    event_sequence_number
+    entry_function_id_str
+    block_height
+  }
 """;
   static const String getAccountTokenQuery =
       r'query getAccountTokenActivity($address: String!, $offset: Int, $limit: Int) { token_activities( where: { _or: [{ from_address: { _eq: $address } }, { to_address: { _eq: $address } }] } limit: $limit offset: $offset order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]) {  ...TokenActivityFields } }  fragment TokenActivityFields on token_activities { coin_amount   coin_type   collection_data_id_hash    collection_name   creator_address   event_account_address   event_creation_number   from_address   event_sequence_number    name   property_version   to_address   token_amount  token_data_id_hash   transaction_timestamp   transaction_version   transfer_type }';

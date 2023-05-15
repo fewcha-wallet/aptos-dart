@@ -63,7 +63,7 @@ class CoinActivities extends Decoder<CoinActivities> {
   }
 
   String getCurrency() {
-    if (coinType == AppConstants.aptosCoin0x1) {
+    if (coinType == AppConstants.aptosCoinConstructor) {
       return AppConstants.aptosDefaultCurrency;
     }
     return '';

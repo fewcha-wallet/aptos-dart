@@ -241,9 +241,7 @@ class TransactionBlock {
     try {
       String address = _blockData.gasConfig?.owner ?? _blockData.sender!;
       SUICoinList coinList = await _repository.getCoins(
-          address:
-              '0x2c3731225b2463d554ed41da45ecdc33beb0e7b96c6d7ae4e18d22b9abfd64cf',
-          coinType: SUIConstants.suiConstruct);
+          address: address, coinType: SUIConstants.suiConstruct);
       if (coinList.coinTypeList!.isEmpty)
         throw ('No valid gas coins found for the transaction.');
 

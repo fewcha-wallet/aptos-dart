@@ -628,6 +628,7 @@ class SUIRepository with AptosSDKMixin {
         IntentScope.transactionData,
         txBytes,
       );
+
       final signature = await RawSigner.signData(intentMessage, suiAccount);
       Map<String, dynamic> map = {};
       map['transactionBlockBytes'] = toB64(txBytes);

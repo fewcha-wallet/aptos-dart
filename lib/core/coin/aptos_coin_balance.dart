@@ -77,7 +77,7 @@ class AptosCoinInfo extends Decoder<AptosCoinInfo> {
     return AptosCoinInfo.fromJson(json);
   }
 
-  bool get isAptosCoin => coinType == AppConstants.aptosCoin0x1;
+  bool get isAptosCoin => coinType == AppConstants.aptosCoinConstructor;
   String get getName => name!;
   String get getCoinType => coinType!;
   int get getDecimal => decimals!;

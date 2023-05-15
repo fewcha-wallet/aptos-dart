@@ -55,8 +55,11 @@ class SUIIntent {
 
   Uint8List messageWithIntent(IntentScope scope, Uint8List message) {
     final intent = intentWithScope(scope);
+
     final intentMessage = Uint8List(intent.length + message.length);
+
     intentMessage.setAll(0, intent);
+
     intentMessage.setRange(intent.length, intentMessage.length, message);
     return intentMessage;
   }

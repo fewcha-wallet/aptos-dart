@@ -5,6 +5,7 @@ import 'package:aptosdart/core/account_address/account_address.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
 import 'package:aptosdart/core/aptos_types/multi_ed25519.dart';
 import 'package:aptosdart/core/authenticator/authenticator.dart';
+import 'package:aptosdart/core/base_transaction/base_transaction.dart';
 import 'package:aptosdart/core/changes/changes.dart';
 import 'package:aptosdart/core/module_id/module_id.dart';
 import 'package:aptosdart/core/payload/payload.dart';
@@ -12,14 +13,11 @@ import 'package:aptosdart/core/signature/transaction_signature.dart';
 import 'package:aptosdart/core/transaction/transaction_argument.dart';
 import 'package:aptosdart/core/transaction_event/transaction_event.dart';
 import 'package:aptosdart/core/type_tag/type_tag.dart';
-import 'package:aptosdart/network/decodable.dart';
 import 'package:aptosdart/utils/deserializer/deserializer.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/serializer/serializer.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
-
-abstract class BaseTransaction extends Decoder<BaseTransaction> {}
 
 class AptosTransaction extends BaseTransaction {
   String? type;
@@ -44,7 +42,7 @@ class AptosTransaction extends BaseTransaction {
   TransactionSignature? signature;
   List<TransactionEvent>? events;
   String? timestamp;
-
+  int? decimal;
   AptosTransaction({
     this.type,
     this.version,
@@ -68,6 +66,7 @@ class AptosTransaction extends BaseTransaction {
     this.events,
     this.timestamp,
     this.entryFunctionIdStr,
+    this.decimal,
   });
   @override
   AptosTransaction decode(Map<String, dynamic> json) {
@@ -143,6 +142,7 @@ class AptosTransaction extends BaseTransaction {
     return data;
   }
 
+  @override
   String tokenAmount() {
     try {
       if (payload?.arguments == null) return '0';
@@ -163,6 +163,7 @@ class AptosTransaction extends BaseTransaction {
     }
   }
 
+  @override
   String recipientAddress() {
     try {
       if (payload?.arguments != null) {
@@ -182,10 +183,12 @@ class AptosTransaction extends BaseTransaction {
     }
   }
 
-  bool isReceive() {
+  @override
+  bool isReceive({String? currentAccountAddress}) {
     return type == AppConstants.withdrawEvent ? false : true;
   }
 
+  @override
   String getTokenCurrency() {
     if ((gasCurrencyCode ?? '').isEmpty) {
       return AppConstants.aptosDefaultCurrency;
@@ -231,6 +234,51 @@ class AptosTransaction extends BaseTransaction {
   String aptosCalculateGasFee() {
     int result = int.parse(gasUsed ?? '0') * int.parse(gasUnitPrice ?? '1');
     return result.toString();
+  }
+
+  @override
+  String? getHash() {
+    return hash ?? version;
+  }
+
+  @override
+  String getSender() {
+    return sender ?? '';
+  }
+
+  @override
+  String? getStatus() {
+    return vmStatus;
+  }
+
+  @override
+  String getTimestamp() {
+    return timestamp ?? '0';
+  }
+
+  @override
+  bool isSucceed() {
+    return success ?? false;
+  }
+
+  @override
+  String getGasUsed() {
+    return getAptosGasFee();
+  }
+
+  @override
+  String? getTransactionType() {
+    return type;
+  }
+
+  @override
+  String? getTokenType() {
+    return entryFunctionIdStr;
+  }
+
+  @override
+  int getDecimal() {
+    return decimal ?? AppConstants.aptosDecimal;
   }
 }
 

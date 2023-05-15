@@ -10,7 +10,7 @@ class CreateTokenTransferTransaction {
       Options options) async {
     final tx = TransactionBlock();
     String parseAmount = options.amount;
-    if (options.isPayAllSui && options.coinType == SUIConstants.suiConstruct) {}
+    // if (options.isPayAllSui && options.coinType == SUIConstants.suiConstruct) {}
 
     if (options.coinType == SUIConstants.suiConstruct) {
       final coin =

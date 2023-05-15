@@ -1,4 +1,5 @@
 import 'package:aptosdart/constant/constant_value.dart';
+import 'package:aptosdart/core/base_transaction/base_transaction.dart';
 import 'package:aptosdart/core/owner/owner.dart';
 import 'package:aptosdart/network/decodable.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
@@ -340,12 +341,12 @@ class SUITransaction extends Decoder<SUITransaction> {
   }
 }
 
-class SUITransactionHistory extends Decoder<SUITransactionHistory> {
+class SUITransactionHistory extends BaseTransaction {
   String? digest, senderAddress;
 
   SUIEffects? effects;
   int? timestampMs;
-  int? amount;
+  int? amount, decimal;
   BalanceChanges? balanceChanges;
 
   SUITransactionHistory({
@@ -354,6 +355,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     this.senderAddress,
     this.amount,
     this.balanceChanges,
+    this.decimal,
   });
 
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
@@ -391,6 +393,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     return SUITransactionHistory.fromJson(json);
   }
 
+  @override
   String? getStatus() {
     return effects?.status?.status;
   }
@@ -403,6 +406,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     return effects?.status?.status == SUIConstants.success ? true : false;
   }
 
+  @override
   bool isSucceed() {
     if (effects?.status?.status == SUIConstants.success) {
       return true;
@@ -410,11 +414,7 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     return false;
   }
 
-  String? getTimeStamp() {
-    if (timestampMs != null) return (timestampMs! * 1000).toString();
-    return DateTime.now().microsecondsSinceEpoch.toString();
-  }
-
+  @override
   String? getHash() {
     return digest;
   }
@@ -435,11 +435,62 @@ class SUITransactionHistory extends Decoder<SUITransactionHistory> {
     return null;
   }
 
-  String? getSender() {
-    return senderAddress;
+  @override
+  String getSender() {
+    return senderAddress!;
   }
 
-  String getTokenAmount() {
+  @override
+  int getDecimal() {
+    return decimal ?? AppConstants.suiDecimal;
+  }
+
+  @override
+  String getGasUsed() {
+    return (effects?.gasUsed?.getTotalGasUsed() ?? 0).toString();
+  }
+
+  @override
+  String getTimestamp() {
+    if (timestampMs != null) return (timestampMs! * 1000).toString();
+    return DateTime.now().microsecondsSinceEpoch.toString();
+  }
+
+  @override
+  String getTokenCurrency() {
+    List<String> currency = (balanceChanges?.coinType ?? '').split('::');
+    if (currency.isNotEmpty) {
+      return currency.last;
+    }
+    return SUIConstants.sui;
+  }
+
+  @override
+  String? getTokenType() {
+    return balanceChanges?.coinType;
+  }
+
+  @override
+  String? getTransactionType() {
+    return null;
+  }
+
+  @override
+  bool isReceive({String? currentAccountAddress}) {
+    return senderAddress != currentAccountAddress;
+  }
+
+  @override
+  String recipientAddress() {
+    final temp = effects?.created ?? [];
+    if (temp.isNotEmpty) {
+      return temp.first.owner?.addressOwner ?? '';
+    }
+    return "";
+  }
+
+  @override
+  String tokenAmount() {
     return amount.toString();
   }
 }
@@ -468,7 +519,7 @@ class SUIEffects extends Decoder<SUIEffects> {
   SUIGasUsed? gasUsed;
   String? transactionDigest;
   List<SUICreated>? created;
-
+  String? gasAddressOwner;
   SUIEffects({this.status, this.gasUsed, this.transactionDigest, this.created});
 
   SUIEffects.fromJson(Map<String, dynamic> json) {
@@ -482,6 +533,7 @@ class SUIEffects extends Decoder<SUIEffects> {
         created!.add(SUICreated.fromJson(v));
       });
     }
+    gasAddressOwner = json['gasObject']?['owner']?['AddressOwner'];
   }
 
   Map<String, dynamic> toJson() {
