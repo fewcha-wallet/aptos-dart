@@ -429,8 +429,14 @@ class SUITransactionHistory extends BaseTransaction {
 
   String? getToAddress() {
     final temp = effects?.created ?? [];
+    final mutated = effects?.mutated ?? [];
     if (temp.isNotEmpty) {
       return temp.first.owner?.addressOwner;
+    }
+    if (mutated.isNotEmpty) {
+      final address =
+          mutated.firstWhereOrNull((element) => element != senderAddress);
+      return address;
     }
     return null;
   }
@@ -483,10 +489,16 @@ class SUITransactionHistory extends BaseTransaction {
   @override
   String recipientAddress() {
     final temp = effects?.created ?? [];
+    final mutated = effects?.mutated ?? [];
     if (temp.isNotEmpty) {
       return temp.first.owner?.addressOwner ?? '';
     }
-    return "";
+    if (mutated.isNotEmpty) {
+      final address =
+          mutated.firstWhereOrNull((element) => element != senderAddress);
+      return address ?? '';
+    }
+    return '';
   }
 
   @override
@@ -520,7 +532,13 @@ class SUIEffects extends Decoder<SUIEffects> {
   String? transactionDigest;
   List<SUICreated>? created;
   String? gasAddressOwner;
-  SUIEffects({this.status, this.gasUsed, this.transactionDigest, this.created});
+  List<String>? mutated;
+  SUIEffects(
+      {this.status,
+      this.gasUsed,
+      this.transactionDigest,
+      this.created,
+      this.mutated});
 
   SUIEffects.fromJson(Map<String, dynamic> json) {
     status = json['status'] != null ? SUIStatus.fromJson(json['status']) : null;
@@ -531,6 +549,15 @@ class SUIEffects extends Decoder<SUIEffects> {
       created = <SUICreated>[];
       json['created'].forEach((v) {
         created!.add(SUICreated.fromJson(v));
+      });
+    }
+    if (json['mutated'] != null) {
+      mutated = [];
+      json['mutated'].forEach((v) {
+        String? address = v?['owner']?['AddressOwner'];
+        if (address != null) {
+          mutated!.add(address);
+        }
       });
     }
     gasAddressOwner = json['gasObject']?['owner']?['AddressOwner'];
