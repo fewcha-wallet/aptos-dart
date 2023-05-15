@@ -109,7 +109,7 @@ class AptosClient {
     }
   }
 
-  Future<int> getAccountBalance(String address) async {
+/*  Future<int> getAccountBalance(String address) async {
     try {
       final result = await getAccountListCoins(address);
       final listCoins = result.listCoinBalances ?? [];
@@ -124,7 +124,7 @@ class AptosClient {
     } catch (e) {
       return 0;
     }
-  }
+  }*/
 
   Future<int> getChainId() async {
     try {
@@ -167,7 +167,7 @@ class AptosClient {
 
 //endregion
   //region Transaction
-  Future<String> generateSignSubmitTransaction({
+/*  Future<String> generateSignSubmitTransaction({
     required AptosAccount sender,
     required TransactionPayload payload,
     OptionalTransactionArgs? extraArgs,
@@ -185,7 +185,7 @@ class AptosClient {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
   Future<RawTransaction> generateRawTransaction({
     required String accountFrom,
@@ -319,7 +319,7 @@ class AptosClient {
     }
   }
 
-  Future<List<AptosTransaction>> getTransactions(
+/*  Future<List<AptosTransaction>> getTransactions(
       {int start = 0, int limit = 25}) async {
     try {
       final result = await _transactionRepository.getTransactions(
@@ -328,7 +328,7 @@ class AptosClient {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
   Future<AptosTransaction> getTransactionByHash(String txnHashOrVersion) async {
     try {
@@ -381,7 +381,7 @@ class AptosClient {
     }
   }
 
-  Future<AptosTransaction> submitTransaction(
+/*  Future<AptosTransaction> submitTransaction(
       AptosTransaction transaction) async {
     try {
       final result =
@@ -390,7 +390,7 @@ class AptosClient {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
   Future<AptosTransaction> submitRawTransaction(
     Uint8List rawTransaction,
@@ -441,7 +441,7 @@ class AptosClient {
     }
   }
 
-  Future<SigningMessage> createSigningMessage(
+/*  Future<SigningMessage> createSigningMessage(
       AptosTransaction transaction) async {
     try {
       final result =
@@ -450,7 +450,7 @@ class AptosClient {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
   Future<String> encodeSubmission(AptosTransaction transaction) async {
     try {
@@ -482,6 +482,7 @@ class AptosClient {
     }
   }
 
+/*
   Future<TransactionSignature> signTransaction(
       AptosAccount aptosAccount, AptosTransaction transaction) async {
     try {
@@ -495,6 +496,7 @@ class AptosClient {
       rethrow;
     }
   }
+*/
 
   Future<Uint8List> signRawTransaction(
       AptosAccount aptosAccount, RawTransaction rawTransaction) async {

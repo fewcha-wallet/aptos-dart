@@ -19,6 +19,7 @@ import 'package:dio/dio.dart';
 
 class TransactionRepository with AptosSDKMixin {
   TransactionRepository();
+/*
   Future<List<AptosTransaction>> getTransactions(
       {int start = 0, int limit = 10}) async {
     try {
@@ -35,8 +36,9 @@ class TransactionRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
-  Future<AptosTransaction> submitTransaction(
+/*  Future<AptosTransaction> submitTransaction(
       AptosTransaction transaction) async {
     try {
       final response = await apiClient.request(
@@ -50,7 +52,7 @@ class TransactionRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
   Future<AptosTransaction> submitSignedBCSTransaction(
     Uint8List signedTxn,
@@ -220,6 +222,7 @@ class TransactionRepository with AptosSDKMixin {
       rethrow;
     }
   }
+/*
 
   Future<SigningMessage> createSigningMessage(
     AptosTransaction transaction,
@@ -237,6 +240,7 @@ class TransactionRepository with AptosSDKMixin {
       rethrow;
     }
   }
+*/
 
   Future<String> encodeSubmission(
     AptosTransaction transaction,

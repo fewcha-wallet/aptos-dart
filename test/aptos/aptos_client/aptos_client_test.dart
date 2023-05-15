@@ -8,10 +8,6 @@ void main() {
     final genesisAccount = await client.getAccount("0x1");
     expect(genesisAccount.authenticationKey!.length, 66);
   });
-  test("gets transactions", () async {
-    final transactions = await client.getTransactions();
-    expect(transactions, isNot(transactions.isEmpty));
-  });
   test("gets genesis resources", () async {
     final ledgerInfo = await client.getLedgerInformation();
     expect(ledgerInfo.chainID, 1);

@@ -12,13 +12,13 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 
 class TokenClient with AptosSDKMixin {
   late AptosClient _aptosClient;
-  late TransactionBuilderABI transactionBuilder;
+  // late TransactionBuilderABI transactionBuilder;
   TokenClient() {
     _aptosClient = AptosClient();
-    transactionBuilder = TransactionBuilderABI(
-        abis: Abis.tokenAbis.map((abi) => abi.toUint8Array()).toList());
+    /*transactionBuilder = TransactionBuilderABI(
+        abis: Abis.tokenAbis.map((abi) => abi.toUint8Array()).toList());*/
   }
-
+/*
   Future<CollectionsItemProperties> getTokenData(
       TokenDataId tokenDataId) async {
     try {
@@ -41,9 +41,9 @@ class TokenClient with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
-  Future<AptosTransaction> claimTokenSimulate(
+  /* Future<AptosTransaction> claimTokenSimulate(
       {required AptosAccount aptosAccount,
       required String creator,
       required String sender,
@@ -71,7 +71,7 @@ class TokenClient with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
-  }
+  }*/
 
   Future<AptosTransaction> simulateAutoReceiveNFT({
     required AptosAccount aptosAccount,

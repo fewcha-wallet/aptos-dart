@@ -32,10 +32,3 @@ class Event extends Decoder<Event> {
     return Event.fromJson(json);
   }
 }
-
-class EventToken {
-  String amount;
-  EventData eventData;
-
-  EventToken({required this.amount, required this.eventData});
-}
