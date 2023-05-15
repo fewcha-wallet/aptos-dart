@@ -7,22 +7,22 @@ enum APIType {
   getAccountModules,
   faucetSUI,
   getAccountModuleByID,
-  getTransactions,
-  submitTransaction,
+  // getTransactions,
+  // submitTransaction,
   submitSignedBCSTransaction,
   simulateSignedBCSTransaction,
   simulateTransaction,
   getTransactionByHash,
   getTransactionByVersion,
   getGraphQLQuery,
-  signingMessage,
+  // signingMessage,
   encodeSubmission,
   estimateGasPrice,
   getEventsByEventKey,
   getEventsByEventHandle,
   getTableItem,
   getIPFSProfile,
-  getListDApps,
+  // getListDApps,
   register2FA,
   verify2FA,
 }
@@ -35,15 +35,16 @@ enum APIErrorType {
   badRequest,
   unknown,
 }
-enum RPCFunction {
+/*enum RPCFunction {
   suiGetObjectsOwnedByAddress,
   suiGetObject,
   suiFaucet,
   getTransactionsByAddress,
   suiGetTransaction,
-}
+}*/
 enum LogStatus { hide, show }
 enum CoinType { aptos, sui }
+/*
 enum ComputeSUIObjectType {
   getBalance,
   getNFT,
@@ -51,3 +52,4 @@ enum ComputeSUIObjectType {
   getSUIObjectList,
   getSUICoinObjectList
 }
+*/

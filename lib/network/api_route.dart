@@ -28,7 +28,6 @@ class APIRoute implements APIRouteConfigurable {
   final String _byHash = 'by_hash';
   final String _byVersion = 'by_version';
   final String _simulate = 'simulate';
-  final String _signingMessage = 'signing_message';
   final String _encodeSubmission = 'encode_submission';
   final String _event = 'events';
   final String _tables = 'tables';
@@ -75,13 +74,13 @@ class APIRoute implements APIRouteConfigurable {
         break;
 
       ///
-      case APIType.getTransactions:
-        path = '/$_transactions';
-        break;
-      case APIType.submitTransaction:
-        method = APIMethod.post;
-        path = '/$_transactions';
-        break;
+      // case APIType.getTransactions:
+      //   path = '/$_transactions';
+      //   break;
+      // case APIType.submitTransaction:
+      //   method = APIMethod.post;
+      //   path = '/$_transactions';
+      //   break;
       case APIType.submitSignedBCSTransaction:
         method = APIMethod.post;
         path = '/$_transactions';
@@ -111,10 +110,10 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
 
         break;
-      case APIType.signingMessage:
-        method = APIMethod.post;
-        path = '/$_transactions/$_signingMessage';
-        break;
+      // case APIType.signingMessage:
+      //   method = APIMethod.post;
+      //   path = '/$_transactions/$_signingMessage';
+      //   break;
       case APIType.encodeSubmission:
         method = APIMethod.post;
         path = '/$_transactions/$_encodeSubmission';
@@ -136,8 +135,6 @@ class APIRoute implements APIRouteConfigurable {
       case APIType.estimateGasPrice:
         method = APIMethod.get;
         path = '/$_estimateGasPrice';
-        break;
-      case APIType.getListDApps:
         break;
       case APIType.register2FA:
         method = APIMethod.post;

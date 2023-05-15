@@ -20,13 +20,12 @@ import 'package:aptosdart/network/rpc/rpc_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 
 class SUIRepository with AptosSDKMixin {
-
   Future<List<SUIBalances>> getSUITokens(String address) async {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetObjectsOwnedByAddress,
-          ),
+              // RPCFunction.suiGetObjectsOwnedByAddress,
+              ),
           function: SUIConstants.suixGetAllBalances,
           arg: [address],
           create: (response) =>
@@ -62,8 +61,8 @@ class SUIRepository with AptosSDKMixin {
       final result = await rpcClient.request(
           isBatch: true,
           route: RPCRoute(
-            RPCFunction.suiGetObject,
-          ),
+              // RPCFunction.suiGetObject,
+              ),
           function: SUIConstants.suiGetObject,
           arg: [objectIds],
           create: (response) =>
@@ -84,8 +83,8 @@ class SUIRepository with AptosSDKMixin {
       final map = {'filter': addressMap};
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.getTransactionsByAddress,
-          ),
+              // RPCFunction.getTransactionsByAddress,
+              ),
           function: function,
           arg: [map, null, 20, true],
           create: (response) => RPCResponse(
@@ -111,8 +110,8 @@ class SUIRepository with AptosSDKMixin {
       };
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suiMultiGetTransactionBlocks,
           arg: [transactionIDs, mapFilter],
           create: (response) => RPCListResponse(
@@ -127,8 +126,8 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suixGetCoinMetadata,
           arg: [coinType],
           create: (response) =>
@@ -143,8 +142,8 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suixGetOwnedObjects,
           arg: [address],
           create: (response) =>
@@ -159,8 +158,8 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suiMultiGetObjects,
           arg: [
             listIds,
@@ -187,8 +186,8 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suixGetReferenceGasPrice,
           arg: [],
           create: (response) => RPCResponse<String>(response: response));
@@ -203,8 +202,8 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suixGetCoins,
           arg: [address, coinType, null, null],
           create: (response) =>
@@ -227,8 +226,8 @@ class SUIRepository with AptosSDKMixin {
 
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suiDryRunTransactionBlock,
           arg: [input],
           create: (response) =>
@@ -247,8 +246,8 @@ class SUIRepository with AptosSDKMixin {
       final signature = map['signature'];
       final result = await rpcClient.request(
           route: RPCRoute(
-            RPCFunction.suiGetTransaction,
-          ),
+              // RPCFunction.suiGetTransaction,
+              ),
           function: SUIConstants.suiExecuteTransactionBlock,
           arg: [
             transactionBlockBytes,

@@ -1,19 +1,21 @@
 import 'package:aptosdart/constant/api_method.dart';
-import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:dio/dio.dart';
 
 class RPCRoute implements APIRouteConfigurable {
-  final RPCFunction rpcFunction;
+  // final RPCFunction rpcFunction;
   String? baseUrl;
   String? routeParams;
   String? method;
 
   Map<String, String>? headers;
-  final String _suiGetObjectsOwnedByAddress = 'sui_getObjectsOwnedByAddress';
 
-  RPCRoute(this.rpcFunction,
-      {this.baseUrl, this.routeParams, this.method, this.headers}) {
+  RPCRoute(
+      /*this.rpcFunction,*/
+      {this.baseUrl,
+      this.routeParams,
+      this.method,
+      this.headers}) {
     routeParams ??= "";
   }
 
@@ -22,7 +24,7 @@ class RPCRoute implements APIRouteConfigurable {
     String method = RPCMethod.post, path = "";
     ResponseType responseType = ResponseType.json;
 
-    switch (rpcFunction) {
+/*    switch (rpcFunction) {
       case RPCFunction.suiGetObjectsOwnedByAddress:
         path = _suiGetObjectsOwnedByAddress;
         break;
@@ -34,7 +36,7 @@ class RPCRoute implements APIRouteConfigurable {
         break;
       case RPCFunction.suiFaucet:
         break;
-    }
+    }*/
     final options = Options(
             headers: headers,
             responseType: responseType,
