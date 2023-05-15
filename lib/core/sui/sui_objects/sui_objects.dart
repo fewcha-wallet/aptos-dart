@@ -892,24 +892,6 @@ class SUICreated extends Decoder<SUICreated> {
   }
 }
 
-/*class SUITransactionBytes extends Decoder<SUITransactionBytes> {
-  String? txBytes;
-  SUIReference? gas;
-  SUITransactionBytes({
-    this.txBytes,
-    this.gas,
-  });
-
-  SUITransactionBytes.fromJson(Map<String, dynamic> json) {
-    txBytes = json['txBytes'];
-    gas = json['gas'] != null ? SUIReference.fromJson(json['gas']) : null;
-  }
-  @override
-  SUITransactionBytes decode(Map<String, dynamic> json) {
-    return SUITransactionBytes.fromJson(json);
-  }
-}*/
-
 class SUITransactionSimulateResult
     extends Decoder<SUITransactionSimulateResult> {
   String? txBytes;

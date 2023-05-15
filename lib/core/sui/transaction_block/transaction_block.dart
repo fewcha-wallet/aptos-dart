@@ -1,16 +1,12 @@
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
-import 'package:aptosdart/core/sui/bcs/bcs.dart';
-import 'package:aptosdart/core/sui/bcs/define_function.dart';
 import 'package:aptosdart/core/sui/bcs/inputs.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
 import 'package:aptosdart/core/sui/transaction_block_data_builder/transaction_block_data_builder.dart';
 import 'package:aptosdart/core/sui/transaction_block_input/transaction_block_input.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
-import 'package:aptosdart/utils/extensions/hex_string.dart';
 
 import '../coin/sui_coin_type.dart';
 import 'package:collection/collection.dart';
@@ -181,69 +177,14 @@ class TransactionBlock {
     return {'gas': getGasConfig!.budget!, 'txBytes': bytes};
   }
 
-/*
-  Future<Uint8List> build(
-      {int? overridesExpiration,
-      String? overridesSender,
-      GasConfig? gasConfig,
-      bool onlyTransactionKind = false}) async {
-    final inputs = _blockData.inputs!.map((e) => e.toInputJson()).toList();
-    final transactionMap =
-        _blockData.transactions!.map((e) => e.toJson()).toList();
-    Map<String, dynamic> kind = {
-      'ProgrammableTransaction': {
-        'inputs': inputs,
-        'transactions': transactionMap,
-      },
-    };
-    if (onlyTransactionKind) {
-      return Builder()
-          .bcs
-          .ser('TransactionKind', kind,
-              options:
-                  BcsWriterOptions(size: SUIConstants.transactionDataMaxSize))
-          .toBytes();
-    }
-    int? expiration = overridesExpiration ?? getExpiration;
-    String sender = overridesSender ?? getSender;
-    GasConfig gas = getGasConfig!.copyWith(
-      inputBudget: gasConfig?.budget,
-      inputPrice: gasConfig?.price,
-      inputOwner: gasConfig?.owner,
-      inputPayment: gasConfig?.payment,
-    );
-
-    Map<String, dynamic> transactionData = {
-      'sender': sender.trimPrefix(),
-      'expiration': expiration ?? {'None': true},
-      'gasData': {
-        'payment': gas.payment,
-        'owner': (gas.owner ?? sender).trimPrefix(),
-        'price': gas.price!,
-        'budget': gas.budget!,
-      },
-      'kind': kind,
-    };
-    BCS bcs = Builder().bcs;
-    final result = bcs
-        .ser(
-          'TransactionData',
-          {'V1': transactionData},
-          options: BcsWriterOptions(size: SUIConstants.transactionDataMaxSize),
-        )
-        .toBytes();
-
-    return result;
-  }
-*/
-
   Future<List<SUICoinType>> selectGasPayment() async {
     try {
       String address = _blockData.gasConfig?.owner ?? _blockData.sender!;
       SUICoinList coinList = await _repository.getCoins(
           address: address, coinType: SUIConstants.suiConstruct);
-      if (coinList.coinTypeList!.isEmpty)
+      if (coinList.coinTypeList!.isEmpty) {
         throw ('No valid gas coins found for the transaction.');
+      }
 
       final list = coinList.coinTypeList!.where((element) {
         bool matchingInput =

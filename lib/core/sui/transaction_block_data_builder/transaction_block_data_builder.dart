@@ -129,12 +129,5 @@ class GasConfig {
       owner: inputOwner ?? owner,
       payment: inputPayment ?? payment,
     );
-    // budget = inputBudget ?? budget;
-    // price = inputPrice ?? price;
-    // owner = inputOwner ?? owner;
-    // payment = inputPayment ?? payment;
-    /*payment = */ /*inputPayment ??*/ /* (inputPayment ?? []).isNotEmpty
-        ? inputPayment
-        : payment;*/
   }
 }

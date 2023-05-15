@@ -206,8 +206,7 @@ class BCS {
     throw Exception("Incorrect type passed into the '.ser()' function.");
   }
 
-  dynamic de(dynamic type, dynamic data /*: Uint8Array | string*/,
-      {Encoding? encoding}) {
+  dynamic de(dynamic type, dynamic data, {Encoding? encoding}) {
     assert(data is Uint8List || data is String);
     if (data is String) {
       if (encoding != null) {

@@ -196,10 +196,6 @@ class AptosTransaction extends BaseTransaction {
     return gasCurrencyCode!;
   }
 
-  // String getTokenAmountRemoveTrailingZeros({int? decimal}) {
-  //   return tokenAmount().removeTrailingZeros(decimal: decimal);
-  // }
-
   String getGasFeeRemoveTrailingZeros() {
     if (gasUsed != null) return aptosCalculateGasFee().removeTrailingZeros();
     return (maxGasAmount ?? '0').removeTrailingZeros();
@@ -209,14 +205,6 @@ class AptosTransaction extends BaseTransaction {
     if (gasUsed != null) return aptosCalculateGasFee();
     return (maxGasAmount ?? '0');
   }
-
-  // String tokenAmountInDecimalFormat() {
-  //   return tokenAmount().decimalFormat();
-  // }
-
-/*  String maxGasAmountInDecimalFormat() {
-    return (maxGasAmount ?? '0').decimalFormat();
-  }*/
 
   String getNFTName() {
     if (payload?.arguments != null) {

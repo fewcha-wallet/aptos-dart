@@ -89,15 +89,7 @@ class Inputs {
       result = Builder().bcs.ser(type!, data).toBytes();
     }
     return Pure(result);
-  } /*  static Map<String, dynamic> pure(dynamic data, {String? type}) {
-    dynamic result;
-    if (data is Uint8List) {
-      result = data;
-    } else {
-      result = Builder().bcs.ser(type!, data).toBytes();
-    }
-    return {'Pure': result};
-  }*/
+  }
 
   static getIdFromCallArg(dynamic arg) {
     assert(arg != String || arg != ObjectCallArg);

@@ -8,7 +8,6 @@ import 'package:aptosdart/sdk/src/transaction_builder_abi/transaction_builder_ab
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 
-
 class TransactionBuilderRemoteABI {
   late AptosClient _aptosClient;
   late RemoteABIBuilderConfig _builderConfig;
@@ -22,7 +21,6 @@ class TransactionBuilderRemoteABI {
       {required String func,
       List<String> tyTags = const [],
       List<dynamic> args = const []}) async {
-    /* eslint no-param-reassign: ["off"] */
     func = func.replaceAll(Validator.removeLeadingZerosInHex, '0x');
 
     final funcNameParts = func.split("::");

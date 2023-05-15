@@ -73,7 +73,6 @@ class TransactionBuilderABI {
         payload = TransactionPayloadScript(
             Script(code: funcABI.code, tyArgs: typeTags, args: scriptArgs));
       } else {
-        /* istanbul ignore next */
         throw ("Unknown ABI format.");
       }
       return payload;
