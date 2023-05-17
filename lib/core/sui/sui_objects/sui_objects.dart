@@ -364,7 +364,8 @@ class SUITransactionHistory extends BaseTransaction {
 
     effects =
         json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
-    timestampMs = int.parse(json['timestampMs']);
+    timestampMs = int.parse(json['timestampMs'] ??
+        DateTime.now().millisecondsSinceEpoch.toString());
     digest = json['digest'] ?? 0;
     senderAddress = json['transaction']?['data']?['sender'] ?? '';
     balanceChanges = json['balanceChanges'] != null
@@ -526,11 +527,11 @@ class SUITransactionHistory extends BaseTransaction {
   String tokenAmount() {
     return amount.toString();
   }
-  //
-  // @override
-  // bool isNFT() {
-  //   return false;
-  // }
+
+  @override
+  bool isNFT() {
+    return false;
+  }
 }
 
 class BalanceChanges extends Decoder<BalanceChanges> {

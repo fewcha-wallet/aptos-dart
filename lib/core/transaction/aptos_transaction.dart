@@ -43,7 +43,7 @@ class AptosTransaction extends BaseTransaction {
   List<TransactionEvent>? events;
   String? timestamp;
   int? decimal;
-  // bool? isNFTTransaction;
+  bool? isNFTTransaction;
   AptosTransaction({
     this.type,
     this.version,
@@ -68,7 +68,7 @@ class AptosTransaction extends BaseTransaction {
     this.timestamp,
     this.entryFunctionIdStr,
     this.decimal,
-    // this.isNFTTransaction = false,
+    this.isNFTTransaction = false,
   });
   @override
   AptosTransaction decode(Map<String, dynamic> json) {
@@ -270,11 +270,11 @@ class AptosTransaction extends BaseTransaction {
   int getDecimal() {
     return decimal ?? AppConstants.aptosDecimal;
   }
-  //
-  // @override
-  // bool isNFT() {
-  //   return isNFTTransaction!;
-  // }
+
+  @override
+  bool isNFT() {
+    return isNFTTransaction!;
+  }
 }
 
 abstract class RawTransactionWithData {
