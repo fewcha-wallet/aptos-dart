@@ -90,6 +90,7 @@ class SUIClient {
       if (transactionMerge.isNotEmpty) {
         listTrans =
             await multiGetTransactionBlocks(transactionMerge.toSet().toList());
+        listTrans.sort((a, b) => b.timestampMs!.compareTo(a.timestampMs!));
       }
       return listTrans.reversed.toList();
     } catch (e) {

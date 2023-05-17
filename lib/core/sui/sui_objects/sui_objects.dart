@@ -4,6 +4,7 @@ import 'package:aptosdart/core/owner/owner.dart';
 import 'package:aptosdart/network/decodable.dart';
 import 'package:aptosdart/utils/validator/validator.dart';
 import 'package:collection/collection.dart';
+import 'package:aptosdart/utils/extensions/hex_string.dart';
 
 class SUIObjects extends Decoder<SUIObjects> {
   String? objectId, version, digest, type, owner, storageRebate;
@@ -348,7 +349,7 @@ class SUITransactionHistory extends BaseTransaction {
   int? timestampMs;
   int? amount, decimal;
   BalanceChanges? balanceChanges;
-
+  bool _isNFTTransaction = false;
   SUITransactionHistory({
     this.effects,
     this.timestampMs,
@@ -359,12 +360,13 @@ class SUITransactionHistory extends BaseTransaction {
   });
 
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
+    amount = parseAmount(json);
+
     effects =
         json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
     timestampMs = int.parse(json['timestampMs']);
     digest = json['digest'] ?? 0;
     senderAddress = json['transaction']?['data']?['sender'] ?? '';
-    amount = parseAmount(json);
     balanceChanges = json['balanceChanges'] != null
         ? BalanceChanges.fromJson(json['balanceChanges'])
         : null;
@@ -382,10 +384,25 @@ class SUITransactionHistory extends BaseTransaction {
   int parseAmount(Map<String, dynamic> json) {
     if (json['transaction'] == null) return 0;
     List data = json['transaction']?['data']?['transaction']?['inputs'] ?? [];
+    String result = (_getCoin(data) ?? _getNFT(data));
+    return int.parse(result);
+  }
+
+  String? _getCoin(List<dynamic> data) {
     Map<String, dynamic>? result =
         data.firstWhereOrNull((element) => element['valueType'] == 'u64');
-    String amount = result?['value'] ?? '0';
-    return int.parse(amount);
+    String? amount = result?['value'];
+    return amount;
+  }
+
+  String _getNFT(List<dynamic> data) {
+    Map<String, dynamic>? result =
+        data.firstWhereOrNull((element) => element['type'] == 'object');
+    if (result != null) {
+      _isNFTTransaction = true;
+      return '1';
+    }
+    return '0';
   }
 
   @override
@@ -399,6 +416,8 @@ class SUITransactionHistory extends BaseTransaction {
   }
 
   String? getCoinType() {
+    if (_isNFTTransaction) return 'NFT';
+
     return balanceChanges?.coinType;
   }
 
@@ -448,6 +467,7 @@ class SUITransactionHistory extends BaseTransaction {
 
   @override
   int getDecimal() {
+    if (_isNFTTransaction) return 0;
     return decimal ?? AppConstants.suiDecimal;
   }
 
@@ -464,6 +484,7 @@ class SUITransactionHistory extends BaseTransaction {
 
   @override
   String getTokenCurrency() {
+    if (_isNFTTransaction) return 'NFT';
     List<String> currency = (balanceChanges?.coinType ?? '').split('::');
     if (currency.isNotEmpty) {
       return currency.last;
@@ -505,6 +526,11 @@ class SUITransactionHistory extends BaseTransaction {
   String tokenAmount() {
     return amount.toString();
   }
+  //
+  // @override
+  // bool isNFT() {
+  //   return false;
+  // }
 }
 
 class BalanceChanges extends Decoder<BalanceChanges> {
@@ -520,9 +546,14 @@ class BalanceChanges extends Decoder<BalanceChanges> {
 
   BalanceChanges.fromJson(List<dynamic> json) {
     if (json.isEmpty) coinType = null;
-    final type = (json).firstWhereOrNull(
-        (element) => element?['coinType'] != SUIConstants.suiConstruct);
-    coinType = type?['coinType'];
+    final type = (json).firstWhereOrNull((element) =>
+        ((element?['coinType'] ?? '') as String).toShortString() !=
+        SUIConstants.suiConstruct);
+    if (type != null) {
+      coinType = ((type?['coinType'] ?? '') as String).toShortString();
+    } else {
+      coinType = SUIConstants.suiConstruct;
+    }
   }
 }
 

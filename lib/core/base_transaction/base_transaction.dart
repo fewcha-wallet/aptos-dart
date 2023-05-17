@@ -12,6 +12,7 @@ abstract class BaseTransaction extends Decoder<BaseTransaction> {
   String getTokenCurrency();
   String? getTokenType();
   bool isSucceed();
+  // bool isNFT();
   bool isReceive({String? currentAccountAddress});
   int getDecimal();
 }
