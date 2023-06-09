@@ -228,7 +228,7 @@ class AptosTransaction extends BaseTransaction {
 
   @override
   String? getHash() {
-    return hash ?? version;
+    return version ?? hash;
   }
 
   @override
