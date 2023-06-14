@@ -16,7 +16,7 @@ class RawSigner {
     final signature = account.signBuffer(digest);
 
     String signatureScheme = 'ED25519';
-    return toSerializedSignature(
+    return await toSerializedSignature(
       signatureScheme: signatureScheme,
       signature: Utilities.hexToBytes(signature),
       pubKey: pubkey.toBytes(),

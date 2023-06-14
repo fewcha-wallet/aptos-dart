@@ -61,6 +61,8 @@ class AppConstants {
   static const String defaultGasUnitPrice = '100';
   static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";
+  static const String aptos = "aptos";
+  static const String sui = "sui";
   static const String rootAPIStatusMessageFormat = "status_message";
   static const String prefixOx = '0x';
   static const String aptosCoin =

@@ -35,7 +35,8 @@ class TwoFactorAuthenticatorRepository with AptosSDKMixin {
       );
       final result = await _aptosClient.signMessage(account, payloads);
 
-      final regis = await register(account, result.signature);
+      final regis =
+          await register(account, result.signature, AppConstants.aptos);
       return regis;
     } catch (e) {
       rethrow;
@@ -48,16 +49,18 @@ class TwoFactorAuthenticatorRepository with AptosSDKMixin {
       Uint8List tx = fromB64(AppConstants.signMessage);
 
       final intentMessage = SUIIntent().messageWithIntent(
-        IntentScope.transactionData,
+        IntentScope.personalMessage,
         tx,
       );
-
       final signature = await RawSigner.signData(intentMessage, account);
 
-      final dwe = fromB64(signature);
-      final dw = Utilities.bytesToHex(dwe);
-      final regis = await register(account,
-          'ec50dbfb1f3bc20d9dd1e6e00beac9b0c9635648a5f33f1edd29d7251681871548fb2b351b6a830fc9262f852a034870317a0989a77ad6552b806726bfe6fb02');
+      final toUint8List = fromB64(signature);
+      final toHexString = Utilities.bytesToHex(toUint8List);
+
+      final formatLeading = toHexString.replaceAll('00', '');
+
+      final short = formatLeading.substring(0, 128);
+      final regis = await register(account, short, AppConstants.sui);
       return regis;
     } catch (e) {
       rethrow;
@@ -65,12 +68,13 @@ class TwoFactorAuthenticatorRepository with AptosSDKMixin {
   }
 
   Future<TwoFactorAuthenticatorResponse> register(
-      AbstractAccount account, String signature) async {
+      AbstractAccount account, String signature, String chain) async {
     try {
       final payload = {
         "address": account.address(),
         "publicKey": account.publicKeyInHex(),
         "signature": '0x$signature',
+        "chain": chain,
       };
       final response = await twoFactorClient.request(
           body: payload,
