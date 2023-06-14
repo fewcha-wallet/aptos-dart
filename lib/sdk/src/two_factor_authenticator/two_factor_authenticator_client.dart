@@ -8,11 +8,22 @@ class TwoFactorAuthenticatorClient {
   TwoFactorAuthenticatorClient() {
     _twoFactorAuthenticatorRepository = TwoFactorAuthenticatorRepository();
   }
-  Future<TwoFactorAuthenticatorResponse> register2FA(
+  Future<TwoFactorAuthenticatorResponse> registerAptos2FA(
       AptosAccount account) async {
     try {
       final regis =
-          await _twoFactorAuthenticatorRepository.register2FA(account);
+          await _twoFactorAuthenticatorRepository.registerAptos2FA(account);
+      return regis;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<TwoFactorAuthenticatorResponse> registerSUI2FA(
+      SUIAccount account) async {
+    try {
+      final regis =
+          await _twoFactorAuthenticatorRepository.registerSUI2FA(account);
       return regis;
     } catch (e) {
       rethrow;

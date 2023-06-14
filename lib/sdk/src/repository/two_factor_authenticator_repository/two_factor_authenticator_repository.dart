@@ -1,20 +1,29 @@
+import 'dart:typed_data';
+
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/core/aptos_sign_message_payload/aptos_sign_message_payload.dart';
+import 'package:aptosdart/core/sui/bcs/b64.dart';
+import 'package:aptosdart/core/sui/raw_signer/raw_signer.dart';
+import 'package:aptosdart/core/sui/sui_intent/sui_intent.dart';
 import 'package:aptosdart/core/two_factor_authenticator_response/two_factor_authenticator_response.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
+import 'package:aptosdart/utils/utilities.dart';
 
 class TwoFactorAuthenticatorRepository with AptosSDKMixin {
   late AptosClient _aptosClient;
+  late SUIClient _suiClient;
 
   TwoFactorAuthenticatorRepository() {
     _aptosClient = AptosClient();
+    _suiClient = SUIClient();
   }
 
-  Future<TwoFactorAuthenticatorResponse> register2FA(
+  Future<TwoFactorAuthenticatorResponse> registerAptos2FA(
       AptosAccount account) async {
     try {
       AptosSignMessagePayload payloads = AptosSignMessagePayload(
@@ -33,8 +42,30 @@ class TwoFactorAuthenticatorRepository with AptosSDKMixin {
     }
   }
 
+  Future<TwoFactorAuthenticatorResponse> registerSUI2FA(
+      SUIAccount account) async {
+    try {
+      Uint8List tx = fromB64(AppConstants.signMessage);
+
+      final intentMessage = SUIIntent().messageWithIntent(
+        IntentScope.transactionData,
+        tx,
+      );
+
+      final signature = await RawSigner.signData(intentMessage, account);
+
+      final dwe = fromB64(signature);
+      final dw = Utilities.bytesToHex(dwe);
+      final regis = await register(account,
+          'ec50dbfb1f3bc20d9dd1e6e00beac9b0c9635648a5f33f1edd29d7251681871548fb2b351b6a830fc9262f852a034870317a0989a77ad6552b806726bfe6fb02');
+      return regis;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<TwoFactorAuthenticatorResponse> register(
-      AptosAccount account, String signature) async {
+      AbstractAccount account, String signature) async {
     try {
       final payload = {
         "address": account.address(),

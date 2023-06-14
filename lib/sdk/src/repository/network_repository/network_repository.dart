@@ -29,7 +29,7 @@ class NetWorkRepository {
         coinType: CoinType.sui,
         explorerParam: HostUrl.testnet,
         explorerBaseURL: HostUrl.suiExplorerBaseURL,
-        twoFactorAuthenticatorURL: '',
+        twoFactorAuthenticatorURL: HostUrl.testNet2FAUrl,
       );
       return [
         aptosDevNet,
@@ -82,7 +82,7 @@ class NetWorkRepository {
       coinType: CoinType.sui,
       explorerParam: HostUrl.mainNet,
       explorerBaseURL: HostUrl.suiExplorerBaseURL,
-      twoFactorAuthenticatorURL: '',
+      twoFactorAuthenticatorURL: HostUrl.mainNet2FAUrl,
     );
   }
 
@@ -96,7 +96,7 @@ class NetWorkRepository {
       coinType: CoinType.sui,
       explorerParam: HostUrl.devNet,
       explorerBaseURL: HostUrl.suiExplorerBaseURL,
-      twoFactorAuthenticatorURL: '',
+      twoFactorAuthenticatorURL: HostUrl.devNet2FAUrl,
     );
   }
 }
