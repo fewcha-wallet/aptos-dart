@@ -57,7 +57,7 @@ class TwoFactorAuthenticatorRepository with AptosSDKMixin {
       final toUint8List = fromB64(signature);
       final toHexString = Utilities.bytesToHex(toUint8List);
 
-      final formatLeading = toHexString.replaceAll('00', '');
+      final formatLeading = toHexString.replaceFirst('00', '');
 
       final short = formatLeading.substring(0, 128);
       final regis = await register(account, short, AppConstants.sui);
