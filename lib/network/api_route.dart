@@ -72,15 +72,6 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
         path = '/$_mint';
         break;
-
-      ///
-      // case APIType.getTransactions:
-      //   path = '/$_transactions';
-      //   break;
-      // case APIType.submitTransaction:
-      //   method = APIMethod.post;
-      //   path = '/$_transactions';
-      //   break;
       case APIType.submitSignedBCSTransaction:
         method = APIMethod.post;
         path = '/$_transactions';

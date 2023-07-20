@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';

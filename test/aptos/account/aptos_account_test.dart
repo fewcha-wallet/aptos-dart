@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:aptosdart/sdk/src/aptos_account/aptos_account.dart';
 import 'package:aptosdart/utils/mnemonic/mnemonic_utils.dart';
 import 'package:flutter/foundation.dart';

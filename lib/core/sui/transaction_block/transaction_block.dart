@@ -8,7 +8,6 @@ import 'package:aptosdart/core/sui/transaction_block_data_builder/transaction_bl
 import 'package:aptosdart/core/sui/transaction_block_input/transaction_block_input.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
 
-import '../coin/sui_coin_type.dart';
 import 'package:collection/collection.dart';
 
 class TransactionBlock {

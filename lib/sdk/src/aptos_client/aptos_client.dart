@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/argument/account_arg.dart';
