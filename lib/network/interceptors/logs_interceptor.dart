@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 class LogsInterceptor extends InterceptorsWrapper {
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     debugPrint('');
     debugPrint('---------ERROR---------');
     debugPrint('<-- ${err.response?.statusCode} - ${err.requestOptions.uri}');

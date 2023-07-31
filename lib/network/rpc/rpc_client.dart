@@ -104,7 +104,7 @@ class RPCClient extends ServerProxyBase implements BaseRPCClient {
         throw ErrorResponse.fromSystem(APIErrorType.unknown,
             "Can not match the $T type with ${result._data.runtimeType}");
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       if (e.response?.data != null) {
         T apiWrapper = create(e.response);
         if (apiWrapper is BaseAPIResponseWrapper) {

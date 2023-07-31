@@ -6,8 +6,8 @@ import 'package:dio/dio.dart';
 class ErrorInterceptor extends InterceptorsWrapper {
   BaseAPIClient? apiClient;
   Function? unauthorizedCallback;
-  Function(DioErrorType errorType)? onErrorCallback;
-  Function(DioErrorType errorType)? onNetworkErrorCallback;
+  Function(DioExceptionType errorType)? onErrorCallback;
+  Function(DioExceptionType errorType)? onNetworkErrorCallback;
 
   ErrorInterceptor(
       {this.apiClient,
@@ -16,26 +16,38 @@ class ErrorInterceptor extends InterceptorsWrapper {
       this.onNetworkErrorCallback});
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     switch (err.type) {
-      case DioErrorType.cancel:
-      case DioErrorType.connectTimeout:
-      case DioErrorType.sendTimeout:
-      case DioErrorType.receiveTimeout:
+      case DioExceptionType.connectionTimeout:
         if (onErrorCallback != null) {
           onErrorCallback!(err.type);
         }
         break;
-      case DioErrorType.other:
-        if (onNetworkErrorCallback != null && err.error is SocketException) {
-          onNetworkErrorCallback!(err.type);
-        }
+      case DioExceptionType.badCertificate:
+        // TODO: Handle this case.
         break;
-      case DioErrorType.response:
+      case DioExceptionType.badResponse:
 
         ///Unauthorized, may be the access token has been expired
         if (err.response!.statusCode == HttpStatus.unauthorized) {}
 
+        break;
+      case DioExceptionType.connectionError:
+        // TODO: Handle this case.
+        break;
+      case DioExceptionType.unknown:
+        if (onNetworkErrorCallback != null && err.error is SocketException) {
+          onNetworkErrorCallback!(err.type);
+        }
+        break;
+      case DioExceptionType.sendTimeout:
+        // TODO: Handle this case.
+        break;
+      case DioExceptionType.receiveTimeout:
+        // TODO: Handle this case.
+        break;
+      case DioExceptionType.cancel:
+        // TODO: Handle this case.
         break;
     }
     super.onError(err, handler);

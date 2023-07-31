@@ -135,7 +135,7 @@ class APIClient extends BaseAPIClient {
           }
         }
         throw ErrorResponse.fromAPI(response);
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         if (e.response?.statusCode == 202) {
           if (e.response?.data != null) {
             T apiWrapper = create(e.response);
@@ -249,7 +249,7 @@ class IPFSClient extends BaseAPIClient {
           }
         }
         throw ErrorResponse.fromAPI(response);
-      } on DioError catch (e) {
+      } on DioException catch (e) {
         if (e.response?.data != null) {
           T apiWrapper = create(e.response);
           if (apiWrapper is BaseAPIResponseWrapper) {
