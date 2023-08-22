@@ -16,11 +16,9 @@ import 'package:aptosdart/utils/utilities.dart';
 
 class TwoFactorAuthenticatorRepository with AptosSDKMixin {
   late AptosClient _aptosClient;
-  late SUIClient _suiClient;
 
   TwoFactorAuthenticatorRepository() {
     _aptosClient = AptosClient();
-    _suiClient = SUIClient();
   }
 
   Future<TwoFactorAuthenticatorResponse> registerAptos2FA(
