@@ -1,4 +1,3 @@
-import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
 import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
