@@ -112,4 +112,9 @@ class SUIAccount implements AbstractAccount {
     // TODO: implement signatureHex
     throw UnimplementedError();
   }
+
+  @override
+  String getAuthKey() {
+    return _authenKey;
+  }
 }

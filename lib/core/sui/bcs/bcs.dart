@@ -18,7 +18,7 @@ class BCS {
   static const String u64 = "u64";
   static const String u128 = "u128";
   static const String u256 = "u256";
-  static const String BOOL = "bool";
+  static const String boolString = "bool";
   static const String vector = "vector";
   static const String address = "address";
   static const String string = "string";
@@ -324,7 +324,7 @@ class BCS {
             reader.read256(),
         (dynamic u256) => true);
 
-    bcs.registerType(BCS.BOOL, (BcsWriter writer, dynamic data,
+    bcs.registerType(BCS.boolString, (BcsWriter writer, dynamic data,
             {typeParams = const [], typeMap = const {}}) {
       return writer.write8(data == true ? 1 : 0);
     },
@@ -623,7 +623,7 @@ class BCS {
   }
 
   BCS registerTypeBuilder() {
-    return registerType([ENUM_KIND, 'T'], (BcsWriter writer, dynamic data,
+    return registerType([enumKind, 'T'], (BcsWriter writer, dynamic data,
         {typeParams = const [], typeMap = const {}}) {
       final kind = (data as Map)['kind'];
       final invariant = {kind: data};

@@ -63,7 +63,6 @@ class TransactionBuilder {
 
 class TransactionBuilderEd25519 extends TransactionBuilder {
   late Uint8List publicKey;
-  TransactionBuilderABI? rawTxnBuilder;
 
   TransactionBuilderEd25519(SigningFn signingFunction, Uint8List inputPublicKey,
       {TransactionBuilderABI? rawTxnBuilder})

@@ -23,7 +23,7 @@ main() {
       };
 
       bcs.registerStructType(
-          "Metadata", {'lastLogin': BCS.string, 'isActive': BCS.BOOL});
+          "Metadata", {'lastLogin': BCS.string, 'isActive': BCS.boolString});
 
       bcs.registerStructType(
           ["User", "T"], {'name': BCS.string, 'role': BCS.string, 'meta': "T"});

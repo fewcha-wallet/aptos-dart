@@ -53,7 +53,7 @@ main() {
       bcs.registerStructType("Coin", {
         'value': BCS.u64,
         'owner': BCS.string,
-        'is_locked': BCS.BOOL,
+        'is_locked': BCS.boolString,
       });
 
       String rustBcs = "gNGxBWAAAAAOQmlnIFdhbGxldCBHdXkA";
@@ -136,7 +136,7 @@ main() {
       bcs.registerStructType("Coin", {
         'value': BCS.u64,
         'owner': BCS.string,
-        'is_locked': BCS.BOOL,
+        'is_locked': BCS.boolString,
       });
 
       const rustBcs = "gNGxBWAAAAAOQmlnIFdhbGxldCBHdXkA";
@@ -163,7 +163,7 @@ main() {
       bcs.registerStructType("Coin", {
         'value': BCS.u64,
         'owner': BCS.string,
-        'is_locked': BCS.BOOL,
+        'is_locked': BCS.boolString,
       });
 
       const expected = {

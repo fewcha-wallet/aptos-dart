@@ -88,4 +88,9 @@ class AptosAccount implements AbstractAccount {
     final toUInt8List = Uint8List.fromList(listInt);
     return signBuffer(toUInt8List);
   }
+
+  @override
+  String getAuthKey() {
+    return _authenKey;
+  }
 }

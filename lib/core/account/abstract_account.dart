@@ -19,4 +19,5 @@ abstract class AbstractAccount {
   String signBuffer(Uint8List buffer);
 
   String signatureHex(String hexString);
+  String getAuthKey();
 }

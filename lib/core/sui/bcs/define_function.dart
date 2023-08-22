@@ -9,7 +9,7 @@ typedef Encoding = String;
 typedef TransactionType = List<dynamic>;
 typedef ConditionFn = bool Function(dynamic);
 
-Map<String, dynamic> BCS_SPEC = {
+Map<String, dynamic> bcsSpec = {
   'enums': {
     'Option<T>': {
       'None': null,
@@ -20,9 +20,9 @@ Map<String, dynamic> BCS_SPEC = {
       'Shared': 'SharedObjectRef',
     },
     'CallArg': {
-      'Pure': [VECTOR, BCS.u8],
+      'Pure': [vector, BCS.u8],
       'Object': 'ObjectArg',
-      'ObjVec': [VECTOR, 'ObjectArg'],
+      'ObjVec': [vector, 'ObjectArg'],
     },
     'TypeTag': {
       'bool': null,
@@ -60,16 +60,16 @@ Map<String, dynamic> BCS_SPEC = {
     'SharedObjectRef': {
       'objectId': BCS.address,
       'initialSharedVersion': BCS.u64,
-      'mutable': BCS.BOOL,
+      'mutable': BCS.boolString,
     },
     'StructTag': {
       'address': BCS.address,
       'module': BCS.string,
       'name': BCS.string,
-      'typeParams': [VECTOR, 'TypeTag'],
+      'typeParams': [vector, 'TypeTag'],
     },
     'GasData': {
-      'payment': [VECTOR, 'SuiObjectRef'],
+      'payment': [vector, 'SuiObjectRef'],
       'owner': BCS.address,
       'price': BCS.u64,
       'budget': BCS.u64,
@@ -77,8 +77,8 @@ Map<String, dynamic> BCS_SPEC = {
     'SenderSignedData': {
       'data': 'TransactionData',
       'txSignatures': [
-        VECTOR,
-        [VECTOR, BCS.u8]
+        vector,
+        [vector, BCS.u8]
       ],
     },
     'TransactionDataV1': {
@@ -93,26 +93,26 @@ Map<String, dynamic> BCS_SPEC = {
   },
 };
 
-const ARGUMENT_INNER = 'Argument';
-const VECTOR = 'vector';
-const OPTION = 'Option';
-const CALL_ARG = 'CallArg';
-const TYPE_TAG = 'TypeTag';
-const OBJECT_ARG = 'ObjectArg';
-const PROGRAMMABLE_TX_BLOCK = 'ProgrammableTransaction';
-const PROGRAMMABLE_CALL_INNER = 'ProgrammableMoveCall';
-const TRANSACTION_INNER = 'Transaction';
+const argumentInner = 'Argument';
+const vector = 'vector';
+const option = 'Option';
+const callArg = 'CallArg';
+const typeTag = 'TypeTag';
+const objectArg = 'ObjectArg';
+const programmableTxBlock = 'ProgrammableTransaction';
+const programmableCallInner = 'ProgrammableMoveCall';
+const transactionInner = 'Transaction';
 
-const ENUM_KIND = 'EnumKind';
+const enumKind = 'EnumKind';
 
 /// Wrapper around transaction Enum to support `kind` matching in Dart
-const TRANSACTION = [ENUM_KIND, TRANSACTION_INNER];
+const transaction = [enumKind, transactionInner];
 
 /// Wrapper around Argument Enum to support `kind` matching in Dart
-const ARGUMENT = [ENUM_KIND, ARGUMENT_INNER];
+const argument = [enumKind, argumentInner];
 
 /// Custom serializer for decoding package, module, function easier
-const PROGRAMMABLE_CALL = 'SimpleProgrammableMoveCall';
+const programmableCall = 'SimpleProgrammableMoveCall';
 
 class Builder {
   late BCS bcs;
@@ -122,48 +122,48 @@ class Builder {
         addressLength: SUIConstants.suiAddressLength,
         vectorType: "vector",
         addressEncoding: "hex",
-        types: BCS_SPEC));
+        types: bcsSpec));
   }
 
   BCS builder() {
-    return bcs.registerStructType(PROGRAMMABLE_TX_BLOCK, <String, dynamic>{
-      'inputs': [VECTOR, CALL_ARG],
-      'transactions': [VECTOR, TRANSACTION],
-    }).registerEnumType(ARGUMENT_INNER, <String, dynamic>{
+    return bcs.registerStructType(programmableTxBlock, <String, dynamic>{
+      'inputs': [vector, callArg],
+      'transactions': [vector, transaction],
+    }).registerEnumType(argumentInner, <String, dynamic>{
       'GasCoin': null,
       'Input': {'index': BCS.u16},
       'Result': {'index': BCS.u16},
       'NestedResult': {'index': BCS.u16, 'resultIndex': BCS.u16},
-    }).registerStructType(PROGRAMMABLE_CALL_INNER, <String, dynamic>{
+    }).registerStructType(programmableCallInner, <String, dynamic>{
       'package': BCS.address,
       'module': BCS.string,
       'function': BCS.string,
-      'type_arguments': [VECTOR, TYPE_TAG],
-      'arguments': [VECTOR, ARGUMENT],
-    }).registerEnumType(TRANSACTION_INNER, <String, dynamic>{
-      'MoveCall': PROGRAMMABLE_CALL,
+      'type_arguments': [vector, typeTag],
+      'arguments': [vector, argument],
+    }).registerEnumType(transactionInner, <String, dynamic>{
+      'MoveCall': programmableCall,
       'TransferObjects': {
-        'objects': [VECTOR, ARGUMENT],
-        'address': ARGUMENT,
+        'objects': [vector, argument],
+        'address': argument,
       },
       'SplitCoins': {
-        'coin': ARGUMENT,
-        'amounts': [VECTOR, ARGUMENT]
+        'coin': argument,
+        'amounts': [vector, argument]
       },
       'MergeCoins': {
-        'destination': ARGUMENT,
-        'sources': [VECTOR, ARGUMENT]
+        'destination': argument,
+        'sources': [vector, argument]
       },
       'Publish': {
         'modules': [
-          VECTOR,
-          [VECTOR, BCS.u8]
+          vector,
+          [vector, BCS.u8]
         ],
-        'dependencies': [VECTOR, BCS.address],
+        'dependencies': [vector, BCS.address],
       },
       'MakeMoveVec': {
-        'type': [OPTION, TYPE_TAG],
-        'objects': [VECTOR, ARGUMENT],
+        'type': [option, typeTag],
+        'objects': [vector, argument],
       },
     }).registerTypeBuilder();
   }

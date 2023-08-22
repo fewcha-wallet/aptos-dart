@@ -68,7 +68,7 @@ main() {
           },
           'meta': {
             'status': {
-              'active': BCS.BOOL,
+              'active': BCS.boolString,
             },
           },
         },
