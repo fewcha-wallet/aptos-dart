@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'common_function_test.dart';
 
-main() {
+void main() {
   group("BCS: Config", () {
     test('should work with Rust config', () {
       final bcs = BCS(Uleb.getRustConfig());

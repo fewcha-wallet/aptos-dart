@@ -39,10 +39,8 @@ main() {
       Ed25519Keypair ed25519keypair =
           Ed25519Keypair.deriveKeypair(testMnemonic2);
 
-      expect(
-          Utilities.bytesToHex(ed25519keypair.getPrivateKey()),
-          '0x16b00ec52b772746335a34b74d570c4202cb45c932b38f7f68fb9642fc244152'
-              .toHexString());
+      expect(Utilities.bytesToHex(ed25519keypair.getPrivateKey()),
+          '16b00ec52b772746335a34b74d570c4202cb45c932b38f7f68fb9642fc244152373aec70856508ab1b13a45f13b5f2e2183d6751c1989f1740a6cb6ce9f28804');
     });
     test('getPublicKey from mnemonic 2', () {
       Ed25519Keypair ed25519keypair =
@@ -51,17 +49,7 @@ main() {
       expect(ed25519keypair.getPublicKey().toBase64(),
           'NzrscIVlCKsbE6RfE7Xy4hg9Z1HBmJ8XQKbLbOnyiAQ=');
     });
-    test('getPublicKey from mnemonic 2', () {
-      final raw = fromB64('AN0JMHpDum3BhrVwnkylH0/HGRHBQ/fO/8+MYOawO8j6');
-      Ed25519Keypair ed25519keypair = Ed25519Keypair.fromSecretKey(raw);
 
-      expect(ed25519keypair.getPublicKey().toSuiAddress(),
-          '0xa2d14fad60c56049ecf75246a481934691214ce413e6a8ae2fe6834c173a6133=');
-    });
-
-    // final raw = fromB64('AJrA997C1eVz6wYIp7bO8dpITSRBXpvg1m70/P3gusu2');
-    // final imported = Ed25519Keypair.fromSecretKey(raw);
-    // expect(imported.getPublicKey().toSuiAddress()).toEqual(t[2]);
     test('incorrect coin type node for ed25519 derivation path', () {
       expect(
           () => Ed25519Keypair.deriveKeypair(

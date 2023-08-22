@@ -219,7 +219,7 @@ void main() {
     final res = Utilities.argToTransactionArgument(true, TypeTagBool());
     expect((res as TransactionArgumentBool).value, true);
     expect(() => Utilities.argToTransactionArgument(123, TypeTagBool()),
-        throwsA('Invalid arg'));
+        throwsA('Invalid boolean string.'));
   });
 
   test("converts a u8 TransactionArgument", () {

@@ -4,6 +4,7 @@ import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
 import 'package:aptosdart/core/sui/transaction_block/transaction_block.dart';
 import 'package:aptosdart/utils/utilities.dart';
 
+main() {}
 serde(BCS bcs, TypeName type, dynamic data) {
   var d = bcs.ser(type, data);
 

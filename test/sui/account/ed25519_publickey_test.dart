@@ -111,7 +111,8 @@ main() {
       final key = Ed25519PublicKey(Uint8List.fromList(base64KeyBytes));
       expect(
         key.toSuiAddress(),
-        '98fc1c8179b95274327069cf3b0ed051fb14e0bc'.toHexString(),
+        'c148b7b3e42129e236fb603dceb142de8695f1a276c9cab8a7daff8442b7b421'
+            .toHexString(),
       );
     });
   });
