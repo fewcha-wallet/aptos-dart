@@ -9,7 +9,7 @@ main() {
       expect(transactions, isNot(transactions.isEmpty));
     }); //
   });
-  group('ed25519-keypaasdas', () {
+  group('ed25519- ', () {
     test("gets transactions", () async {
       final transactions = Utilities.hexToBytes(
           '750fe8b15c839237de6faa33101393f81de8b5b4cf8efe73ffa34959314d7013');
