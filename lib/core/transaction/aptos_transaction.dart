@@ -273,7 +273,7 @@ class AptosTransaction extends BaseTransaction {
 
   @override
   bool isNFT() {
-    return isNFTTransaction!;
+    return isNFTTransaction??false;
   }
 }
 
