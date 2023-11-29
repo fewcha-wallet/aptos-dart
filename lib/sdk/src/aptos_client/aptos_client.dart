@@ -11,12 +11,12 @@ import 'package:aptosdart/core/account_module/account_module.dart';
 import 'package:aptosdart/core/aptos_sign_message_payload/aptos_sign_message_payload.dart';
 import 'package:aptosdart/core/aptos_types/ed25519.dart';
 import 'package:aptosdart/core/coin/aptos_coin_balance.dart';
-import 'package:aptosdart/core/coin/aptos_nft_balance.dart';
 import 'package:aptosdart/core/collections_item_properties/collections_item_properties.dart';
 import 'package:aptosdart/core/event/event.dart';
 import 'package:aptosdart/core/gas_estimation/gas_estimation.dart';
 import 'package:aptosdart/core/graphql/token_activities.dart';
 import 'package:aptosdart/core/ledger/ledger.dart';
+import 'package:aptosdart/core/nft/token_ownerships_v2.dart';
 import 'package:aptosdart/core/payload/payload.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/core/signature/transaction_signature.dart';
@@ -95,12 +95,12 @@ class AptosClient {
     }
   }
 
-  Future<ListAptosNFTBalance> getAccountListNFTs(String address) async {
+  Future<List<CurrentTokenOwnershipsV2>> getAccountListNFTs(String address) async {
     try {
       final result = await _accountRepository.getAccountListNFTs(
         address: address,
       );
-      return result;
+      return result.currentTokenOwnershipsV2!;
     } catch (e) {
       rethrow;
     }

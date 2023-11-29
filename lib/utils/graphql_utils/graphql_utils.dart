@@ -29,6 +29,7 @@ class GraphQLUtils {
       "operationName": operationName,
       "variables": {
         "account_address": address,
+        "offset": offset,
       },
       "query": query,
     };

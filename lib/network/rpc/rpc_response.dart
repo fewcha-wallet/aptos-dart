@@ -77,6 +77,12 @@ class RPCListResponse<T> extends BaseRPCResponseWrapper<Response, List<T>> {
           for (final e in data) {
             (decodedData as List).add(createObject.decode(e));
           }
+        }else if(data is Map){
+          final result=data["data"]??[];
+          decodedData ??= <T>[];
+          for (final e in result) {
+            (decodedData as List).add(createObject.decode(e));
+          }
         }
       }
       decodedData ??= <T>[];

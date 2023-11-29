@@ -13,6 +13,7 @@ class NetworkType extends Decoder<NetworkType> {
 
   CoinType coinType;
   bool isSelected;
+
   NetworkType({
     required this.networkURL,
     required this.networkName,
@@ -29,5 +30,18 @@ class NetworkType extends Decoder<NetworkType> {
   @override
   NetworkType decode(Map<String, dynamic> json) {
     throw UnimplementedError();
+  }
+
+  factory NetworkType.defaultConstructor() {
+    return NetworkType(
+        coinCurrency: '',
+        faucetURL: '',
+        networkName: '',
+        networkURL: '',
+        explorerBaseURL: '',
+        explorerParam: '',
+        transactionHistoryGraphQL: '',
+        twoFactorAuthenticatorURL: '',
+        coinType: CoinType.aptos);
   }
 }

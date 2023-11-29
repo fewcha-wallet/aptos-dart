@@ -7,7 +7,7 @@ import 'package:aptosdart/core/type_tag/type_tag.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/serializer/serializer.dart';
 import 'package:aptosdart/utils/utilities.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test("parses a bool TypeTag", () {

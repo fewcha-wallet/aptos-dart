@@ -3,7 +3,7 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/account/account_data.dart';
 import 'package:aptosdart/core/account_module/account_module.dart';
 import 'package:aptosdart/core/coin/aptos_coin_balance.dart';
-import 'package:aptosdart/core/coin/aptos_nft_balance.dart';
+import 'package:aptosdart/core/nft/token_ownerships_v2.dart';
 import 'package:aptosdart/core/resources/resource.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
@@ -40,13 +40,14 @@ class AptosAccountRepository with AptosSDKMixin {
     }
   }
 
-  Future<ListAptosNFTBalance> getAccountListNFTs(
+  Future<TokenOwnershipsV2> getAccountListNFTs(
       {required String address, int start = 0, int? limit}) async {
     try {
       final payload = GraphQLUtils.createNFTGraphQLPayload(
         operationName: GraphQLConstant.myQuery,
         query: GraphQLConstant.getAccountNFTBalanceQuery,
         address: address,
+        offset: 0,
       );
 
       final response = await apiClient.request(
@@ -56,7 +57,7 @@ class AptosAccountRepository with AptosSDKMixin {
             routeParams: address.trimPrefix(),
           ),
           create: (response) => GraphQLResponse(
-              createObject: ListAptosNFTBalance(), response: response));
+              createObject: TokenOwnershipsV2(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;

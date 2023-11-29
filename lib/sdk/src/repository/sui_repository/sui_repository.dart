@@ -7,6 +7,7 @@ import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_metadata.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
+import 'package:aptosdart/core/sui/dynamic_field/dynamic_field.dart';
 import 'package:aptosdart/core/sui/raw_signer/raw_signer.dart';
 import 'package:aptosdart/core/sui/sui_intent/sui_intent.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
@@ -24,12 +25,13 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetObjectsOwnedByAddress,
-              ),
+            // RPCFunction.suiGetObjectsOwnedByAddress,
+          ),
           function: SUIConstants.suixGetAllBalances,
           arg: [address],
           create: (response) =>
-              RPCListResponse(createObject: SUIBalances(), response: response));
+              RPCListResponse(
+                  createObject: SUIBalances(), response: response));
 
       return result.decodedData!;
     } catch (e) {
@@ -47,8 +49,10 @@ class SUIRepository with AptosSDKMixin {
             APIType.faucetSUI,
           ),
           body: body,
-          create: (response) => APIResponse(
-              createObject: TransferredGasObject(), response: response));
+          create: (response) =>
+              APIResponse(
+                  createObject: TransferredGasObject(),
+                  response: response));
 
       return result.decodedData!;
     } catch (e) {
@@ -61,12 +65,13 @@ class SUIRepository with AptosSDKMixin {
       final result = await rpcClient.request(
           isBatch: true,
           route: RPCRoute(
-              // RPCFunction.suiGetObject,
-              ),
+            // RPCFunction.suiGetObject,
+          ),
           function: SUIConstants.suiGetObject,
           arg: [objectIds],
           create: (response) =>
-              RPCListResponse(createObject: SUIObjects(), response: response));
+              RPCListResponse(
+                  createObject: SUIObjects(), response: response));
 
       return result.decodedData!.first;
     } catch (e) {
@@ -76,19 +81,23 @@ class SUIRepository with AptosSDKMixin {
 
   Future<TransactionPagination> getTransactionsByAddress(
       {required String address,
-      required String function,
-      bool isToAddress = false}) async {
+        required String function,
+        bool isToAddress = false}) async {
     try {
-      final addressMap = {isToAddress ? "ToAddress" : "FromAddress": address};
+      final addressMap = {
+        isToAddress ? "ToAddress" : "FromAddress": address
+      };
       final map = {'filter': addressMap};
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.getTransactionsByAddress,
-              ),
+            // RPCFunction.getTransactionsByAddress,
+          ),
           function: function,
           arg: [map, null, 20, true],
-          create: (response) => RPCResponse(
-              createObject: TransactionPagination(), response: response));
+          create: (response) =>
+              RPCResponse(
+                  createObject: TransactionPagination(),
+                  response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
@@ -96,11 +105,11 @@ class SUIRepository with AptosSDKMixin {
   }
 
   Future<List<SUITransactionHistory>> getMultiTransactionBlocks(
-    List<String> transactionIDs, {
-    bool howEffects = true,
-    bool showEvents = true,
-    bool showInput = true,
-  }) async {
+      List<String> transactionIDs, {
+        bool howEffects = true,
+        bool showEvents = true,
+        bool showInput = true,
+      }) async {
     try {
       final mapFilter = {
         'showEffects': howEffects,
@@ -110,12 +119,14 @@ class SUIRepository with AptosSDKMixin {
       };
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+            // RPCFunction.suiGetTransaction,
+          ),
           function: SUIConstants.suiMultiGetTransactionBlocks,
           arg: [transactionIDs, mapFilter],
-          create: (response) => RPCListResponse(
-              createObject: SUITransactionHistory(), response: response));
+          create: (response) =>
+              RPCListResponse(
+                  createObject: SUITransactionHistory(),
+                  response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
@@ -126,40 +137,56 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+            // RPCFunction.suiGetTransaction,
+          ),
           function: SUIConstants.suixGetCoinMetadata,
           arg: [coinType],
           create: (response) =>
-              RPCResponse(createObject: SUICoinMetadata(), response: response));
+              RPCResponse(
+                  createObject: SUICoinMetadata(),
+                  response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<SUICoinList> getOwnedObjects(String address) async {
+  Future<SUICoinList> getOwnedObjects(List<dynamic> arg) async {
     try {
       final result = await rpcClient.request(
-          route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+          route: RPCRoute(),
           function: SUIConstants.suixGetOwnedObjects,
-          arg: [address],
+          arg: arg,
           create: (response) =>
-              RPCResponse(createObject: SUICoinList(), response: response));
+              RPCResponse(
+                  createObject: SUICoinList(), response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<List<SUIObjects>> multiGetObjects(List<String> listIds) async {
+  Future<List<DynamicFields>> getDynamicFields(
+      List<dynamic> arg) async {
     try {
       final result = await rpcClient.request(
-          route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+          route: RPCRoute(),
+          function: SUIConstants.suixGetDynamicFields,
+          arg: arg,
+          create: (response) =>
+              RPCListResponse(
+                  createObject: DynamicFields(), response: response));
+      return result.decodedData;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SUIObjects>> multiGetObjects(
+      List<String> listIds) async {
+    try {
+      final result = await rpcClient.request(
+          route: RPCRoute(),
           function: SUIConstants.suiMultiGetObjects,
           arg: [
             listIds,
@@ -174,7 +201,8 @@ class SUIRepository with AptosSDKMixin {
             }
           ],
           create: (response) =>
-              RPCListResponse(createObject: SUIObjects(), response: response));
+              RPCListResponse(
+                  createObject: SUIObjects(), response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
@@ -186,11 +214,12 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+            // RPCFunction.suiGetTransaction,
+          ),
           function: SUIConstants.suixGetReferenceGasPrice,
           arg: [],
-          create: (response) => RPCResponse<String>(response: response));
+          create: (response) =>
+              RPCResponse<String>(response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
@@ -202,19 +231,21 @@ class SUIRepository with AptosSDKMixin {
     try {
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+            // RPCFunction.suiGetTransaction,
+          ),
           function: SUIConstants.suixGetCoins,
           arg: [address, coinType, null, null],
           create: (response) =>
-              RPCResponse(createObject: SUICoinList(), response: response));
+              RPCResponse(
+                  createObject: SUICoinList(), response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<SUITransaction> dryRunTransactionBlock({required dynamic data}) async {
+  Future<SUITransaction> dryRunTransactionBlock(
+      {required dynamic data}) async {
     assert(data != String || data != Uint8List);
     try {
       String input;
@@ -226,12 +257,14 @@ class SUIRepository with AptosSDKMixin {
 
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+            // RPCFunction.suiGetTransaction,
+          ),
           function: SUIConstants.suiDryRunTransactionBlock,
           arg: [input],
           create: (response) =>
-              RPCResponse(createObject: SUITransaction(), response: response));
+              RPCResponse(
+                  createObject: SUITransaction(),
+                  response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
@@ -246,17 +279,23 @@ class SUIRepository with AptosSDKMixin {
       final signature = map['signature'];
       final result = await rpcClient.request(
           route: RPCRoute(
-              // RPCFunction.suiGetTransaction,
-              ),
+            // RPCFunction.suiGetTransaction,
+          ),
           function: SUIConstants.suiExecuteTransactionBlock,
           arg: [
             transactionBlockBytes,
             [signature],
-            {"showInput": true, "showEffects": true, "showEvents": true},
+            {
+              "showInput": true,
+              "showEffects": true,
+              "showEvents": true
+            },
             'WaitForLocalExecution'
           ],
           create: (response) =>
-              RPCResponse(createObject: SUITransaction(), response: response));
+              RPCResponse(
+                  createObject: SUITransaction(),
+                  response: response));
       return result.decodedData;
     } catch (e) {
       rethrow;
@@ -271,7 +310,8 @@ class SUIRepository with AptosSDKMixin {
         txBytes,
       );
 
-      final signature = await RawSigner.signData(intentMessage, suiAccount);
+      final signature =
+      await RawSigner.signData(intentMessage, suiAccount);
       Map<String, dynamic> map = {};
       map['transactionBlockBytes'] = toB64(txBytes);
       map['signature'] = signature;

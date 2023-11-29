@@ -7,6 +7,7 @@ import 'package:aptosdart/core/sui/coin/sui_coin_metadata.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
 import 'package:aptosdart/core/sui/create_nft_transfer_transaction/create_nft_transfer_transaction.dart';
 import 'package:aptosdart/core/sui/create_token_transfer_transaction/create_token_transfer_transaction.dart';
+import 'package:aptosdart/core/sui/dynamic_field/dynamic_field.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transaction_block/transaction_block.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
@@ -23,12 +24,14 @@ class SUIClient {
   SUIClient() {
     _suiRepository = SUIRepository();
   }
+
   Future<SUIAccount> _computeSUIAccount(AccountArg arg) async {
     SUIAccount suiAccount;
     if (arg.mnemonics != null) {
       suiAccount = SUIAccount(mnemonics: arg.mnemonics!);
     } else {
-      suiAccount = SUIAccount.fromPrivateKey(arg.privateKeyHex!.trimPrefix());
+      suiAccount =
+          SUIAccount.fromPrivateKey(arg.privateKeyHex!.trimPrefix());
     }
     return suiAccount;
   }
@@ -39,8 +42,8 @@ class SUIClient {
   }) async {
     try {
       SUIAccount suiAccount;
-      final arg =
-          AccountArg(mnemonics: mnemonics, privateKeyHex: privateKeyHex);
+      final arg = AccountArg(
+          mnemonics: mnemonics, privateKeyHex: privateKeyHex);
       suiAccount = await compute(_computeSUIAccount, arg);
       return suiAccount;
     } catch (e) {
@@ -78,17 +81,18 @@ class SUIClient {
     try {
       final transactionsFromAddress =
           await getTransactionsByAddress(address: address);
-      final transactionsToAddress =
-          await getTransactionsByAddress(address: address, isToAddress: true);
+      final transactionsToAddress = await getTransactionsByAddress(
+          address: address, isToAddress: true);
 
       List<String> transactionMerge = [
         ...transactionsFromAddress.data!,
         ...transactionsToAddress.data!
       ];
       if (transactionMerge.isNotEmpty) {
-        listTrans =
-            await multiGetTransactionBlocks(transactionMerge.toSet().toList());
-        listTrans.sort((a, b) => b.timestampMs!.compareTo(a.timestampMs!));
+        listTrans = await multiGetTransactionBlocks(
+            transactionMerge.toSet().toList());
+        listTrans
+            .sort((a, b) => b.timestampMs!.compareTo(a.timestampMs!));
       }
       return listTrans.reversed.toList();
     } catch (e) {
@@ -99,8 +103,8 @@ class SUIClient {
   Future<List<SUITransactionHistory>> multiGetTransactionBlocks(
       List<String> transactionIDs) async {
     try {
-      List<SUITransactionHistory> result =
-          await _suiRepository.getMultiTransactionBlocks(transactionIDs);
+      List<SUITransactionHistory> result = await _suiRepository
+          .getMultiTransactionBlocks(transactionIDs);
       return result;
     } catch (e) {
       return [];
@@ -136,14 +140,15 @@ class SUIClient {
   Future<List<SUIObjects>> getAccountNFT(String address) async {
     try {
       List<SUIObjects> listNFT = [];
-      final result = await _suiRepository.getOwnedObjects(address);
+      final result = await _suiRepository.getOwnedObjects([address]);
       if (result.coinTypeList!.isEmpty) return [];
 
       final multi = await _suiRepository.multiGetObjects(
           result.coinTypeList!.map((e) => e.coinObjectId!).toList());
       if (multi.isEmpty) return [];
 
-      listNFT = multi.where((element) => element.display != null).toList();
+      listNFT =
+          multi.where((element) => element.display != null).toList();
       return listNFT;
     } catch (e) {
       return [];
@@ -155,8 +160,9 @@ class SUIClient {
   }) async {
     try {
       Uint8List tx = fromB64(suiArgument.txBytes!);
-      final result = await _suiRepository.signAndExecuteTransactionBlock(
-          suiArgument.suiAccount!, tx);
+      final result =
+          await _suiRepository.signAndExecuteTransactionBlock(
+              suiArgument.suiAccount!, tx);
       return result;
     } catch (e) {
       rethrow;
@@ -169,8 +175,8 @@ class SUIClient {
     try {
       TransactionBlock tx;
       if (suiArgument.isSendNFT) {
-        tx = await CreateNFTTransferTransaction.createNFTTransferTransaction(
-            Options(
+        tx = await CreateNFTTransferTransaction
+            .createNFTTransferTransaction(Options(
           to: suiArgument.recipient!.trimPrefix(),
           coinType: suiArgument.coinType!,
           coins: [],
@@ -180,9 +186,8 @@ class SUIClient {
           address: suiArgument.address!,
         ));
       } else {
-        tx =
-            await CreateTokenTransferTransaction.createTokenTransferTransaction(
-                Options(
+        tx = await CreateTokenTransferTransaction
+            .createTokenTransferTransaction(Options(
           address: suiArgument.address!,
           to: suiArgument.recipient!.trimPrefix(),
           amount: suiArgument.amount.toString(),
@@ -214,9 +219,29 @@ class SUIClient {
     }
   }
 
-  Future<SUICoinList> getOwnedObjects(String coinType) async {
+  Future<SUICoinList> getOwnedObjects(List<dynamic> arg) async {
     try {
-      final result = await _suiRepository.getOwnedObjects(coinType);
+      final result = await _suiRepository.getOwnedObjects(arg);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<SUIObjects>> multiGetObjects(
+      List<String> listIds) async {
+    try {
+      final result = await _suiRepository.multiGetObjects(listIds);
+
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  } Future<List<DynamicFields>> getDynamicFields(
+      List<dynamic> arg) async {
+    try {
+      final result = await _suiRepository.getDynamicFields(arg);
+
       return result;
     } catch (e) {
       rethrow;

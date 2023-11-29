@@ -12,11 +12,15 @@ class HostUrl {
   static const aptosTestNetUrl = 'https://testnet.aptoslabs.com/v1';
   static const aptosMainNetUrl = 'https://mainnet.aptoslabs.com/v1';
 
-  static const faucetAptosDevnetUrl = 'https://faucet.devnet.aptoslabs.com';
-  static const faucetAptosTestnetUrl = 'https://faucet.testnet.aptoslabs.com';
+  static const faucetAptosDevnetUrl =
+      'https://faucet.devnet.aptoslabs.com';
+  static const faucetAptosTestnetUrl =
+      'https://faucet.testnet.aptoslabs.com';
 
-  static const faucetSUIDevnetUrl = 'https://faucet.devnet.sui.io/gas';
-  static const faucetSUITestnetUrl = 'https://faucet.testnet.sui.io/gas';
+  static const faucetSUIDevnetUrl =
+      'https://faucet.devnet.sui.io/gas';
+  static const faucetSUITestnetUrl =
+      'https://faucet.testnet.sui.io/gas';
 
   static const iosSchemeURLSUIDevnet =
       'discord:///channels/916379725201563759/971488439931392130';
@@ -24,8 +28,10 @@ class HostUrl {
   static const ipfsSUI = 'https://ipfs.io/ipfs/';
 
   static const String suiDevnetUrl = "https://fullnode.devnet.sui.io";
-  static const String suiTestnetUrl = "https://fullnode.testnet.sui.io";
-  static const String suiMainNetUrl = "https://fullnode.mainnet.sui.io";
+  static const String suiTestnetUrl =
+      "https://fullnode.testnet.sui.io";
+  static const String suiMainNetUrl =
+      "https://fullnode.mainnet.sui.io";
 
   static const String aptosMainnetGraphql =
       'https://indexer.mainnet.aptoslabs.com/v1/graphql';
@@ -34,7 +40,8 @@ class HostUrl {
   static const String aptosDevnetGraphql =
       'https://indexer-devnet.staging.gcp.aptosdev.com/v1/graphql';
 
-  static const String aptosExplorerBaseURL = "https://explorer.aptoslabs.com";
+  static const String aptosExplorerBaseURL =
+      "https://explorer.aptoslabs.com";
   static const String suiExplorerBaseURL = "https://explorer.sui.io";
   static const String devNet = "Devnet";
   static const String testnet = "Testnet";
@@ -71,7 +78,8 @@ class AppConstants {
   static const String coinEvents = '0x1::coin::CoinEvents';
   static const String guidGenerator = '0x1::guid::Generator';
   static const String coinInfo = '0x1::coin::CoinInfo';
-  static const String aptosCoinConstructor = '0x1::aptos_coin::AptosCoin';
+  static const String aptosCoinConstructor =
+      '0x1::aptos_coin::AptosCoin';
 
   static const String account = '0x1::account::Account';
   static const String ansProfile = 'Ans::AnsProfile';
@@ -80,12 +88,18 @@ class AppConstants {
   static const String tokenTokenDataId = '0x3::token::TokenDataId';
   static const String tokenStore = '0x3::token::TokenStore';
   static const String tokenData = '0x3::token::TokenData';
-  static const String transferWithOptIn = "0x3::token::transfer_with_opt_in";
-  static const String tokenOfferEvent = "0x3::token_transfers::TokenOfferEvent";
-  static const String tokenClaimEvent = "0x3::token_transfers::TokenClaimEvent";
-  static const String tokenWithdrawEvent0x3 = "0x3::token::WithdrawEvent";
-  static const String tokenDepositEvent0x3 = "0x3::token::DepositEvent";
-  static const String mintTokenEvent0x3 = "0x3::token::MintTokenEvent";
+  static const String transferWithOptIn =
+      "0x3::token::transfer_with_opt_in";
+  static const String tokenOfferEvent =
+      "0x3::token_transfers::TokenOfferEvent";
+  static const String tokenClaimEvent =
+      "0x3::token_transfers::TokenClaimEvent";
+  static const String tokenWithdrawEvent0x3 =
+      "0x3::token::WithdrawEvent";
+  static const String tokenDepositEvent0x3 =
+      "0x3::token::DepositEvent";
+  static const String mintTokenEvent0x3 =
+      "0x3::token::MintTokenEvent";
   static const String gasFeeEvent = "0x1::aptos_coin::GasFeeEvent";
   static const String kanaAggregatorv1 =
       "kana_aggregatorv1::intermediate_route";
@@ -105,14 +119,18 @@ class AppConstants {
 }
 
 class ErrorMessages {
-  static const String invalidAddress = 'invalid parameter account address:';
-  static const String invalidLedger = 'invalid parameter ledger version:';
+  static const String invalidAddress =
+      'invalid parameter account address:';
+  static const String invalidLedger =
+      'invalid parameter ledger version:';
   static const String resourceNotFound = 'Resource not found by';
   static const String moduleNotFound = 'Module not found by';
 }
 
 class HeadersApi {
-  static Map<String, String> headers = {"Content-Type": "application/json"};
+  static Map<String, String> headers = {
+    "Content-Type": "application/json"
+  };
   static Map<String, String> signedTransactionHeaders = {
     "Content-Type": "application/x.aptos.signed_transaction+bcs",
   };
@@ -138,12 +156,16 @@ class SUIConstants {
   static const String suiDryRunTransaction = 'sui_dryRunTransaction';
   static const String suixGetCoinMetadata = 'suix_getCoinMetadata';
   static const String suiPaySui = 'sui_paySui';
-  static const String suixGetReferenceGasPrice = 'suix_getReferenceGasPrice';
-  static const String suiExecuteTransaction = 'sui_executeTransaction';
+  static const String suixGetReferenceGasPrice =
+      'suix_getReferenceGasPrice';
+  static const String suiExecuteTransaction =
+      'sui_executeTransaction';
   static const String suixGetCoins = 'suix_getCoins';
   static const String suixGetOwnedObjects = 'suix_getOwnedObjects';
   static const String suiMultiGetObjects = 'sui_multiGetObjects';
-  static const String suiDryRunTransactionBlock = 'sui_dryRunTransactionBlock';
+  static const String suixGetDynamicFields = 'suix_getDynamicFields';
+  static const String suiDryRunTransactionBlock =
+      'sui_dryRunTransactionBlock';
   static const String suiExecuteTransactionBlock =
       'sui_executeTransactionBlock';
   static const String suiExecuteTransactionSerializedSig =
@@ -169,7 +191,8 @@ class SUIConstants {
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
   static const sui = "SUI";
   static const hardenedOffset = 0x80000000;
-  static const String defaultEd25519DerivationPath = "m/44'/784'/0'/0'/0'";
+  static const String defaultEd25519DerivationPath =
+      "m/44'/784'/0'/0'/0'";
   static const int suiAddressLength = 32;
   static const int maxGasObjects = 256;
   static const int transactionDataMaxSize = 128 * 1024;
@@ -205,14 +228,17 @@ class Abis {
 class MaxNumber {
   static num maxU32Number = pow(2, 32) - 1;
   static num maxU16Number = pow(2, 16) - 1;
-  static BigInt maxU64BigInt = BigInt.from(2).pow((64)) - BigInt.from(1);
+  static BigInt maxU64BigInt =
+      BigInt.from(2).pow((64)) - BigInt.from(1);
   static int defaultMaxGasAmount = 200000;
   static int defaultTxnExpSecFromNow = 50;
 }
 
 class GraphQLConstant {
-  static const String getAccountCoinActivity = 'getAccountCoinActivity';
-  static const String getAccountTokenActivity = 'getAccountTokenActivity';
+  static const String getAccountCoinActivity =
+      'getAccountCoinActivity';
+  static const String getAccountTokenActivity =
+      'getAccountTokenActivity';
   static const String getAccountCoinBalance = 'getAccountCoinBalance';
   static const String myQuery = 'MyQuery';
   static const String getAccountCoinQuery = r""" 
@@ -259,27 +285,37 @@ class GraphQLConstant {
       }
     }
   }''';
-  static const String getAccountNFTBalanceQuery =
-      r''' query MyQuery($account_address: String!) {
-    current_token_ownerships(
-      where: { owner_address: { _eq: $account_address }, amount: { _gte: "1" } }
-      limit: 100
-      offset: 0
-      order_by: { last_transaction_timestamp: desc }
-    ) {
-      amount
-      collection_name
-      creator_address
-      last_transaction_timestamp
-      last_transaction_version
-      name
-      owner_address
-      property_version
-      token_data_id_hash
-      current_token_data {
-        description
-        metadata_uri
+  static const String getAccountNFTBalanceQuery = r''' 
+     query MyQuery($account_address: String!, $offset: Int!) {
+  current_token_ownerships_v2(
+    where: {owner_address: {_eq: $account_address}, amount: {_gte: "1"}}
+    limit: 100
+    offset: $offset
+    order_by: {last_transaction_timestamp: desc}
+  ) {
+    is_fungible_v2
+    last_transaction_timestamp
+    is_soulbound_v2
+    owner_address
+    amount
+    token_data_id
+    token_standard
+    property_version_v1
+    current_token_data {
+      token_name
+      token_uri
+      description
+      current_collection {
+        collection_name
+        creator_address
+        uri
+        collection_id
+        __typename
       }
+      __typename
     }
-  }''';
+    __typename
+  }
+}
+''';
 }

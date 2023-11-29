@@ -86,7 +86,7 @@ class MnemonicUtils {
     final derivePath = segments.fold(
       keys,
       (parentKeys, segment) =>
-          MnemonicUtils.cKDPriv(parentKeys as Keys, segment + 0x80000000),
+          MnemonicUtils.cKDPriv(parentKeys, segment + 0x80000000),
     );
     return derivePath;
   }

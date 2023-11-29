@@ -9,6 +9,7 @@ import 'package:aptosdart/utils/extensions/hex_string.dart';
 class SUIObjects extends Decoder<SUIObjects> {
   String? objectId, version, digest, type, owner, storageRebate;
   SUIDisplay? display;
+  Content? content;
 
   SUIObjects({
     this.objectId,
@@ -18,6 +19,7 @@ class SUIObjects extends Decoder<SUIObjects> {
     this.owner,
     this.storageRebate,
     this.display,
+    this.content,
   });
 
   SUIObjects.fromJson(Map<String, dynamic> json) {
@@ -30,16 +32,21 @@ class SUIObjects extends Decoder<SUIObjects> {
     display = json['display']?['data'] != null
         ? SUIDisplay.fromJson(json['display']?['data'])
         : null;
+    content= json["content"] == null ? null : Content.fromJson
+      (json["content"]);
   }
-
   @override
   SUIObjects decode(Map<String, dynamic> json) {
     return SUIObjects.fromJson(json['data']);
   }
 
   bool get isNFT => display != null;
+
   String getObjectId() {
     return objectId ?? '';
+  }
+ String getFieldForID() {
+    return content?.getFieldFor()??"";
   }
 
   bool isSUICoinObject() {
@@ -69,10 +76,92 @@ class SUIObjects extends Decoder<SUIObjects> {
   String getNFTProjectUrl() {
     return display?.projectUrl ?? '';
   }
+
+  String getNFTName() {
+    return display?.name ?? '';
+  }
+}
+class Content extends Decoder<Content>{
+  String? dataType;
+  String? type;
+  bool? hasPublicTransfer;
+  Fields? fields;
+
+  Content({
+    this.dataType,
+    this.type,
+    this.hasPublicTransfer,
+    this.fields,
+  });
+
+  factory Content.fromJson(Map<String, dynamic> json) => Content(
+    dataType: json["dataType"],
+    type: json["type"],
+    hasPublicTransfer: json["hasPublicTransfer"],
+    fields: json["fields"] == null ? null : Fields.fromJson(json["fields"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "dataType": dataType,
+    "type": type,
+    "hasPublicTransfer": hasPublicTransfer,
+    "fields": fields?.toJson(),
+  };
+  String getFieldFor() {
+    return fields?.fieldsFor ?? '';
+  }
+
+  @override
+  Content decode(Map<String, dynamic> json) {
+   return Content.fromJson(json);
+  }
 }
 
+class Fields extends Decoder<Fields>{
+  String? fieldsFor;
+  SUIId? id;
+
+  Fields({
+    this.fieldsFor,
+    this.id,
+  });
+
+  factory Fields.fromJson(Map<String, dynamic> json) => Fields(
+    fieldsFor: json["for"],
+    id: json["id"] == null ? null : SUIId.fromJson(json["id"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "for": fieldsFor,
+    "id": id?.toJson(),
+  };
+  @override
+  Fields decode(Map<String, dynamic> json) {
+    return Fields.fromJson(json);
+  }
+}
+//
+// class Id extends Decoder<Id>{
+//   String? id;
+//
+//   Id({
+//     this.id,
+//   });
+//
+//   factory Id.fromJson(Map<String, dynamic> json) => Id(
+//     id: json["id"],
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     "id": id,
+//   };
+//   @override
+//   Id decode(Map<String, dynamic> json) {
+//     return Id.fromJson(json);
+//   }
+// }
 class SUIDisplay extends Decoder<SUIDisplay> {
-  String? description, imageUrl, link, projectUrl, error;
+  String? description, imageUrl, link, projectUrl, error, name;
 
   SUIDisplay({
     this.description,
@@ -80,13 +169,17 @@ class SUIDisplay extends Decoder<SUIDisplay> {
     this.link,
     this.projectUrl,
     this.error,
+    this.name,
   });
+
   SUIDisplay.fromJson(Map<String, dynamic> json) {
     description = json['description'];
     imageUrl = json['image_url'];
     link = json['link'];
     projectUrl = json['project_url'];
+    name = json['name'];
   }
+
   @override
   SUIDisplay decode(Map<String, dynamic> json) {
     return SUIDisplay.fromJson(json);
@@ -108,8 +201,10 @@ class SUIDetails extends Decoder<SUIDetails> {
       this.reference});
 
   SUIDetails.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? SUIData.fromJson(json['data']) : null;
-    owner = json['owner'] != null ? Owner.fromJson(json['owner']) : null;
+    data =
+        json['data'] != null ? SUIData.fromJson(json['data']) : null;
+    owner =
+        json['owner'] != null ? Owner.fromJson(json['owner']) : null;
     previousTransaction = json['previousTransaction'];
     storageRebate = json['storageRebate'];
     reference = json['reference'] != null
@@ -145,13 +240,19 @@ class SUIData extends Decoder<SUIData> {
   bool? hasPublicTransfer;
   SUIFields? fields;
 
-  SUIData({this.dataType, this.type, this.hasPublicTransfer, this.fields});
+  SUIData(
+      {this.dataType,
+      this.type,
+      this.hasPublicTransfer,
+      this.fields});
 
   SUIData.fromJson(Map<String, dynamic> json) {
     dataType = json['dataType'];
     type = json['type'];
     hasPublicTransfer = json['has_public_transfer'];
-    fields = json['fields'] != null ? SUIFields.fromJson(json['fields']) : null;
+    fields = json['fields'] != null
+        ? SUIFields.fromJson(json['fields'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -185,7 +286,8 @@ class SUIFields extends Decoder<SUIFields> {
   });
 
   SUIFields.fromJson(Map<String, dynamic> json) {
-    balance = json['balance'] != null ? int.parse(json['balance']) : 0;
+    balance =
+        json['balance'] != null ? int.parse(json['balance']) : 0;
     description = json['description'];
     name = json['name'];
     url = json['url'];
@@ -259,6 +361,7 @@ class EffectsCert extends Decoder<EffectsCert> {
   SUITransaction? suiTransaction;
 
   EffectsCert({this.suiTransaction});
+
   EffectsCert.fromJson(Map<String, dynamic> json) {
     suiTransaction = json['EffectsCert'] != null
         ? SUITransaction.fromJson(json['EffectsCert'])
@@ -274,11 +377,13 @@ class EffectsCert extends Decoder<EffectsCert> {
 class SUITransaction extends Decoder<SUITransaction> {
   SUIEffects? effects;
   SUICertificate? suiCertificate;
+
   SUITransaction({this.effects, this.suiCertificate});
 
   SUITransaction.fromJson(Map<String, dynamic> json) {
-    effects =
-        json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
+    effects = json['effects'] != null
+        ? SUIEffects.fromJson(json['effects'])
+        : null;
     suiCertificate = json['certificate'] != null
         ? SUICertificate.fromJson(json['certificate'])
         : null;
@@ -302,7 +407,9 @@ class SUITransaction extends Decoder<SUITransaction> {
   }
 
   bool? getStatusInBool() {
-    return effects?.status?.status == SUIConstants.success ? true : false;
+    return effects?.status?.status == SUIConstants.success
+        ? true
+        : false;
   }
 
   bool isSucceed() {
@@ -350,6 +457,7 @@ class SUITransactionHistory extends BaseTransaction {
   int? amount, decimal;
   BalanceChanges? balanceChanges;
   bool _isNFTTransaction = false;
+
   SUITransactionHistory({
     this.effects,
     this.timestampMs,
@@ -362,8 +470,9 @@ class SUITransactionHistory extends BaseTransaction {
   SUITransactionHistory.fromJson(Map<String, dynamic> json) {
     amount = parseAmount(json);
 
-    effects =
-        json['effects'] != null ? SUIEffects.fromJson(json['effects']) : null;
+    effects = json['effects'] != null
+        ? SUIEffects.fromJson(json['effects'])
+        : null;
     timestampMs = int.parse(json['timestampMs'] ??
         DateTime.now().millisecondsSinceEpoch.toString());
     digest = json['digest'] ?? 0;
@@ -384,21 +493,22 @@ class SUITransactionHistory extends BaseTransaction {
 
   int parseAmount(Map<String, dynamic> json) {
     if (json['transaction'] == null) return 0;
-    List data = json['transaction']?['data']?['transaction']?['inputs'] ?? [];
+    List data =
+        json['transaction']?['data']?['transaction']?['inputs'] ?? [];
     String result = (_getCoin(data) ?? _getNFT(data));
     return int.parse(result);
   }
 
   String? _getCoin(List<dynamic> data) {
-    Map<String, dynamic>? result =
-        data.firstWhereOrNull((element) => element['valueType'] == 'u64');
+    Map<String, dynamic>? result = data
+        .firstWhereOrNull((element) => element['valueType'] == 'u64');
     String? amount = result?['value'];
     return amount;
   }
 
   String _getNFT(List<dynamic> data) {
-    Map<String, dynamic>? result =
-        data.firstWhereOrNull((element) => element['type'] == 'object');
+    Map<String, dynamic>? result = data
+        .firstWhereOrNull((element) => element['type'] == 'object');
     if (result != null) {
       _isNFTTransaction = true;
       return '1';
@@ -423,7 +533,9 @@ class SUITransactionHistory extends BaseTransaction {
   }
 
   bool? getStatusInBool() {
-    return effects?.status?.status == SUIConstants.success ? true : false;
+    return effects?.status?.status == SUIConstants.success
+        ? true
+        : false;
   }
 
   @override
@@ -454,8 +566,8 @@ class SUITransactionHistory extends BaseTransaction {
       return temp.first.owner?.addressOwner;
     }
     if (mutated.isNotEmpty) {
-      final address =
-          mutated.firstWhereOrNull((element) => element != senderAddress);
+      final address = mutated
+          .firstWhereOrNull((element) => element != senderAddress);
       return address;
     }
     return null;
@@ -486,7 +598,8 @@ class SUITransactionHistory extends BaseTransaction {
   @override
   String getTokenCurrency() {
     if (_isNFTTransaction) return 'NFT';
-    List<String> currency = (balanceChanges?.coinType ?? '').split('::');
+    List<String> currency =
+        (balanceChanges?.coinType ?? '').split('::');
     if (currency.isNotEmpty) {
       return currency.last;
     }
@@ -516,8 +629,8 @@ class SUITransactionHistory extends BaseTransaction {
       return temp.first.owner?.addressOwner ?? '';
     }
     if (mutated.isNotEmpty) {
-      final address =
-          mutated.firstWhereOrNull((element) => element != senderAddress);
+      final address = mutated
+          .firstWhereOrNull((element) => element != senderAddress);
       return address ?? '';
     }
     return '';
@@ -551,7 +664,8 @@ class BalanceChanges extends Decoder<BalanceChanges> {
         ((element?['coinType'] ?? '') as String).toShortString() !=
         SUIConstants.suiConstruct);
     if (type != null) {
-      coinType = ((type?['coinType'] ?? '') as String).toShortString();
+      coinType =
+          ((type?['coinType'] ?? '') as String).toShortString();
     } else {
       coinType = SUIConstants.suiConstruct;
     }
@@ -565,6 +679,7 @@ class SUIEffects extends Decoder<SUIEffects> {
   List<SUICreated>? created;
   String? gasAddressOwner;
   List<String>? mutated;
+
   SUIEffects(
       {this.status,
       this.gasUsed,
@@ -573,9 +688,12 @@ class SUIEffects extends Decoder<SUIEffects> {
       this.mutated});
 
   SUIEffects.fromJson(Map<String, dynamic> json) {
-    status = json['status'] != null ? SUIStatus.fromJson(json['status']) : null;
-    gasUsed =
-        json['gasUsed'] != null ? SUIGasUsed.fromJson(json['gasUsed']) : null;
+    status = json['status'] != null
+        ? SUIStatus.fromJson(json['status'])
+        : null;
+    gasUsed = json['gasUsed'] != null
+        ? SUIGasUsed.fromJson(json['gasUsed'])
+        : null;
     transactionDigest = json['transactionDigest'];
     if (json['created'] != null) {
       created = <SUICreated>[];
@@ -623,11 +741,13 @@ class SUIEffects extends Decoder<SUIEffects> {
 class SUICertificate extends Decoder<SUICertificate> {
   SUICertificateData? data;
   String? transactionDigest;
+
   SUICertificate({this.data, this.transactionDigest});
 
   SUICertificate.fromJson(Map<String, dynamic> json) {
-    data =
-        json['data'] != null ? SUICertificateData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? SUICertificateData.fromJson(json['data'])
+        : null;
     transactionDigest = json['transactionDigest'];
   }
 
@@ -650,7 +770,8 @@ class SUICertificateData extends Decoder<SUICertificateData> {
   String? sender;
   int? gasBudget;
 
-  SUICertificateData({this.transactions, this.sender, this.gasBudget});
+  SUICertificateData(
+      {this.transactions, this.sender, this.gasBudget});
 
   SUICertificateData.fromJson(Map<String, dynamic> json) {
     if (json['transactions'] != null) {
@@ -680,13 +801,15 @@ class SUICertificateData extends Decoder<SUICertificateData> {
   }
 }
 
-abstract class SUITransferAbstract extends Decoder<SUITransferAbstract> {
+abstract class SUITransferAbstract
+    extends Decoder<SUITransferAbstract> {
   @override
   SUITransferAbstract decode(Map<String, dynamic> json) {
     throw UnimplementedError();
   }
 
   String getRecipient();
+
   String getAmount();
 }
 
@@ -787,10 +910,13 @@ class SUIPay extends SUITransferAbstract {
   SUIPay({this.amount, this.recipients});
 
   SUIPay.fromJson(Map<String, dynamic> json) {
-    amount = json['amounts'] != null ? _parseAmount(json['amounts']) : 0;
-    recipients =
-        json['recipients'] != null ? _parseRecipients(json['recipients']) : '';
+    amount =
+        json['amounts'] != null ? _parseAmount(json['amounts']) : 0;
+    recipients = json['recipients'] != null
+        ? _parseRecipients(json['recipients'])
+        : '';
   }
+
   int _parseAmount(List<dynamic> listData) {
     int temp = 0;
     for (var v in listData) {
@@ -856,7 +982,8 @@ class SUIGasUsed extends Decoder<SUIGasUsed> {
   num? storageCost;
   num? storageRebate;
 
-  SUIGasUsed({this.computationCost, this.storageCost, this.storageRebate});
+  SUIGasUsed(
+      {this.computationCost, this.storageCost, this.storageRebate});
 
   SUIGasUsed.fromJson(Map<String, dynamic> json) {
     computationCost = _toNum(json['computationCost'] ?? 0);
@@ -878,7 +1005,8 @@ class SUIGasUsed extends Decoder<SUIGasUsed> {
   }
 
   num getTotalGasUsed() {
-    return (computationCost ?? 0) + ((storageCost ?? 0) - (storageRebate ?? 0));
+    return (computationCost ?? 0) +
+        ((storageCost ?? 0) - (storageRebate ?? 0));
   }
 
   num getSubmitGasUsed() {
@@ -928,6 +1056,7 @@ class SUITransactionSimulateResult
     extends Decoder<SUITransactionSimulateResult> {
   String? txBytes;
   int? gas;
+
   SUITransactionSimulateResult({
     required this.txBytes,
     required this.gas,
