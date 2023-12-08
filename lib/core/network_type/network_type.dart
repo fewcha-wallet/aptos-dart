@@ -1,3 +1,4 @@
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/network/decodable.dart';
 
@@ -31,7 +32,9 @@ class NetworkType extends Decoder<NetworkType> {
   NetworkType decode(Map<String, dynamic> json) {
     throw UnimplementedError();
   }
-
+  bool isMainNet(){
+    return networkName.contains(HostUrl.mainNet);
+  }
   factory NetworkType.defaultConstructor() {
     return NetworkType(
         coinCurrency: '',

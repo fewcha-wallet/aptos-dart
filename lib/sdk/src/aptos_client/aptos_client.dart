@@ -24,6 +24,7 @@ import 'package:aptosdart/core/table_item/table_item.dart';
 import 'package:aptosdart/core/transaction/aptos_transaction.dart';
 import 'package:aptosdart/core/transaction/transaction_builder.dart';
 import 'package:aptosdart/core/transaction_builder_remote_abi/transaction_builder_remote_abi.dart';
+import 'package:aptosdart/core/user_transactions/user_transactions.dart';
 import 'package:aptosdart/sdk/src/repository/event_repository/event_repository.dart';
 import 'package:aptosdart/sdk/src/repository/ledger_repository/ledger_repository.dart';
 import 'package:aptosdart/sdk/src/repository/table_repository/table_repository.dart';
@@ -46,6 +47,7 @@ class AptosClient {
     _stateRepository = TableRepository();
     _ledgerRepository = LedgerRepository();
   }
+
   //region Account
 
   Future<AptosAccount> createAccount({
@@ -54,7 +56,8 @@ class AptosClient {
   }) async {
     try {
       final arg = AccountArg(
-          privateKeyBytes: privateKeyBytes, privateKeyHex: privateKeyHex);
+          privateKeyBytes: privateKeyBytes,
+          privateKeyHex: privateKeyHex);
       AptosAccount aptosAccount;
       aptosAccount = await compute(_computeAptosAccount, arg);
       return aptosAccount;
@@ -67,10 +70,11 @@ class AptosClient {
     AptosAccount aptosAccount;
 
     if (arg.privateKeyBytes != null) {
-      aptosAccount = AptosAccount(privateKeyBytes: arg.privateKeyBytes);
-    } else {
       aptosAccount =
-          AptosAccount.fromPrivateKey(arg.privateKeyHex!.trimPrefix());
+          AptosAccount(privateKeyBytes: arg.privateKeyBytes);
+    } else {
+      aptosAccount = AptosAccount.fromPrivateKey(
+          arg.privateKeyHex!.trimPrefix());
     }
     return aptosAccount;
   }
@@ -84,7 +88,8 @@ class AptosClient {
     }
   }
 
-  Future<ListAptosCoinBalance> getAccountListCoins(String address) async {
+  Future<ListAptosCoinBalance> getAccountListCoins(
+      String address) async {
     try {
       final result = await _accountRepository.getAccountCoinBalance(
         address: address,
@@ -95,12 +100,37 @@ class AptosClient {
     }
   }
 
-  Future<List<CurrentTokenOwnershipsV2>> getAccountListNFTs(String address) async {
+  Future<List<CurrentTokenOwnershipsV2>> getAccountListNFTs(
+      String address) async {
     try {
       final result = await _accountRepository.getAccountListNFTs(
         address: address,
       );
       return result.currentTokenOwnershipsV2!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UserTransactions> getAddressVersionFromMoveResource(
+      String address) async {
+    try {
+      final result =
+          await _accountRepository.getAddressVersionFromMoveResource(
+        address: address,
+      );
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }  Future<UserTransactions> getAllUserActivities(
+      String address) async {
+    try {
+      final result =
+          await _accountRepository.getAllUserActivities(
+        address: address,
+      );
+      return result;
     } catch (e) {
       rethrow;
     }
@@ -132,9 +162,11 @@ class AptosClient {
     }
   }
 
-  Future<UserResources?> getAccountResourcesNew(String address) async {
+  Future<UserResources?> getAccountResourcesNew(
+      String address) async {
     try {
-      final result = await _accountRepository.getAccountResourcesNew(address);
+      final result =
+          await _accountRepository.getAccountResourcesNew(address);
       return result;
     } catch (e) {
       rethrow;
@@ -144,8 +176,8 @@ class AptosClient {
   Future<ResourceNew?> getResourcesByType(
       {required String address, required String resourceType}) async {
     try {
-      final result =
-          await _accountRepository.getResourcesByType(address, resourceType);
+      final result = await _accountRepository.getResourcesByType(
+          address, resourceType);
 
       return result;
     } catch (e) {
@@ -153,9 +185,11 @@ class AptosClient {
     }
   }
 
-  Future<List<AccountModule>> getAccountModules(String address) async {
+  Future<List<AccountModule>> getAccountModules(
+      String address) async {
     try {
-      final result = await _accountRepository.getAccountModules(address);
+      final result =
+          await _accountRepository.getAccountModules(address);
       return result;
     } catch (e) {
       rethrow;
@@ -190,15 +224,16 @@ class AptosClient {
     OptionalTransactionArgs? extraArgs,
   }) async {
     try {
-      final sequenceNumber = (await getAccount(accountFrom)).sequenceNumber;
+      final sequenceNumber =
+          (await getAccount(accountFrom)).sequenceNumber;
       final chainId = (await getLedgerInformation()).chainID;
       final gasEstimate = extraArgs?.gasUnitPrice != null
           ? extraArgs!.gasUnitPrice!
           : (await estimateGasPrice()).gasEstimate;
 
       ///
-      final maxGasAmount =
-          BigInt.from(extraArgs?.maxGasAmount ?? MaxNumber.defaultMaxGasAmount);
+      final maxGasAmount = BigInt.from(
+          extraArgs?.maxGasAmount ?? MaxNumber.defaultMaxGasAmount);
       final gasUnitPrice = BigInt.from(gasEstimate!);
 
       final expireTimestamp =
@@ -241,8 +276,8 @@ class AptosClient {
       //   config.expSecFromNow = timestamp - Math.floor(Date.now() / 1000);
       // }
 
-      final builder =
-          TransactionBuilderRemoteABI(aptosClient: this, builderConfig: config);
+      final builder = TransactionBuilderRemoteABI(
+          aptosClient: this, builderConfig: config);
 
       return await builder.build(
           func: payload.function,
@@ -255,10 +290,12 @@ class AptosClient {
 
   Future<Uint8List> generateBCSTransaction(
       AptosAccount accountFrom, RawTransaction rawTxn) async {
-    final txnBuilder = TransactionBuilderEd25519((Uint8List uint8list) {
+    final txnBuilder =
+        TransactionBuilderEd25519((Uint8List uint8list) {
       final buffer = accountFrom.signBuffer(uint8list);
 
-      final ed25519Signature = Ed25519Signature(buffer.toUint8Array());
+      final ed25519Signature =
+          Ed25519Signature(buffer.toUint8Array());
       return ed25519Signature;
     }, accountFrom.publicKeyInHex().toUint8Array());
     return await txnBuilder.sign(rawTxn);
@@ -266,7 +303,8 @@ class AptosClient {
 
   Future<Uint8List> generateBCSSimulation(
       AptosAccount accountFrom, RawTransaction rawTxn) async {
-    final txnBuilder = TransactionBuilderEd25519((Uint8List uint8list) {
+    final txnBuilder =
+        TransactionBuilderEd25519((Uint8List uint8list) {
       final invalidSigBytes = Uint8List(64);
 
       final ed25519Signature = Ed25519Signature(invalidSigBytes);
@@ -275,10 +313,11 @@ class AptosClient {
     return await txnBuilder.sign(rawTxn);
   }
 
-  Future<AptosTransaction?> transactionPending(String txnHashOrVersion) async {
+  Future<AptosTransaction?> transactionPending(
+      String txnHashOrVersion) async {
     try {
-      final result =
-          await _transactionRepository.getTransactionByHash(txnHashOrVersion);
+      final result = await _transactionRepository
+          .getTransactionByHash(txnHashOrVersion);
       if (result.type == AppConstants.pendingTransaction ||
           result.success == false) {
         return null;
@@ -289,7 +328,8 @@ class AptosClient {
     }
   }
 
-  Future<AptosTransaction?> waitForTransaction(String txnHashOrVersion) async {
+  Future<AptosTransaction?> waitForTransaction(
+      String txnHashOrVersion) async {
     int count = 0;
     AptosTransaction? transaction;
     try {
@@ -327,10 +367,11 @@ class AptosClient {
     }
   }*/
 
-  Future<AptosTransaction> getTransactionByHash(String txnHashOrVersion) async {
+  Future<AptosTransaction> getTransactionByHash(
+      String txnHashOrVersion) async {
     try {
-      final result =
-          await _transactionRepository.getTransactionByHash(txnHashOrVersion);
+      final result = await _transactionRepository
+          .getTransactionByHash(txnHashOrVersion);
       return result;
     } catch (e) {
       rethrow;
@@ -351,12 +392,13 @@ class AptosClient {
   Future<List<AptosTransaction>> getAccountCoinTransactions(
       {required String address, int start = 0, int? limit}) async {
     try {
-      final result = await _transactionRepository.getAccountCoinTransactions(
-          address: address,
-          operationName: GraphQLConstant.getAccountCoinActivity,
-          query: GraphQLConstant.getAccountCoinQuery,
-          start: start,
-          limit: limit);
+      final result =
+          await _transactionRepository.getAccountCoinTransactions(
+              address: address,
+              operationName: GraphQLConstant.getAccountCoinActivity,
+              query: GraphQLConstant.getAccountCoinQuery,
+              start: start,
+              limit: limit);
       return result;
     } catch (e) {
       rethrow;
@@ -366,12 +408,13 @@ class AptosClient {
   Future<List<TokenActivities>> getAccountTokenTransactions(
       {required String address, int start = 0, int? limit}) async {
     try {
-      final result = await _transactionRepository.getAccountTokenTransactions(
-          address: address,
-          operationName: GraphQLConstant.getAccountTokenActivity,
-          query: GraphQLConstant.getAccountTokenQuery,
-          start: start,
-          limit: limit);
+      final result =
+          await _transactionRepository.getAccountTokenTransactions(
+              address: address,
+              operationName: GraphQLConstant.getAccountTokenActivity,
+              query: GraphQLConstant.getAccountTokenQuery,
+              start: start,
+              limit: limit);
       return result;
     } catch (e) {
       rethrow;
@@ -404,8 +447,8 @@ class AptosClient {
   Future<AptosTransaction> submitSignedBCSTransaction(
       Uint8List signedTxn) async {
     try {
-      final result =
-          await _transactionRepository.submitSignedBCSTransaction(signedTxn);
+      final result = await _transactionRepository
+          .submitSignedBCSTransaction(signedTxn);
       return result;
     } catch (e) {
       rethrow;
@@ -415,8 +458,8 @@ class AptosClient {
   Future<AptosTransaction> simulateSignedBCSTransaction(
       Uint8List signedTxn) async {
     try {
-      final result =
-          await _transactionRepository.simulateSignedBCSTransaction(signedTxn);
+      final result = await _transactionRepository
+          .simulateSignedBCSTransaction(signedTxn);
       return result;
     } catch (e) {
       rethrow;
@@ -430,8 +473,8 @@ class AptosClient {
           type: AppConstants.ed25519Signature,
           publicKey: aptosAccount.publicKeyInHex(),
           signature: Utilities.generateStringFromUInt8List());
-      final result = await _transactionRepository
-          .simulateTransaction(transaction..signature = transactionSignature);
+      final result = await _transactionRepository.simulateTransaction(
+          transaction..signature = transactionSignature);
       return result.first;
     } catch (e) {
       rethrow;
@@ -449,9 +492,11 @@ class AptosClient {
     }
   }*/
 
-  Future<String> encodeSubmission(AptosTransaction transaction) async {
+  Future<String> encodeSubmission(
+      AptosTransaction transaction) async {
     try {
-      final result = await _transactionRepository.encodeSubmission(transaction);
+      final result =
+          await _transactionRepository.encodeSubmission(transaction);
       return result;
     } catch (e) {
       rethrow;
@@ -470,7 +515,8 @@ class AptosClient {
         sender: address.toHexString(),
         sequenceNumber: account.sequenceNumber,
         maxGasAmount: maximumUserBalance,
-        gasUnitPrice: gasUnitPrice ?? AppConstants.defaultGasUnitPrice,
+        gasUnitPrice:
+            gasUnitPrice ?? AppConstants.defaultGasUnitPrice,
         expirationTimestampSecs: Utilities.getExpirationTimeStamp(),
         payload: payload,
       );
@@ -495,10 +541,11 @@ class AptosClient {
   }
 */
 
-  Future<Uint8List> signRawTransaction(
-      AptosAccount aptosAccount, RawTransaction rawTransaction) async {
+  Future<Uint8List> signRawTransaction(AptosAccount aptosAccount,
+      RawTransaction rawTransaction) async {
     try {
-      final result = await generateBCSTransaction(aptosAccount, rawTransaction);
+      final result =
+          await generateBCSTransaction(aptosAccount, rawTransaction);
       return result;
     } catch (e) {
       rethrow;
@@ -511,7 +558,8 @@ class AptosClient {
       final d = Deserializer(rawTransaction);
       final transaction = RawTransaction.deserialize(d);
 
-      final signed = await signRawTransaction(aptosAccount, transaction);
+      final signed =
+          await signRawTransaction(aptosAccount, transaction);
       final tx = await submitRawTransaction(signed);
       return tx.hash!;
     } catch (e) {
@@ -567,7 +615,8 @@ class AptosClient {
       final d = Deserializer(rawTransaction);
       final rawTxn = RawTransaction.deserialize(d);
 
-      final signingMessage = TransactionBuilder.getSigningMessage(rawTxn);
+      final signingMessage =
+          TransactionBuilder.getSigningMessage(rawTxn);
       return aptosAccount.signBuffer(signingMessage).toUint8Array();
     } catch (e) {
       rethrow;
@@ -674,6 +723,7 @@ class AptosClient {
       rethrow;
     }
   }
+
 //endregion
 //region Ledge
 

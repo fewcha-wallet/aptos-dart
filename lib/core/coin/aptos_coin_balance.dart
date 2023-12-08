@@ -70,7 +70,7 @@ class AptosCoinInfo extends Decoder<AptosCoinInfo> {
     name = json['name'] ?? '';
     symbol = json['symbol'] ?? '';
     typename = json['__typename'] ?? '';
-    decimals = json['decimals'] ?? 0;
+    decimals = json['decimals'] ?? AppConstants.aptosDecimal;
   }
   @override
   AptosCoinInfo decode(Map<String, dynamic> json) {

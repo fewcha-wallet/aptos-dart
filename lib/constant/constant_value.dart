@@ -318,4 +318,29 @@ class GraphQLConstant {
   }
 }
 ''';
+  static const String addressVersionFromMoveResource=r"""
+  query MyQuery($address: String!, $offset: Int, $limit: Int) {
+  user_transactions: address_version_from_move_resources(
+    where: {address: {_eq: $address}}
+    offset: $offset
+    limit: $limit
+    order_by: {transaction_version: desc}
+  ) {
+    sender: address
+    version: transaction_version
+    __typename
+  }
+}
+  """;
+  static const String userActivitiesQuery=r"""
+  query MyQuery($address: String!, $offset: Int, $limit: Int) {
+    user_transactions(where: { sender: { _eq: $address } }, offset: $offset, limit: $limit, order_by: { sequence_number: desc }) {
+      sender
+      version
+      entry_function_id_str
+      sequence_number
+      timestamp
+    }
+  }
+  """;
 }
