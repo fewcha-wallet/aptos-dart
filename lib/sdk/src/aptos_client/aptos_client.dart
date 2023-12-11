@@ -136,23 +136,6 @@ class AptosClient {
     }
   }
 
-/*  Future<int> getAccountBalance(String address) async {
-    try {
-      final result = await getAccountListCoins(address);
-      final listCoins = result.listCoinBalances ?? [];
-      if (listCoins.isEmpty) return 0;
-
-      final aptosCoin = listCoins
-          .firstWhereOrNull((element) => element.coinInfo!.isAptosCoin);
-      if (aptosCoin != null) {
-        return aptosCoin.getAmount;
-      }
-      return 0;
-    } catch (e) {
-      return 0;
-    }
-  }*/
-
   Future<int> getChainId() async {
     try {
       final result = await getLedgerInformation();
@@ -198,25 +181,6 @@ class AptosClient {
 
 //endregion
   //region Transaction
-/*  Future<String> generateSignSubmitTransaction({
-    required AptosAccount sender,
-    required TransactionPayload payload,
-    OptionalTransactionArgs? extraArgs,
-  }) async {
-    try {
-      final rawTransaction = await generateRawTransaction(
-          accountFrom: sender.address(),
-          payload: payload,
-          extraArgs: extraArgs);
-
-      final bcsTxn = await generateBCSTransaction(sender, rawTransaction);
-
-      final pendingTransaction = await submitSignedBCSTransaction(bcsTxn);
-      return pendingTransaction.hash!;
-    } catch (e) {
-      rethrow;
-    }
-  }*/
 
   Future<RawTransaction> generateRawTransaction({
     required String accountFrom,
@@ -356,17 +320,6 @@ class AptosClient {
     }
   }
 
-/*  Future<List<AptosTransaction>> getTransactions(
-      {int start = 0, int limit = 25}) async {
-    try {
-      final result = await _transactionRepository.getTransactions(
-          start: start, limit: limit);
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }*/
-
   Future<AptosTransaction> getTransactionByHash(
       String txnHashOrVersion) async {
     try {
@@ -421,16 +374,6 @@ class AptosClient {
     }
   }
 
-/*  Future<AptosTransaction> submitTransaction(
-      AptosTransaction transaction) async {
-    try {
-      final result =
-          await _transactionRepository.submitTransaction(transaction);
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }*/
 
   Future<AptosTransaction> submitRawTransaction(
     Uint8List rawTransaction,
@@ -481,17 +424,6 @@ class AptosClient {
     }
   }
 
-/*  Future<SigningMessage> createSigningMessage(
-      AptosTransaction transaction) async {
-    try {
-      final result =
-          await _transactionRepository.createSigningMessage(transaction);
-      return result;
-    } catch (e) {
-      rethrow;
-    }
-  }*/
-
   Future<String> encodeSubmission(
       AptosTransaction transaction) async {
     try {
@@ -525,21 +457,6 @@ class AptosClient {
     }
   }
 
-/*
-  Future<TransactionSignature> signTransaction(
-      AptosAccount aptosAccount, AptosTransaction transaction) async {
-    try {
-      final signMessage = await encodeSubmission(transaction);
-      final signature = aptosAccount.signatureHex(signMessage.trimPrefix());
-      return TransactionSignature(
-          type: AppConstants.ed25519Signature,
-          publicKey: aptosAccount.publicKeyInHex(),
-          signature: signature.trimPrefix());
-    } catch (e) {
-      rethrow;
-    }
-  }
-*/
 
   Future<Uint8List> signRawTransaction(AptosAccount aptosAccount,
       RawTransaction rawTransaction) async {
@@ -658,7 +575,6 @@ class AptosClient {
         start: start,
         limit: limit,
       );
-      // return response;
 
       List<Event> result = res;
       if (data.isNotEmpty) {
