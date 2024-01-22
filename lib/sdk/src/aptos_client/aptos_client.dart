@@ -123,11 +123,12 @@ class AptosClient {
     } catch (e) {
       rethrow;
     }
-  }  Future<UserTransactions> getAllUserActivities(
+  }
+
+  Future<UserTransactions> getAllUserActivities(
       String address) async {
     try {
-      final result =
-          await _accountRepository.getAllUserActivities(
+      final result = await _accountRepository.getAllUserActivities(
         address: address,
       );
       return result;
@@ -374,7 +375,6 @@ class AptosClient {
     }
   }
 
-
   Future<AptosTransaction> submitRawTransaction(
     Uint8List rawTransaction,
   ) async {
@@ -457,7 +457,6 @@ class AptosClient {
     }
   }
 
-
   Future<Uint8List> signRawTransaction(AptosAccount aptosAccount,
       RawTransaction rawTransaction) async {
     try {
@@ -486,10 +485,15 @@ class AptosClient {
 
   Future<AptosSignMessageResponse> signMessage(
       AptosAccount aptosAccount, AptosSignMessagePayload message,
-      {String? domain}) async {
+      {String? domain, bool usePrefix = true}) async {
     try {
       String prefix = "APTOS";
-      String messageToBeSigned = prefix;
+      String messageToBeSigned;
+      if (usePrefix) {
+        messageToBeSigned = prefix;
+      } else {
+        messageToBeSigned = '';
+      }
 
       final address = aptosAccount.address().toHexString();
       if (message.address ?? false) {
@@ -504,9 +508,14 @@ class AptosClient {
       if (message.chainId ?? false) {
         messageToBeSigned += '\nchainId: $chainId';
       }
-
-      messageToBeSigned += '\nmessage: ${message.message}';
-      messageToBeSigned += '\nnonce: ${message.nonce}';
+      if (message.prefixMessage ?? false) {
+        messageToBeSigned += '\nmessage: ${message.message}';
+      } else {
+        messageToBeSigned += message.message ?? "";
+      }
+      if (message.nonce != null) {
+        messageToBeSigned += '\nnonce: ${message.nonce}';
+      }
 
       final encoder = const Utf8Encoder().convert(messageToBeSigned);
       final signature = aptosAccount.signBuffer(encoder);

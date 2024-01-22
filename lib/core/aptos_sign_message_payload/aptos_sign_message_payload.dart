@@ -3,6 +3,7 @@ class AptosSignMessagePayload {
   bool? application; // Should we include the domain of the dapp
   bool?
       chainId; // Should we include the current chain id the wallet is connected to
+  bool? prefixMessage;
   String? message; // The message to be signed and displayed to the user
   String? nonce;
 
@@ -10,6 +11,7 @@ class AptosSignMessagePayload {
       {this.address = false,
       this.application = false,
       this.chainId = false,
+      this.prefixMessage = true,
       required this.message,
       required this.nonce}); // A nonce the dapp should generate
   AptosSignMessagePayload.fromJson(Map<String, dynamic> json) {
