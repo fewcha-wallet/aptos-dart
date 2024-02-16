@@ -485,7 +485,7 @@ class AptosClient {
 
   Future<AptosSignMessageResponse> signMessage(
       AptosAccount aptosAccount, AptosSignMessagePayload message,
-      {String? domain, bool usePrefix = true}) async {
+      {String? domain, bool usePrefix = true, bool useNonce = true,}) async {
     try {
       String prefix = "APTOS";
       String messageToBeSigned;
@@ -513,7 +513,8 @@ class AptosClient {
       } else {
         messageToBeSigned += message.message ?? "";
       }
-      if (message.nonce != null) {
+
+      if (message.nonce != null &&useNonce) {
         messageToBeSigned += '\nnonce: ${message.nonce}';
       }
 

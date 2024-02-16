@@ -26,6 +26,7 @@ enum APIType {
   register2FA,
   verify2FA,
 }
+
 enum APIErrorType {
   invalidLedger,
   resourceNotFound,
@@ -35,6 +36,7 @@ enum APIErrorType {
   badRequest,
   unknown,
 }
+
 /*enum RPCFunction {
   suiGetObjectsOwnedByAddress,
   suiGetObject,
@@ -43,7 +45,20 @@ enum APIErrorType {
   suiGetTransaction,
 }*/
 enum LogStatus { hide, show }
-enum CoinType { aptos, sui }
+
+enum CoinType {
+  aptos,
+  sui;
+
+  int toInt() {
+    switch (this) {
+      case CoinType.aptos:
+        return 1;
+      case CoinType.sui:
+        return 0;
+    }
+  }
+}
 /*
 enum ComputeSUIObjectType {
   getBalance,
