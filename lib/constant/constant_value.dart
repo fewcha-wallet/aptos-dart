@@ -242,17 +242,18 @@ class GraphQLConstant {
   static const String getAccountCoinBalance = 'getAccountCoinBalance';
   static const String myQuery = 'MyQuery';
   static const String getAccountCoinQuery = r""" 
-   query getAccountCoinActivity($address: String!, $offset: Int, $limit: Int) {
+     query getAccountCoinActivity($address: String!, $coinType: String!, $offset: Int, $limit: Int) {
     coin_activities(
-      where: { owner_address: { _eq: $address } }
+       where: { owner_address: { _eq: $address }, coin_type: { _eq: $coinType } }
       limit: $limit
       offset: $offset
-      order_by: [{ transaction_version: desc }, { event_account_address: desc }, { event_creation_number: desc }, { event_sequence_number: desc }]
+      order_by: [{transaction_version: desc}, {event_account_address: desc}, {event_creation_number: desc}, {event_sequence_number: desc}]
     ) {
       ...CoinActivityFields
+      __typename
     }
   }
-
+  
   fragment CoinActivityFields on coin_activities {
     transaction_timestamp
     transaction_version
@@ -266,6 +267,7 @@ class GraphQLConstant {
     event_sequence_number
     entry_function_id_str
     block_height
+    __typename
   }
 """;
   static const String getAccountTokenQuery =

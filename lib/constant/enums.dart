@@ -53,9 +53,9 @@ enum CoinType {
   int toInt() {
     switch (this) {
       case CoinType.aptos:
-        return 1;
+        return 2;
       case CoinType.sui:
-        return 0;
+        return 1;
     }
   }
 }

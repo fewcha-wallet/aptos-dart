@@ -344,11 +344,12 @@ class AptosClient {
   }
 
   Future<List<AptosTransaction>> getAccountCoinTransactions(
-      {required String address, int start = 0, int? limit}) async {
+      {required String address,required String tokenID, int start = 0, int? limit}) async {
     try {
       final result =
           await _transactionRepository.getAccountCoinTransactions(
               address: address,
+              tokenID: tokenID,
               operationName: GraphQLConstant.getAccountCoinActivity,
               query: GraphQLConstant.getAccountCoinQuery,
               start: start,

@@ -17,6 +17,26 @@ class GraphQLUtils {
     };
     return map;
   }
+  static Map<String, dynamic> detailTokenTransactionGraphQLPayload({
+    required String operationName,
+    required String address,
+    required String tokenID,
+    required String query,
+    int? offset,
+    int? limit,
+  }) {
+    final map = {
+      "operationName": operationName,
+      "variables": {
+        "address": address,
+        "coinType": tokenID,
+        "offset": offset,
+        "limit": limit,
+      },
+      "query": query,
+    };
+    return map;
+  }
 
   static Map<String, dynamic> createNFTGraphQLPayload({
     required String operationName,

@@ -17,6 +17,7 @@ import 'package:dio/dio.dart';
 
 class TransactionRepository with AptosSDKMixin {
   TransactionRepository();
+
 /*
   Future<List<AptosTransaction>> getTransactions(
       {int start = 0, int limit = 10}) async {
@@ -116,15 +117,17 @@ class TransactionRepository with AptosSDKMixin {
 
   Future<List<AptosTransaction>> getAccountCoinTransactions(
       {required String address,
+      required String tokenID,
       required String operationName,
       required String query,
       int start = 0,
       int? limit}) async {
     try {
-      final payload = GraphQLUtils.createGraphQLPayload(
+      final payload = GraphQLUtils.detailTokenTransactionGraphQLPayload(
         operationName: operationName,
         query: query,
         address: address,
+        tokenID: tokenID,
         offset: start,
         limit: limit,
       );
@@ -220,6 +223,7 @@ class TransactionRepository with AptosSDKMixin {
       rethrow;
     }
   }
+
 /*
 
   Future<SigningMessage> createSigningMessage(
