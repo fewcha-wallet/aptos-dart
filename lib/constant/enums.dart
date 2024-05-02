@@ -55,7 +55,7 @@ enum CoinType {
       case CoinType.aptos:
         return 2;
       case CoinType.sui:
-        return 1;
+        return 3;
     }
   }
 }
