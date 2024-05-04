@@ -22,12 +22,13 @@ dependencies:
     git:
       url: https://github.com/beobanhbo/jsonrpc2-folk.git
       ref: main
-  http: ^0.13.5
+  http: ^1.0.0
   intl: 0.18.1
-  path_provider: 2.0.15
+  path_provider: ^2.1.1
   blake2b: ^0.2.2
   fast_base58: ^0.2.1
   collection: ^1.17.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

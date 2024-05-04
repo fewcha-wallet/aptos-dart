@@ -26,11 +26,11 @@ class AptosDartSDKInternal {
     _netWorkRepository = NetWorkRepository();
     _aptosCurrentConfig.listNetwork = _netWorkRepository.getListNetWork();
 
-    _network = network ?? _netWorkRepository.defaultAptosNetwork().networkURL;
+    _network = network ?? _netWorkRepository.defaultSUINetwork().networkURL;
     _aptosCurrentConfig.faucetUrl =
-        faucet ?? _netWorkRepository.defaultAptosNetwork().faucetURL;
+        faucet ?? _netWorkRepository.defaultSUINetwork().faucetURL;
     _aptosCurrentConfig.transactionHistoryGraphQL =
-        _netWorkRepository.defaultAptosNetwork().transactionHistoryGraphQL;
+        _netWorkRepository.defaultSUINetwork().transactionHistoryGraphQL;
 
     _aptosCurrentConfig.logStatus = logStatus;
 
@@ -77,9 +77,6 @@ class AptosDartSDKInternal {
     return result;
   }
 
-  NetworkType getDefaultAptosNetwork() {
-    return _netWorkRepository.defaultAptosNetwork();
-  }
 
   NetworkType getDefaultSUINetwork() {
     return _netWorkRepository.defaultSUINetwork();

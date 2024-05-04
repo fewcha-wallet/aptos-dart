@@ -32,9 +32,7 @@ class AptosDartSDK {
     return _internal.getListNetwork();
   }
 
-  NetworkType getDefaultAptosNetwork() {
-    return _internal.getDefaultAptosNetwork();
-  }
+
 
   NetworkType getDefaultSUINetwork() {
     return _internal.getDefaultSUINetwork();
