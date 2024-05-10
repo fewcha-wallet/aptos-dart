@@ -42,7 +42,7 @@ class HostUrl {
 
   static const String aptosExplorerBaseURL =
       "https://explorer.aptoslabs.com";
-  static const String suiExplorerBaseURL = "https://explorer.sui.io";
+  static const String suiExplorerBaseURL = "https://suiscan.xyz";
   static const String devNet = "Devnet";
   static const String testnet = "Testnet";
   static const String mainNet = "Mainnet";
@@ -114,8 +114,11 @@ class AppConstants {
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
   static const String signMessage = "Fewcha Login";
-  static const int aptosDecimal = 8;
   static const int suiDecimal = 9;
+  static const int aptosDecimal = 8;
+
+  static const int suiPlatform = 3;
+  static const int aptosPlatform = 2;
 }
 
 class ErrorMessages {

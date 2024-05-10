@@ -1,3 +1,5 @@
+import 'package:aptosdart/constant/constant_value.dart';
+
 enum APIType {
   getAccount,
   mint,
@@ -37,34 +39,33 @@ enum APIErrorType {
   unknown,
 }
 
-/*enum RPCFunction {
-  suiGetObjectsOwnedByAddress,
-  suiGetObject,
-  suiFaucet,
-  getTransactionsByAddress,
-  suiGetTransaction,
-}*/
 enum LogStatus { hide, show }
 
 enum CoinType {
   aptos,
   sui;
 
-  int toInt() {
+  ({
+  int platformCode,
+  int decimal,
+  String coinAddress,
+  String coinCurrency,
+  }) coinTypeInfo() {
     switch (this) {
       case CoinType.aptos:
-        return 2;
+        return (
+        platformCode: AppConstants.aptosPlatform,
+        decimal: AppConstants.aptosDecimal,
+        coinAddress: AppConstants.aptosCoinConstructor,
+        coinCurrency: AppConstants.aptosDefaultCurrency
+        );
       case CoinType.sui:
-        return 3;
+        return (
+        platformCode: AppConstants.suiPlatform,
+        decimal: AppConstants.suiDecimal,
+        coinAddress: SUIConstants.suiConstruct,
+        coinCurrency: AppConstants.suiDefaultCurrency
+        );
     }
   }
 }
-/*
-enum ComputeSUIObjectType {
-  getBalance,
-  getNFT,
-  getToken,
-  getSUIObjectList,
-  getSUICoinObjectList
-}
-*/
