@@ -30,4 +30,8 @@ class SUIBalances extends Decoder<SUIBalances> {
   String get getCoinType => coinType ?? '';
   int get getTotalBalance => totalBalance ?? 0;
   String get getCoinName => (coinType ?? '').split('::').last;
+
+  factory SUIBalances.defaultSUI(){
+    return SUIBalances(totalBalance: 0,coinType: SUIConstants.suiConstruct,coinObjectCount:0);
+  }
 }
