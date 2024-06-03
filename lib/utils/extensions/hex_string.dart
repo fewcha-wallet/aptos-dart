@@ -148,7 +148,7 @@ extension NumberExtension on num {
       return temp;
     }
     if (result.startsWith('-.')) {
-      final temp =result.replaceFirst('-.', '-0.');
+      final temp = result.replaceFirst('-.', '-0.');
       return temp;
     }
     return result;

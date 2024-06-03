@@ -2,16 +2,16 @@ import 'package:aptosdart/network/decodable.dart';
 
 class TransferredGasObject extends Decoder<TransferredGasObject> {
   List<ItemTransferredGas>? listItemTransferredGas;
+
   TransferredGasObject({this.listItemTransferredGas});
 
   TransferredGasObject.fromJson(Map<String, dynamic> json) {
-    if (json['transferred_gas_objects'] != null) {
-      listItemTransferredGas = <ItemTransferredGas>[];
-      json['transferred_gas_objects'].forEach((v) {
-        listItemTransferredGas!.add(ItemTransferredGas.fromJson(v));
-      });
-    }
+    listItemTransferredGas = json["transferredGasObjects"] == null
+        ? []
+        : List<ItemTransferredGas>.from(json["transferredGasObjects"]!
+            .map((x) => ItemTransferredGas.fromJson(x)));
   }
+
   @override
   TransferredGasObject decode(Map<String, dynamic> json) {
     return TransferredGasObject.fromJson(json);
