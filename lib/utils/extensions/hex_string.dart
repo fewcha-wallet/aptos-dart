@@ -8,6 +8,10 @@ import 'package:hex/hex.dart';
 import 'package:intl/intl.dart';
 
 extension HexString on String {
+  bool isSuiPrivKey() {
+    return startsWith('suiprivkey');
+  }
+
   String toHexString() {
     if (startsWith(AppConstants.prefixOx)) {
       return this;
@@ -128,7 +132,7 @@ extension NumberExtension on num {
       final haveDecimalDigits = splitText.length > 1;
       if (haveDecimalDigits) {
         final removeZeros =
-        splitText.last.replaceAll(Validator.removingTrailingZeros, '');
+            splitText.last.replaceAll(Validator.removingTrailingZeros, '');
         suffix = List.generate(removeZeros.length, (index) => "#").join();
       }
     }
@@ -141,7 +145,7 @@ extension NumberExtension on num {
     final haveDot = result.contains(".");
     if (!haveDot && suffix.isNotEmpty) {
       result =
-      "$result.${List.generate(suffix.length, (index) => "0").join("")}";
+          "$result.${List.generate(suffix.length, (index) => "0").join("")}";
     }
     if (result.startsWith('.')) {
       final temp = "0$result";
@@ -154,9 +158,9 @@ extension NumberExtension on num {
     return result;
   }
 
-  String formatNumberWithCurrency({String currencySymbol = "\$",
-    int decimalDigits = 1,
-    bool keepDecimalDigitLikeOrigin = false}) =>
-      "$currencySymbol${formatNumber(decimalDigits: decimalDigits,
-          keepDecimalDigitLikeOrigin: keepDecimalDigitLikeOrigin)}";
+  String formatNumberWithCurrency(
+          {String currencySymbol = "\$",
+          int decimalDigits = 1,
+          bool keepDecimalDigitLikeOrigin = false}) =>
+      "$currencySymbol${formatNumber(decimalDigits: decimalDigits, keepDecimalDigitLikeOrigin: keepDecimalDigitLikeOrigin)}";
 }

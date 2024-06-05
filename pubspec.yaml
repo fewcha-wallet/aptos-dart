@@ -28,6 +28,8 @@ dependencies:
   blake2b: ^0.2.2
   fast_base58: ^0.2.1
   collection: ^1.17.1
+  sui: ^0.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
