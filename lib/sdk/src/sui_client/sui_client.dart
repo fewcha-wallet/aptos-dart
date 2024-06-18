@@ -48,10 +48,12 @@ class SUIClient extends BaseWalletClient {
     return suiAccount;
   }
 
-  Future<TransferredGasObject> faucet(String address) async {
+  @override
+  Future<TransferredGasObject> faucet<TransferredGasObject>(String address) async {
     try {
+
       final result = await _suiRepository.faucet(address);
-      return result;
+      return result as TransferredGasObject;
     } catch (e) {
       rethrow;
     }

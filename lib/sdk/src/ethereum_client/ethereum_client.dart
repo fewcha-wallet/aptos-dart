@@ -5,7 +5,7 @@ import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:flutter/foundation.dart';
 
-class EthereumClient extends BaseWalletClient with AptosSDKMixin{
+class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<AbstractAccount> createAccount({required AccountArg arg}) async {
     try {
@@ -30,5 +30,10 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin{
       suiAccount = EthereumAccount.fromPrivateKey(arg.privateKeyHex!);
     }
     return suiAccount;
+  }
+
+  @override
+  Future<T> faucet<T>(String address) {
+    throw UnimplementedError();
   }
 }
