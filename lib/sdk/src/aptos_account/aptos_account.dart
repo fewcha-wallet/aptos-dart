@@ -93,4 +93,10 @@ class AptosAccount implements AbstractAccount {
   String getAuthKey() {
     return _authenKey;
   }
+
+  @override
+  String typeName() {
+    // TODO: implement typeName
+    throw UnimplementedError();
+  }
 }

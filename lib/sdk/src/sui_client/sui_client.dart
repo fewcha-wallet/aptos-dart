@@ -12,7 +12,6 @@ import 'package:aptosdart/core/sui/dynamic_field/dynamic_field.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_kiosk.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transaction_block/transaction_block.dart';
-import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 import 'package:aptosdart/core/transaction/transaction_pagination.dart';
 import 'package:aptosdart/sdk/src/repository/sui_repository/sui_repository.dart';
 import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';

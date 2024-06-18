@@ -2,7 +2,6 @@ library aptosdart;
 
 export 'sdk/aptos_dart_sdk.dart';
 
-export 'sdk/src/faucet_client/faucet_client.dart';
 export 'sdk/src/aptos_client/aptos_client.dart';
 export 'sdk/src/two_factor_authenticator/two_factor_authenticator_client.dart';
 export 'sdk/src/sui_client/sui_client.dart';

@@ -79,7 +79,6 @@ class AppConstants {
   static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";
   static const String aptos = "aptos";
-  static const String sui = "sui";
   static const String rootAPIStatusMessageFormat = "status_message";
   static const String prefixOx = '0x';
   static const String aptosCoin =
@@ -204,10 +203,13 @@ class SUIConstants {
   static const String moveObject = 'moveObject';
   static const String suiConstruct = '0x2::sui::SUI';
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
-  static const sui = "SUI";
+  static const String suiCurrency = "SUI";
+  static const String sui = "sui";
+
   static const String kioskLock = "0x2::kiosk::Lock";
   static const String kioskItem = "0x2::kiosk::Item";
   static const String kioskOwnerCap = "0x2::kiosk::KioskOwnerCap";
+  static const String suiPrivKey = "suiprivkey";
   static Map<String, dynamic> kioskOwnerCapFilter = {
     "filter": {"StructType": kioskOwnerCap}
   };
@@ -220,7 +222,11 @@ class SUIConstants {
   static const int maxGas = 50000000000;
   static const int gasOverHeadPerCoin = 10;
 }
+class EthereumConstant{
+  static const String metis = "metis";
+  static const String defaultPath = "m/44'/60'/0'/0/0";
 
+}
 class Abis {
   static const tokenAbis = [
     // aptos-token/build/AptosToken/abis/token/create_collection_script.abi

@@ -42,9 +42,20 @@ enum APIErrorType {
 enum LogStatus { hide, show }
 
 enum CoinType {
-  aptos,
   metis,
   sui;
+
+  static stringToEnum(String name) {
+    switch (name) {
+      case EthereumConstant.metis:
+        return CoinType.metis;
+      case SUIConstants.sui:
+        return CoinType.sui;
+      default:
+        throw UnimplementedError(
+            'Unimplemented function: stringToEnum() in CoinType enum');
+    }
+  }
 
   ({
     int platformCode,
@@ -53,13 +64,7 @@ enum CoinType {
     String coinCurrency,
   }) coinTypeInfo() {
     switch (this) {
-      case CoinType.aptos:
-        return (
-          platformCode: AppConstants.aptosPlatform,
-          decimal: AppConstants.aptosDecimal,
-          coinAddress: AppConstants.aptosCoinConstructor,
-          coinCurrency: AppConstants.aptosDefaultCurrency
-        );
+
       case CoinType.sui:
         return (
           platformCode: AppConstants.suiPlatform,
@@ -80,7 +85,7 @@ enum CoinType {
   bool validatePrivateKey(String privateKeyHex) {
     switch (this) {
       case CoinType.sui:
-        if (privateKeyHex.startsWith('suiprivkey')) {
+        if (privateKeyHex.startsWith(SUIConstants.suiPrivKey)) {
           return true;
         }
         return _validatePrivateKey(privateKeyHex,

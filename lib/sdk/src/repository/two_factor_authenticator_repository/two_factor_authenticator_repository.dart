@@ -58,7 +58,7 @@ class TwoFactorAuthenticatorRepository with AptosSDKMixin {
       final formatLeading = toHexString.replaceFirst('00', '');
 
       final short = formatLeading.substring(0, 128);
-      final regis = await register(account, short, AppConstants.sui);
+      final regis = await register(account, short, SUIConstants.sui);
       return regis;
     } catch (e) {
       rethrow;

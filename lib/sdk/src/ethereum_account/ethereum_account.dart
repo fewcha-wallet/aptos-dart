@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/sdk/src/ethereum_account/hd_node.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:web3dart/credentials.dart';
-
-const defaultPath = "m/44'/60'/0'/0/0";
 
 class EthereumAccount extends AbstractAccount {
   EthPrivateKey _ethPrivateKey;
@@ -13,9 +12,10 @@ class EthereumAccount extends AbstractAccount {
   EthereumAccount._(this._ethPrivateKey);
 
   factory EthereumAccount({required String mnemonics}) {
-    final resilt = HDNode.fromMnemonic(mnemonics).derivePath(defaultPath);
+    final result =
+        HDNode.fromMnemonic(mnemonics).derivePath(EthereumConstant.defaultPath);
 
-    return EthereumAccount.fromPrivateKey(resilt.privateKey!);
+    return EthereumAccount.fromPrivateKey(result.privateKey!);
   }
 
   factory EthereumAccount.fromPrivateKey(String privateKeyHex) {
@@ -62,4 +62,8 @@ class EthereumAccount extends AbstractAccount {
     throw UnimplementedError();
   }
 
+  @override
+  String typeName() {
+    return EthereumConstant.metis;
+  }
 }

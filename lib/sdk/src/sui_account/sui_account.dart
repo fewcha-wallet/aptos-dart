@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/core/sui/cryptography/ed25519_public_key.dart';
 import 'package:aptosdart/core/sui/publickey/public_key.dart' as sui_pk;
@@ -101,5 +102,10 @@ class SUIAccount implements AbstractAccount {
   @override
   String getAuthKey() {
     return '';
+  }
+
+  @override
+  String typeName() {
+   return SUIConstants.sui;
   }
 }

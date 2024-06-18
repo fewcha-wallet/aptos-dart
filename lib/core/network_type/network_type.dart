@@ -35,16 +35,4 @@ class NetworkType extends Decoder<NetworkType> {
   bool isMainNet(){
     return networkName.contains(HostUrl.mainNet);
   }
-  factory NetworkType.defaultConstructor() {
-    return NetworkType(
-        coinCurrency: '',
-        faucetURL: '',
-        networkName: '',
-        networkURL: '',
-        explorerBaseURL: '',
-        explorerParam: '',
-        transactionHistoryGraphQL: '',
-        twoFactorAuthenticatorURL: '',
-        coinType: CoinType.aptos);
-  }
 }

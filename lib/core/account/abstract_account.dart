@@ -15,4 +15,5 @@ abstract class AbstractAccount {
 
   String signatureHex(String hexString);
   String getAuthKey();
+  String typeName();
 }

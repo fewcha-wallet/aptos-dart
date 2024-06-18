@@ -12,7 +12,8 @@ class BaseWalletClientConfig {
       case CoinType.metis:
         return EthereumClient();
       default:
-        throw 'Error: Unimplemented BaseNFT type';
+        throw UnimplementedError(
+            'Unimplemented: BaseWalletClient from CoinType: $coinType is not implemented');
     }
   }
 }

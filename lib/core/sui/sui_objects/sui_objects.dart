@@ -603,7 +603,7 @@ class SUITransactionHistory extends BaseTransaction {
     if (currency.isNotEmpty) {
       return currency.last;
     }
-    return SUIConstants.sui;
+    return SUIConstants.suiCurrency;
   }
 
   @override
