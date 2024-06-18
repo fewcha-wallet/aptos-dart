@@ -46,6 +46,14 @@ class HostUrl {
   static const String devNet = "Devnet";
   static const String testnet = "Testnet";
   static const String mainNet = "Mainnet";
+  /// Metis
+  static const String metisTestnetUrl =
+      "https://sepolia.metisdevops.link";
+  static const String metisMainNetUrl =
+      "https://sepolia.metisdevops.link";
+
+  static const metisTestnet = "Metis Testnet";
+  static const metisMainNet = "Metis Mainnet";
 
   /// 2FA
   static const String baseUrl2FA = "https://api.fewcha.app";
@@ -65,6 +73,8 @@ class AppConstants {
   static const String entryFunctionPayload = "entry_function_payload";
   static const String aptosDefaultCurrency = "APT";
   static const String suiDefaultCurrency = "SUI";
+  static const String metisTestNetDefaultCurrency = "tMETIS";
+  static const String metisDefaultCurrency = "METIS";
   static const String defaultGasUnitPrice = '100';
   static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";
@@ -114,11 +124,13 @@ class AppConstants {
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
   static const String signMessage = "Fewcha Login";
+  static const int metisDecimal = 18;
   static const int suiDecimal = 9;
   static const int aptosDecimal = 8;
 
   static const int suiPlatform = 3;
   static const int aptosPlatform = 2;
+  static const int metisPlatform = 1;
 }
 
 class ErrorMessages {
@@ -193,6 +205,12 @@ class SUIConstants {
   static const String suiConstruct = '0x2::sui::SUI';
   static const String suiNFTType = '0x2::devnet_nft::DevNetNFT';
   static const sui = "SUI";
+  static const String kioskLock = "0x2::kiosk::Lock";
+  static const String kioskItem = "0x2::kiosk::Item";
+  static const String kioskOwnerCap = "0x2::kiosk::KioskOwnerCap";
+  static Map<String, dynamic> kioskOwnerCapFilter = {
+    "filter": {"StructType": kioskOwnerCap}
+  };
   static const hardenedOffset = 0x80000000;
   static const String defaultEd25519DerivationPath =
       "m/44'/784'/0'/0'/0'";

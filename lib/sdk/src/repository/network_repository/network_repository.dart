@@ -22,39 +22,12 @@ class NetWorkRepository {
         suiMainnet,
         suiDevNet,
         suiTestNet,
+        testnetMetisNetwork(),
       ];
     } catch (e) {
       rethrow;
     }
   }
-
-  // NetworkType defaultAptosNetwork() {
-  //   return NetworkType(
-  //     networkURL: HostUrl.aptosMainNetUrl,
-  //     networkName: HostUrl.aptosMainnet,
-  //     faucetURL: '',
-  //     coinCurrency: AppConstants.aptosDefaultCurrency,
-  //     transactionHistoryGraphQL: HostUrl.aptosMainnetGraphql,
-  //     coinType: CoinType.aptos,
-  //     explorerParam: HostUrl.mainNet,
-  //     explorerBaseURL: HostUrl.aptosExplorerBaseURL,
-  //     twoFactorAuthenticatorURL: HostUrl.mainNet2FAUrl,
-  //   );
-  // }
-  //
-  // NetworkType devNetAptosNetwork() {
-  //   return NetworkType(
-  //     networkURL: HostUrl.aptosDevUrl,
-  //     networkName: HostUrl.aptosDevnet,
-  //     faucetURL: HostUrl.faucetAptosDevnetUrl,
-  //     coinCurrency: AppConstants.aptosDefaultCurrency,
-  //     transactionHistoryGraphQL: HostUrl.aptosDevnetGraphql,
-  //     coinType: CoinType.aptos,
-  //     explorerParam: HostUrl.devNet,
-  //     explorerBaseURL: HostUrl.aptosExplorerBaseURL,
-  //     twoFactorAuthenticatorURL: HostUrl.devNet2FAUrl,
-  //   );
-  // }
 
   NetworkType defaultSUINetwork() {
     return NetworkType(
@@ -81,6 +54,20 @@ class NetWorkRepository {
       explorerParam: HostUrl.devNet,
       explorerBaseURL: HostUrl.suiExplorerBaseURL,
       twoFactorAuthenticatorURL: HostUrl.devNet2FAUrl,
+    );
+  }
+
+  NetworkType testnetMetisNetwork() {
+    return NetworkType(
+      networkURL: HostUrl.metisTestnetUrl,
+      networkName: HostUrl.metisTestnet,
+      faucetURL: '',
+      coinCurrency: AppConstants.metisTestNetDefaultCurrency,
+      transactionHistoryGraphQL: '',
+      coinType: CoinType.metis,
+      explorerParam: HostUrl.devNet,
+      explorerBaseURL: 'HostUrl.suiExplorerBaseURL',
+      twoFactorAuthenticatorURL: 'HostUrl.devNet2FAUrl',
     );
   }
 }

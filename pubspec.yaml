@@ -13,6 +13,7 @@ dependencies:
   dio: 5.3.0
   cryptography: ^2.0.5
   bip39: ^1.0.6
+  bip32: ^2.0.0
   sha3: ^0.2.0
   buffer: ^1.1.1
   crypto: ^3.0.2
@@ -29,6 +30,8 @@ dependencies:
   fast_base58: ^0.2.1
   collection: ^1.17.1
   sui: ^0.2.0
+  web3dart: 2.7.2
+
 
 dev_dependencies:
   flutter_test:

@@ -10,6 +10,7 @@ import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
 import 'package:aptosdart/core/sui/dynamic_field/dynamic_field.dart';
 import 'package:aptosdart/core/sui/raw_signer/raw_signer.dart';
 import 'package:aptosdart/core/sui/sui_intent/sui_intent.dart';
+import 'package:aptosdart/core/sui/sui_objects/sui_kiosk.dart';
 import 'package:aptosdart/core/sui/sui_objects/sui_objects.dart';
 import 'package:aptosdart/core/sui/transferred_gas_object/transferred_gas_object.dart';
 
@@ -319,6 +320,37 @@ class SUIRepository with AptosSDKMixin {
     } catch (e) {
       rethrow;
     }
+  }
+  Future<List<SuiKiosk>> getKioskItem(String id) async {
+    List<String> lock = [];
+    List<String> item = [];
+    List<SuiKiosk> list = [];
+    final dynamicItem = await  getDynamicFields([id]);
+    for (var e in dynamicItem) {
+      switch (e.name?.type) {
+        case SUIConstants.kioskLock:
+          lock.add(e.name!.value!.id.toString());
+        case SUIConstants.kioskItem:
+          item.add(e.objectId!);
+      }
+    }
+    if (item.isNotEmpty) {
+      for (var element in item) {
+        final listCoin = await  multiGetObjects([element]);
+        final listKiosk = fetchSUIKioskStatus(listCoin, lock);
+        list.addAll(listKiosk);
+      }
+    }
+    return list;
+  }
+
+  List<SuiKiosk> fetchSUIKioskStatus(
+      List<SUIObjects> listSuiObject, List<String> lockIDs) {
+    final listKiosk = listSuiObject
+        .map(
+            (e) => SuiKiosk.toSuiKiosk(e, isLock: lockIDs.contains(e.objectId)))
+        .toList();
+    return listKiosk;
   }
 
 //endregion

@@ -5,11 +5,6 @@ abstract class AbstractAccount {
 
   List<int> getPrivateKey();
 
-  // KeyPair getKeyPair();
-  //
-  // /// Also use to create Address
-  // String authKey(List<int> publicKey);
-
   /// Get public key in Hex
   String publicKeyInHex();
 

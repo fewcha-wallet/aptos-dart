@@ -12,6 +12,7 @@ class SUICoinMetadata extends Decoder<SUICoinMetadata> {
     this.iconUrl,
     this.id,
   });
+
   SUICoinMetadata.fromJson(Map<String, dynamic> json) {
     decimals = json['decimals'] ?? 0;
     name = json['name'];
@@ -20,7 +21,12 @@ class SUICoinMetadata extends Decoder<SUICoinMetadata> {
     iconUrl = json['iconUrl'];
     id = json['id'];
   }
-  int get getDecimals => decimals!;
+
+  int get getDecimals => decimals ?? 0;
+  String get getName => name ?? '';
+  String get getSymbol => symbol ?? '';
+  String get getIconUrl => iconUrl ?? '';
+
   @override
   SUICoinMetadata decode(Map<String, dynamic> json) {
     return SUICoinMetadata.fromJson(json);
