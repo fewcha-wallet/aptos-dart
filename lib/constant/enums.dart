@@ -74,7 +74,7 @@ enum CoinType {
         );
       case CoinType.metis:
         return (
-          platformCode: AppConstants.metisPlatform,
+          platformCode: 5,
           decimal: AppConstants.metisDecimal,
           coinAddress: SUIConstants.suiConstruct,
           coinCurrency: AppConstants.metisDefaultCurrency

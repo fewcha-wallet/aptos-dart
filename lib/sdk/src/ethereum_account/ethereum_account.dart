@@ -5,6 +5,7 @@ import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/sdk/src/ethereum_account/hd_node.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:web3dart/credentials.dart';
+import 'package:web3dart/crypto.dart';
 
 class EthereumAccount extends AbstractAccount {
   EthPrivateKey _ethPrivateKey;
@@ -46,14 +47,13 @@ class EthereumAccount extends AbstractAccount {
 
   @override
   String publicKeyInHex() {
-    // TODO: implement publicKeyInHex
-    throw UnimplementedError();
+    return Utilities.bytesToHex(_ethPrivateKey.encodedPublicKey);
   }
 
   @override
   String signBuffer(Uint8List buffer) {
-    // TODO: implement signBuffer
-    throw UnimplementedError();
+    final result = _ethPrivateKey.signPersonalMessageToUint8List(buffer);
+  return  bytesToHex(result);
   }
 
   @override

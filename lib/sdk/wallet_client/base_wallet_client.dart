@@ -24,4 +24,6 @@ abstract class BaseWalletClient {
   Future<int> getAccountBalance(String address);
 
   Future<T> faucet<T>(String address);
+
+  Future<List<T>> getAccountTokens<T>(String address);
 }

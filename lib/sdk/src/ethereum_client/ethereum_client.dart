@@ -1,11 +1,19 @@
 import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/sdk/src/ethereum_account/ethereum_account.dart';
+import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_repository.dart';
 import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:flutter/foundation.dart';
+import 'package:web3dart/credentials.dart';
 
 class EthereumClient extends BaseWalletClient with AptosSDKMixin {
+  late EthereumRepository _ethereumRepository;
+
+  EthereumClient() {
+    _ethereumRepository = EthereumRepository();
+  }
+
   @override
   Future<AbstractAccount> createAccount({required AccountArg arg}) async {
     try {
@@ -35,5 +43,17 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<T> faucet<T>(String address) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<List<EtherAmount>> getAccountTokens<EtherAmount>(
+      String address) async {
+    try {
+      final result = await _ethereumRepository
+          .getListToken(EthereumAddress.fromHex(address));
+      return [result as EtherAmount];
+    } catch (e) {
+      return [];
+    }
   }
 }

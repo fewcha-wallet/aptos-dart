@@ -2,7 +2,6 @@ import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
-import 'package:aptosdart/core/sui/balances/sui_balances.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_metadata.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
@@ -48,9 +47,9 @@ class SUIClient extends BaseWalletClient {
   }
 
   @override
-  Future<TransferredGasObject> faucet<TransferredGasObject>(String address) async {
+  Future<TransferredGasObject> faucet<TransferredGasObject>(
+      String address) async {
     try {
-
       final result = await _suiRepository.faucet(address);
       return result as TransferredGasObject;
     } catch (e) {
@@ -122,16 +121,6 @@ class SUIClient extends BaseWalletClient {
       return 0;
     } catch (e) {
       return 0;
-    }
-  }
-
-  Future<List<SUIBalances>> getAccountTokens(String address) async {
-    try {
-      final listCoins = await _suiRepository.getSUITokens(address);
-
-      return listCoins;
-    } catch (e) {
-      return [];
     }
   }
 
@@ -267,5 +256,17 @@ class SUIClient extends BaseWalletClient {
       }
     } catch (_) {}
     return list;
+  }
+
+  @override
+  Future<List<SUIBalances>> getAccountTokens<SUIBalances>(
+      String address) async {
+    try {
+      final listCoins = await _suiRepository.getSUITokens(address);
+
+      return listCoins as List<SUIBalances>;
+    } catch (e) {
+      return [];
+    }
   }
 }
