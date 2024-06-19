@@ -224,6 +224,7 @@ class SUIConstants {
 }
 class EthereumConstant{
   static const String metis = "metis";
+  static const String metisTestNet = "metisTestNet";
   static const String defaultPath = "m/44'/60'/0'/0/0";
 
 }

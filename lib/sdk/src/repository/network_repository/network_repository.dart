@@ -64,10 +64,24 @@ class NetWorkRepository {
       faucetURL: '',
       coinCurrency: AppConstants.metisTestNetDefaultCurrency,
       transactionHistoryGraphQL: '',
+      coinType: CoinType.metisTestNet,
+      explorerParam: '',
+      explorerBaseURL: '',
+      twoFactorAuthenticatorURL: '',
+    );
+  }
+
+  NetworkType mainNetMetisNetwork() {
+    return NetworkType(
+      networkURL: HostUrl.metisMainNetUrl,
+      networkName: HostUrl.metisMainNet,
+      faucetURL: '',
+      coinCurrency: AppConstants.metisDefaultCurrency,
+      transactionHistoryGraphQL: '',
       coinType: CoinType.metis,
-      explorerParam: HostUrl.devNet,
-      explorerBaseURL: 'HostUrl.suiExplorerBaseURL',
-      twoFactorAuthenticatorURL: 'HostUrl.devNet2FAUrl',
+      explorerParam: '',
+      explorerBaseURL: '',
+      twoFactorAuthenticatorURL: '',
     );
   }
 }

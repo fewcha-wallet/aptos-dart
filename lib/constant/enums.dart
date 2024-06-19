@@ -43,11 +43,14 @@ enum LogStatus { hide, show }
 
 enum CoinType {
   metis,
+  metisTestNet,
   sui;
 
-  static stringToEnum(String name) {
+  static CoinType stringToEnum(String name) {
     switch (name) {
       case EthereumConstant.metis:
+        return CoinType.metis;
+      case EthereumConstant.metisTestNet:
         return CoinType.metis;
       case SUIConstants.sui:
         return CoinType.sui;
@@ -62,22 +65,32 @@ enum CoinType {
     int decimal,
     String coinAddress,
     String coinCurrency,
+    String blockChainName,
   }) coinTypeInfo() {
     switch (this) {
-
       case CoinType.sui:
         return (
           platformCode: AppConstants.suiPlatform,
           decimal: AppConstants.suiDecimal,
           coinAddress: SUIConstants.suiConstruct,
-          coinCurrency: AppConstants.suiDefaultCurrency
+          coinCurrency: AppConstants.suiDefaultCurrency,
+          blockChainName: SUIConstants.sui
         );
       case CoinType.metis:
+        return (
+          platformCode: 4,
+          decimal: AppConstants.metisDecimal,
+          coinAddress: SUIConstants.suiConstruct,
+          coinCurrency: AppConstants.metisDefaultCurrency,
+          blockChainName: EthereumConstant.metis
+        );
+      case CoinType.metisTestNet:
         return (
           platformCode: 5,
           decimal: AppConstants.metisDecimal,
           coinAddress: SUIConstants.suiConstruct,
-          coinCurrency: AppConstants.metisDefaultCurrency
+          coinCurrency: AppConstants.metisTestNetDefaultCurrency,
+          blockChainName: EthereumConstant.metis
         );
     }
   }
