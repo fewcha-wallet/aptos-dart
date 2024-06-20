@@ -95,6 +95,9 @@ class AptosDartSDKInternal {
   NetworkType getDefaultSUINetwork() {
     return _netWorkRepository.defaultSUINetwork();
   }
+ NetworkType getDefaultMetisNetwork() {
+    return _netWorkRepository.mainNetMetisNetwork();
+  }
 
   String getNetworkNameByAddress() {
     final result = _aptosCurrentConfig.listNetwork!

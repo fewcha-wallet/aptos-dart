@@ -11,8 +11,8 @@ class BaseWalletClientConfig {
         return SUIClient();
       case CoinType.metis:
         return EthereumClient();
-      case CoinType.metisTestNet:
-        return EthereumClient();
+      // case CoinType.metisTestNet:
+      //   return EthereumClient();
       default:
         throw UnimplementedError(
             'Unimplemented: BaseWalletClient from CoinType: $coinType is not implemented');

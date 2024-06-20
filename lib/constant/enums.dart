@@ -43,15 +43,14 @@ enum LogStatus { hide, show }
 
 enum CoinType {
   metis,
-  metisTestNet,
+  // metisTestNet,
   sui;
 
   static CoinType stringToEnum(String name) {
     switch (name) {
       case EthereumConstant.metis:
         return CoinType.metis;
-      case EthereumConstant.metisTestNet:
-        return CoinType.metis;
+
       case SUIConstants.sui:
         return CoinType.sui;
       default:
@@ -61,37 +60,40 @@ enum CoinType {
   }
 
   ({
-    int platformCode,
-    int decimal,
-    String coinAddress,
-    String coinCurrency,
-    String blockChainName,
+  // int platformCode,
+  int decimal,
+  String coinAddress,
+  String coinCurrency,
+  String blockChainName,
   }) coinTypeInfo() {
     switch (this) {
       case CoinType.sui:
         return (
-          platformCode: AppConstants.suiPlatform,
-          decimal: AppConstants.suiDecimal,
-          coinAddress: SUIConstants.suiConstruct,
-          coinCurrency: AppConstants.suiDefaultCurrency,
-          blockChainName: SUIConstants.sui
+        decimal: AppConstants.suiDecimal,
+        coinAddress: SUIConstants.suiConstruct,
+        coinCurrency: AppConstants.suiDefaultCurrency,
+        blockChainName: SUIConstants.sui
         );
       case CoinType.metis:
         return (
-          platformCode: 4,
-          decimal: AppConstants.metisDecimal,
-          coinAddress: SUIConstants.suiConstruct,
-          coinCurrency: AppConstants.metisDefaultCurrency,
-          blockChainName: EthereumConstant.metis
+        decimal: AppConstants.metisDecimal,
+        coinAddress: SUIConstants.suiConstruct,
+        coinCurrency: AppConstants.metisDefaultCurrency,
+        blockChainName: EthereumConstant.metis
         );
-      case CoinType.metisTestNet:
-        return (
-          platformCode: 5,
-          decimal: AppConstants.metisDecimal,
-          coinAddress: SUIConstants.suiConstruct,
-          coinCurrency: AppConstants.metisTestNetDefaultCurrency,
-          blockChainName: EthereumConstant.metis
-        );
+      default :
+        throw UnimplementedError();
+      // case CoinType.metisTestNet:
+      //   return (
+      //   platformCode: 5,
+      //   decimal: AppConstants.metisDecimal,
+      //   coinAddress: SUIConstants.suiConstruct,
+      //   coinCurrency: AppConstants.metisTestNetDefaultCurrency,
+      //   blockChainName: EthereumConstant.metis
+      //
+      //   /// Explain: This is CoinType.metisTestNet, but it's blockchain name still Metis
+      //   ///  ==> : blockChainName: EthereumConstant.metis
+      //   );
     }
   }
 
@@ -105,7 +107,7 @@ enum CoinType {
             privateKeyHex.length == 130 || privateKeyHex.length == 66);
       case CoinType.metis:
         return _validatePrivateKey(privateKeyHex,
-            privateKeyHex.length == 130 || privateKeyHex.length == 66);
+            privateKeyHex.length == 66);
       default:
         return false;
     }

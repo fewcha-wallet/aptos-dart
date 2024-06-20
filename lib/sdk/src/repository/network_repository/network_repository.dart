@@ -8,6 +8,8 @@ class NetWorkRepository {
       final suiMainnet = defaultSUINetwork();
       final suiDevNet = devnetSUINetwork();
       final suiTestNet = NetworkType(
+        platformCode: AppConstants.suiPlatform,
+
         networkURL: HostUrl.suiTestnetUrl,
         networkName: HostUrl.suiTestnet,
         faucetURL: HostUrl.faucetSUITestnetUrl,
@@ -22,6 +24,7 @@ class NetWorkRepository {
         suiMainnet,
         suiDevNet,
         suiTestNet,
+        mainNetMetisNetwork(),
         testnetMetisNetwork(),
       ];
     } catch (e) {
@@ -31,6 +34,8 @@ class NetWorkRepository {
 
   NetworkType defaultSUINetwork() {
     return NetworkType(
+      platformCode: AppConstants.suiPlatform,
+
       networkURL: HostUrl.suiMainNetUrl,
       networkName: HostUrl.suiMainNet,
       faucetURL: '',
@@ -45,6 +50,8 @@ class NetWorkRepository {
 
   NetworkType devnetSUINetwork() {
     return NetworkType(
+      platformCode: AppConstants.suiPlatform,
+
       networkURL: HostUrl.suiDevnetUrl,
       networkName: HostUrl.suiDevnet,
       faucetURL: HostUrl.faucetSUIDevnetUrl,
@@ -59,12 +66,13 @@ class NetWorkRepository {
 
   NetworkType testnetMetisNetwork() {
     return NetworkType(
+      platformCode: 5,
       networkURL: HostUrl.metisTestnetUrl,
       networkName: HostUrl.metisTestnet,
       faucetURL: '',
       coinCurrency: AppConstants.metisTestNetDefaultCurrency,
       transactionHistoryGraphQL: '',
-      coinType: CoinType.metisTestNet,
+      coinType: CoinType.metis,
       explorerParam: '',
       explorerBaseURL: '',
       twoFactorAuthenticatorURL: '',
@@ -73,6 +81,7 @@ class NetWorkRepository {
 
   NetworkType mainNetMetisNetwork() {
     return NetworkType(
+      platformCode: 4,
       networkURL: HostUrl.metisMainNetUrl,
       networkName: HostUrl.metisMainNet,
       faucetURL: '',

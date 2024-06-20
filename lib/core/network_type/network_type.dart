@@ -11,7 +11,7 @@ class NetworkType extends Decoder<NetworkType> {
       explorerBaseURL,
       explorerParam,
       twoFactorAuthenticatorURL;
-
+  int platformCode;
   CoinType coinType;
   bool isSelected;
 
@@ -25,6 +25,7 @@ class NetworkType extends Decoder<NetworkType> {
     required this.explorerBaseURL,
     required this.explorerParam,
     required this.twoFactorAuthenticatorURL,
+    required this.platformCode,
     this.isSelected = false,
   });
 
