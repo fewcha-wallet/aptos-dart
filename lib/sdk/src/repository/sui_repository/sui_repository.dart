@@ -40,26 +40,26 @@ class SUIRepository with AptosSDKMixin {
     }
   }
 
-  Future<TransferredGasObject> faucet(String address) async {
-    try {
-      final body = {
-        "FixedAmountRequest": {"recipient": address}
-      };
-      final result = await apiClient.request(
-          route: APIRoute(
-            APIType.faucetSUI,
-          ),
-          body: body,
-          create: (response) =>
-              APIResponse(
-                  createObject: TransferredGasObject(),
-                  response: response));
-
-      return result.decodedData!;
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<TransferredGasObject> faucet(String address) async {
+  //   try {
+  //     final body = {
+  //       "FixedAmountRequest": {"recipient": address}
+  //     };
+  //     final result = await apiClient.request(
+  //         route: APIRoute(
+  //           APIType.faucetSUI,
+  //         ),
+  //         body: body,
+  //         create: (response) =>
+  //             APIResponse(
+  //                 createObject: TransferredGasObject(),
+  //                 response: response));
+  //
+  //     return result.decodedData!;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<SUIObjects> getObject(String objectIds) async {
     try {
