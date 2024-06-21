@@ -1,7 +1,6 @@
 import 'package:aptosdart/constant/api_method.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
-import 'package:aptosdart/core/aptos_current_config/aptos_current_config.dart';
 import 'package:dio/dio.dart';
 
 abstract class APIRouteConfigurable {
@@ -18,21 +17,7 @@ class APIRoute implements APIRouteConfigurable {
       {this.baseUrl, this.routeParams, this.method, this.headers}) {
     routeParams ??= "";
   }
-  final String _accounts = 'accounts';
-  final String _resources = 'resources';
-  final String _resource = 'resource';
-  final String _modules = 'modules';
-  final String _module = 'module';
-  final String _mint = 'mint';
-  final String _transactions = 'transactions';
-  final String _byHash = 'by_hash';
-  final String _byVersion = 'by_version';
-  final String _simulate = 'simulate';
-  final String _encodeSubmission = 'encode_submission';
-  final String _event = 'events';
-  final String _tables = 'tables';
-  final String _estimateGasPrice = 'estimate_gas_price';
-  final String _item = 'item';
+
   final String _totp = 'totp';
   final String _register = 'register';
   final String _verify = 'verify';
@@ -43,90 +28,7 @@ class APIRoute implements APIRouteConfigurable {
     ResponseType responseType = ResponseType.json;
 
     switch (apiType) {
-      case APIType.getLedger:
-        break;
 
-      /// Account API
-      case APIType.getAccount:
-        path = '/$_accounts/$routeParams';
-        break;
-      case APIType.getAccountResources:
-        path = '/$_accounts/$routeParams/$_resources';
-        break;
-      case APIType.getResourcesByType:
-        path = '/$_accounts/$routeParams/$_resource/';
-
-        break;
-      case APIType.getAccountModules:
-        path = '/$_accounts/$routeParams/$_modules';
-
-        break;
-      case APIType.getAccountModuleByID:
-        path = '/$_accounts/$routeParams/$_module/';
-        break;
-
-      ///Faucet
-      case APIType.mint:
-        baseUrl =
-            AptosCurrentConfig.shared.faucetUrl ?? HostUrl.faucetAptosDevnetUrl;
-        method = APIMethod.post;
-        path = '/$_mint';
-        break;
-      case APIType.submitSignedBCSTransaction:
-        method = APIMethod.post;
-        path = '/$_transactions';
-        headers = HeadersApi.signedTransactionHeaders;
-        break;
-      case APIType.simulateSignedBCSTransaction:
-        method = APIMethod.post;
-        path = '/$_transactions/$_simulate';
-        headers = HeadersApi.signedTransactionHeaders;
-        break;
-      case APIType.simulateTransaction:
-        method = APIMethod.post;
-        path = '/$_transactions/$_simulate';
-        break;
-      case APIType.getTransactionByHash:
-        path = '/$_transactions/$_byHash/$routeParams';
-        break;
-      case APIType.getTransactionByVersion:
-        path = '/$_transactions/$_byVersion/$routeParams';
-        method = APIMethod.get;
-
-        break;
-      case APIType.getGraphQLQuery:
-        if (AptosCurrentConfig.shared.transactionHistoryGraphQL!.isNotEmpty) {
-          baseUrl = AptosCurrentConfig.shared.transactionHistoryGraphQL;
-        }
-        method = APIMethod.post;
-
-        break;
-      // case APIType.signingMessage:
-      //   method = APIMethod.post;
-      //   path = '/$_transactions/$_signingMessage';
-      //   break;
-      case APIType.encodeSubmission:
-        method = APIMethod.post;
-        path = '/$_transactions/$_encodeSubmission';
-        break;
-      case APIType.getEventsByEventKey:
-        path = '/$_event/$routeParams';
-        break;
-      case APIType.getEventsByEventHandle:
-        path = '/$_accounts/$routeParams';
-        break;
-      case APIType.getTableItem:
-        method = APIMethod.post;
-        path = '/$_tables/$routeParams/$_item';
-        break;
-      case APIType.getIPFSProfile:
-        method = APIMethod.get;
-        path = '$routeParams';
-        break;
-      case APIType.estimateGasPrice:
-        method = APIMethod.get;
-        path = '/$_estimateGasPrice';
-        break;
       case APIType.register2FA:
         method = APIMethod.post;
         path = '/$_totp/$_register';
@@ -135,10 +37,10 @@ class APIRoute implements APIRouteConfigurable {
         method = APIMethod.post;
         path = '/$_totp/$_verify';
         break;
-      case APIType.faucetSUI:
-        method = APIMethod.post;
-        baseUrl = AptosCurrentConfig.shared.faucetUrl;
-        break;
+      // case APIType.faucetSUI:
+      //   method = APIMethod.post;
+      //   baseUrl = AptosCurrentConfig.shared.faucetUrl;
+      //   break;
     }
     final options = Options(
             headers: headers ?? HeadersApi.headers,
