@@ -15,31 +15,31 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:aptosdart/utils/utilities.dart';
 
 class TwoFactorAuthenticatorRepository with AptosSDKMixin {
-  late AptosClient _aptosClient;
+  // late AptosClient _aptosClient;
 
   TwoFactorAuthenticatorRepository() {
-    _aptosClient = AptosClient();
+    // _aptosClient = AptosClient();
   }
 
-  Future<TwoFactorAuthenticatorResponse> registerAptos2FA(
-      AptosAccount account) async {
-    try {
-      AptosSignMessagePayload payloads = AptosSignMessagePayload(
-        message: AppConstants.signMessage,
-        nonce: '0',
-        address: true,
-        application: false,
-        chainId: true,
-      );
-      final result = await _aptosClient.signMessage(account, payloads);
-
-      final regis =
-          await register(account, result.signature, AppConstants.aptos);
-      return regis;
-    } catch (e) {
-      rethrow;
-    }
-  }
+  // Future<TwoFactorAuthenticatorResponse> registerAptos2FA(
+  //     AptosAccount account) async {
+  //   try {
+  //     AptosSignMessagePayload payloads = AptosSignMessagePayload(
+  //       message: AppConstants.signMessage,
+  //       nonce: '0',
+  //       address: true,
+  //       application: false,
+  //       chainId: true,
+  //     );
+  //     final result = await _aptosClient.signMessage(account, payloads);
+  //
+  //     final regis =
+  //         await register(account, result.signature, AppConstants.aptos);
+  //     return regis;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   Future<TwoFactorAuthenticatorResponse> registerSUI2FA(
       SUIAccount account) async {

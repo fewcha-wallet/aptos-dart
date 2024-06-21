@@ -28,7 +28,7 @@ class AptosDartSDKInternal {
   AptosCurrentConfig get aptosCurrentConfig => _aptosCurrentConfig;
   ///
 
-  LedgerRepository? _ledgerRepository;
+  // LedgerRepository? _ledgerRepository;
   late NetWorkRepository _netWorkRepository;
   ///
 
@@ -56,16 +56,16 @@ class AptosDartSDKInternal {
     _client=Client();
     _web3Client = Web3Client(_network,_client);
   }
-
-  Future<void> initSDK() async {
-    _ledgerRepository = LedgerRepository();
-    try {
-      _aptosCurrentConfig.ledger =
-          await _ledgerRepository!.getLedgerInformation();
-    } catch (e) {
-      rethrow;
-    }
-  }
+  //
+  // Future<void> initSDK() async {
+  //   // _ledgerRepository = LedgerRepository();
+  //   try {
+  //     // _aptosCurrentConfig.ledger =
+  //     //     await _ledgerRepository!.getLedgerInformation();
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 
   void setNetWork(NetworkType networkType) {
     _network = networkType.networkURL;

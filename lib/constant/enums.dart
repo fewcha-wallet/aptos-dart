@@ -77,7 +77,7 @@ enum CoinType {
       case CoinType.metis:
         return (
         decimal: EthereumConstant.metisDecimal,
-        coinAddress: SUIConstants.suiConstruct,
+        coinAddress: EthereumConstant.metisTokenAddress,
         coinCurrency: EthereumConstant.metisDefaultCurrency,
         blockChainName: EthereumConstant.metis
         );
@@ -106,8 +106,7 @@ enum CoinType {
         return _validatePrivateKey(privateKeyHex,
             privateKeyHex.length == 130 || privateKeyHex.length == 66);
       case CoinType.metis:
-        return _validatePrivateKey(privateKeyHex,
-            privateKeyHex.length == 66);
+        return privateKeyHex.length == 66||privateKeyHex.length == 64;
       default:
         return false;
     }
