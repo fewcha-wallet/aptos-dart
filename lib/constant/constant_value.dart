@@ -50,7 +50,7 @@ class HostUrl {
   static const String metisTestnetUrl =
       "https://sepolia.metisdevops.link";
   static const String metisMainNetUrl =
-      "https://sepolia.metisdevops.link";
+      "https://andromeda.metis.io/?owner=1088";
 
   static const metisTestnet = "Metis Testnet";
   static const metisMainNet = "Metis Mainnet";
@@ -73,8 +73,7 @@ class AppConstants {
   static const String entryFunctionPayload = "entry_function_payload";
   static const String aptosDefaultCurrency = "APT";
   static const String suiDefaultCurrency = "SUI";
-  static const String metisTestNetDefaultCurrency = "tMETIS";
-  static const String metisDefaultCurrency = "METIS";
+
   static const String defaultGasUnitPrice = '100';
   static const String ed25519Signature = "ed25519_signature";
   static const String rootAPIStatusFormat = "status";
@@ -123,7 +122,6 @@ class AppConstants {
   static const String rawTransactionWithDataSalt =
       'APTOS::RawTransactionWithData';
   static const String signMessage = "Fewcha Login";
-  static const int metisDecimal = 18;
   static const int suiDecimal = 9;
   static const int aptosDecimal = 8;
 
@@ -226,6 +224,10 @@ class EthereumConstant{
   static const String metis = "metis";
   static const String metisTestNet = "metisTestNet";
   static const String defaultPath = "m/44'/60'/0'/0/0";
+  static const String metisTestNetDefaultCurrency = "tMETIS";
+  static const String metisDefaultCurrency = "METIS";
+  static const String metisTokenAddress = "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000";
+  static const int metisDecimal = 18;
 
 }
 class Abis {

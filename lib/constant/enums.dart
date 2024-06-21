@@ -76,9 +76,9 @@ enum CoinType {
         );
       case CoinType.metis:
         return (
-        decimal: AppConstants.metisDecimal,
+        decimal: EthereumConstant.metisDecimal,
         coinAddress: SUIConstants.suiConstruct,
-        coinCurrency: AppConstants.metisDefaultCurrency,
+        coinCurrency: EthereumConstant.metisDefaultCurrency,
         blockChainName: EthereumConstant.metis
         );
       default :

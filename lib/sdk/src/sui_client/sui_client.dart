@@ -140,24 +140,29 @@ class SUIClient extends BaseWalletClient {
       return [];
     }
   }
+  @override
 
-  Future<SUITransaction?> submitTransaction({
-    required SUIArgument suiArgument,
+  Future<T> submitTransaction<T>({
+    required dynamic arg,
   }) async {
     try {
+      SUIArgument suiArgument=     arg as SUIArgument;
+
       Uint8List tx = fromB64(suiArgument.txBytes!);
       final result = await _suiRepository.signAndExecuteTransactionBlock(
           suiArgument.suiAccount!, tx);
-      return result;
+      return result as T;
     } catch (e) {
       rethrow;
     }
   }
-
-  Future<SUITransactionSimulateResult> simulateTransaction({
-    required SUIArgument suiArgument,
+  @override
+  Future<T> simulateTransaction<T>({
+    // required SUIArgument suiArgument,
+required dynamic arg
   }) async {
     try {
+      SUIArgument suiArgument=     arg as SUIArgument;
       TransactionBlock tx;
       if (suiArgument.isSendNFT) {
         tx = await CreateNFTTransferTransaction.createNFTTransferTransaction(
@@ -190,7 +195,7 @@ class SUIClient extends BaseWalletClient {
       final gas = result['gas'];
 
       return SUITransactionSimulateResult(
-          gas: int.parse(gas), txBytes: txBytes);
+          gas: int.parse(gas), txBytes: txBytes) as T;
     } catch (e) {
       rethrow;
     }
@@ -269,4 +274,11 @@ class SUIClient extends BaseWalletClient {
       return [];
     }
   }
+
+  @override
+  Future<T> transactionHistoryByHash<T>(String hash) {
+    // TODO: implement transactionHistoryByHash
+    throw UnimplementedError();
+  }
+
 }

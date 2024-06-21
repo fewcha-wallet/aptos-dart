@@ -11,7 +11,7 @@ class EthereumAccount extends AbstractAccount {
   EthPrivateKey _ethPrivateKey;
 
   EthereumAccount._(this._ethPrivateKey);
-
+  EthPrivateKey get ethPrivateKey =>_ethPrivateKey;
   factory EthereumAccount({required String mnemonics}) {
     final result =
         HDNode.fromMnemonic(mnemonics).derivePath(EthereumConstant.defaultPath);

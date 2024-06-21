@@ -26,6 +26,13 @@ abstract class BaseWalletClient {
   Future<int> getAccountBalance(String address);
 
   Future<T> faucet<T>(String address);
+  Future<T> transactionHistoryByHash<T>(String hash);
 
   Future<List<T>> getAccountTokens<T>(String address);
+
+  Future<T> simulateTransaction<T>({
+    required dynamic arg,
+  }); Future<T> submitTransaction<T>({
+    required dynamic arg,
+  });
 }

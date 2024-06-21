@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:aptosdart/argument/account_arg.dart';
+import 'package:aptosdart/argument/ethereum_argument/ethereum_argument.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
+import 'package:aptosdart/core/ethereum/ethereum_transaction_simulate_result.dart';
 import 'package:aptosdart/sdk/src/ethereum_account/ethereum_account.dart';
 import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_repository.dart';
 import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:flutter/foundation.dart';
-import 'package:web3dart/credentials.dart';
+import 'package:web3dart/web3dart.dart';
 
 class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   late EthereumRepository _ethereumRepository;
@@ -25,9 +29,10 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   }
 
   @override
-  Future<int> getAccountBalance(String address) {
-    // TODO: implement getAccountBalance
-    throw UnimplementedError();
+  Future<int> getAccountBalance(String address) async {
+    final result = await _ethereumRepository
+        .getListToken(EthereumAddress.fromHex(address));
+    return result.getInWei.toInt();
   }
 
   Future<EthereumAccount> _computeEthereumAccount(AccountArg arg) async {
@@ -54,6 +59,65 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       return [result as EtherAmount];
     } catch (e) {
       return [];
+    }
+  }
+
+  @override
+  Future<T> simulateTransaction<T>({required arg}) async {
+    try {
+      EthereumArgument argument = arg as EthereumArgument;
+
+      var credentials = argument.ethereumAccount.ethPrivateKey;
+
+      final estGas = await web3Client.estimateGas(
+        sender: EthereumAddress.fromHex(argument.address),
+        to: EthereumAddress.fromHex(argument.recipient),
+        value: EtherAmount.fromInt(EtherUnit.wei, argument.amount),
+      );
+
+      final transaction = Transaction(
+        // gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, estGas),
+        maxGas: 100000,
+        from: EthereumAddress.fromHex(argument.address),
+        to: EthereumAddress.fromHex(argument.recipient),
+        value: EtherAmount.fromInt(EtherUnit.wei, argument.amount),
+      );
+
+      final simulate =
+          await web3Client.signTransaction(credentials, transaction);
+      final signedTransaction = transaction.copyWith(data: simulate);
+
+      return EthereumTransactionSimulateResult(
+          transaction: signedTransaction, gas: estGas.toInt()) as T;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<T> submitTransaction<T>({required arg}) async {
+    try {
+      SubmitTxnEthereumArgument argument = arg as SubmitTxnEthereumArgument;
+      var credentials = argument.ethereumAccount.ethPrivateKey;
+
+      BigInt chain = await web3Client.getChainId();
+      final hashResult = await web3Client.sendTransaction(
+          credentials, argument.transaction,
+          chainId: chain.toInt());
+
+      return hashResult as T;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<T> transactionHistoryByHash<T>(String hash) async {
+    try {
+      final result = await web3Client.getTransactionByHash(hash);
+      return result as T;
+    } catch (e) {
+      rethrow;
     }
   }
 }
