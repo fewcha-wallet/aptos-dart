@@ -52,54 +52,6 @@ class APIResponse<T> extends BaseAPIResponseWrapper<Response, T> {
   }
 }
 
-class APIListResponse<T> extends BaseAPIResponseWrapper<Response, List<T>> {
-  Pagination? pagination;
-
-  APIListResponse({T? createObject, Response? response})
-      : super(
-          originalResponse: response,
-        ) {
-    decode(extractJson(), createObject: createObject);
-  }
-
-  @override
-  void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
-    super.decode(formatResponse, createObject: createObject);
-    if (createObject is Decoder && !hasError) {
-      final data = formatResponse["data"];
-      if (data is List && data.isNotEmpty) {
-        decodedData ??= <T>[];
-        for (final e in data) {
-          (decodedData as List).add(createObject.decode(e));
-        }
-      }
-      decodedData ??= <T>[];
-    }
-  }
-}
-
-class GraphQLResponse<T> extends BaseAPIResponseWrapper<Response, T> {
-  GraphQLResponse({T? createObject, Response? response})
-      : super(
-          originalResponse: response,
-        ) {
-    decode(extractJson(), createObject: createObject);
-  }
-
-  @override
-  void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
-    super.decode(formatResponse, createObject: createObject);
-    if (createObject is Decoder && !hasError) {
-      decodedData = createObject.decode(formatResponse["data"]["data"] ?? {});
-    } else if (T == dynamic) {
-      decodedData = formatResponse["data"]["data"];
-    } else {
-      final data = formatResponse["data"]["data"];
-      if (data is T) decodedData = data;
-    }
-  }
-}
-
 class ErrorResponse extends BaseAPIResponseWrapper<Response, dynamic>
     implements Exception {
   late APIErrorType error;
