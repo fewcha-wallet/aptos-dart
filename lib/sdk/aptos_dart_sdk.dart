@@ -20,20 +20,20 @@ class AptosDartSDK {
 
     return _instance;
   }
-  void setNetwork(NetworkType networkType) {
+  void setNetwork(BaseNetworkType networkType) {
     _internal.setNetWork(networkType);
   }
 
-  NetworkType getCurrentNetwork() {
-    return _internal.getCurrentNetWork();
-  }
+  // BaseNetworkType getCurrentNetwork() {
+  //   return _internal.getCurrentNetWork();
+  // }
 
-  List<NetworkType> getListNetworks() {
+  List<BaseNetworkType> getListNetworks() {
     return _internal.getListNetwork();
   }
 
 
-  NetworkType getDefaultSUINetwork() {
-    return _internal.getDefaultSUINetwork();
-  }
+  // BaseNetworkType getDefaultSUINetwork() {
+  //   return _internal.getDefaultSUINetwork();
+  // }
 }

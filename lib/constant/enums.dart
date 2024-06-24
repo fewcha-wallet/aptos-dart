@@ -1,8 +1,17 @@
+import 'package:aptosdart/constant/api_method.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 
 enum APIType {
-  register2FA,
-  verify2FA,
+  register2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
+  verify2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
+  metisListTokens(APIMethod.get, "/api/v2/addresses", authorize: false);
+
+  const APIType(this.method, this.path, {this.authorize = false, this.baseUrl});
+
+  final String method;
+  final String path;
+  final bool? authorize;
+  final String? baseUrl;
 }
 
 enum APIErrorType {
@@ -36,28 +45,28 @@ enum CoinType {
   }
 
   ({
-  // int platformCode,
-  int decimal,
-  String coinAddress,
-  String coinCurrency,
-  String blockChainName,
+    // int platformCode,
+    int decimal,
+    String coinAddress,
+    String coinCurrency,
+    String blockChainName,
   }) coinTypeInfo() {
     switch (this) {
       case CoinType.sui:
         return (
-        decimal: AppConstants.suiDecimal,
-        coinAddress: SUIConstants.suiConstruct,
-        coinCurrency: AppConstants.suiDefaultCurrency,
-        blockChainName: SUIConstants.sui
+          decimal: AppConstants.suiDecimal,
+          coinAddress: SUIConstants.suiConstruct,
+          coinCurrency: AppConstants.suiDefaultCurrency,
+          blockChainName: SUIConstants.sui
         );
       case CoinType.metis:
         return (
-        decimal: EthereumConstant.metisDecimal,
-        coinAddress: EthereumConstant.metisTokenAddress,
-        coinCurrency: EthereumConstant.metisDefaultCurrency,
-        blockChainName: EthereumConstant.metis
+          decimal: EthereumConstant.metisDecimal,
+          coinAddress: EthereumConstant.metisTokenAddress,
+          coinCurrency: EthereumConstant.metisDefaultCurrency,
+          blockChainName: EthereumConstant.metis
         );
-      default :
+      default:
         throw UnimplementedError();
       // case CoinType.metisTestNet:
       //   return (
@@ -82,7 +91,7 @@ enum CoinType {
         return _validatePrivateKey(privateKeyHex,
             privateKeyHex.length == 130 || privateKeyHex.length == 66);
       case CoinType.metis:
-        return privateKeyHex.length == 66||privateKeyHex.length == 64;
+        return privateKeyHex.length == 66 || privateKeyHex.length == 64;
       default:
         return false;
     }

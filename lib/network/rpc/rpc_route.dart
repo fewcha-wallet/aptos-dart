@@ -2,46 +2,23 @@ import 'package:aptosdart/constant/api_method.dart';
 import 'package:aptosdart/network/api_route.dart';
 import 'package:dio/dio.dart';
 
-class RPCRoute implements APIRouteConfigurable {
-  // final RPCFunction rpcFunction;
-  String? baseUrl;
-  String? routeParams;
-  String? method;
+class RPCRoute extends APIRouteConfigurable {
 
   Map<String, String>? headers;
 
   RPCRoute(
-      /*this.rpcFunction,*/
-      {this.baseUrl,
-      this.routeParams,
-      this.method,
-      this.headers}) {
-    routeParams ??= "";
-  }
+      {
+      String method = APIMethod.post,
+      String path = "",
+      this.headers})
+      : super(method: method, path: path, authorize: false);
 
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
-    String method = RPCMethod.post, path = "";
     ResponseType responseType = ResponseType.json;
-
-/*    switch (rpcFunction) {
-      case RPCFunction.suiGetObjectsOwnedByAddress:
-        path = _suiGetObjectsOwnedByAddress;
-        break;
-      case RPCFunction.suiGetObject:
-        break;
-      case RPCFunction.getTransactionsByAddress:
-        break;
-      case RPCFunction.suiGetTransaction:
-        break;
-      case RPCFunction.suiFaucet:
-        break;
-    }*/
-    final options = Options(
-            headers: headers,
-            responseType: responseType,
-            method: this.method ?? method)
-        .compose(
+    final options =
+        Options(headers: headers, responseType: responseType, method: method)
+            .compose(
       baseOption,
       path,
     );

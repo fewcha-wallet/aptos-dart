@@ -4,49 +4,58 @@ import 'package:aptosdart/constant/enums.dart';
 import 'package:dio/dio.dart';
 
 abstract class APIRouteConfigurable {
+  String method, path;
+  String? baseUrl;
+  bool authorize;
+
   RequestOptions? getConfig(BaseOptions baseOption);
+
+  APIRouteConfigurable({
+    required this.method,
+    required this.path,
+    this.baseUrl,
+    required this.authorize,
+  });
 }
 
-class APIRoute implements APIRouteConfigurable {
+class APIRoute extends APIRouteConfigurable {
   final APIType apiType;
-  String? baseUrl;
-  String? routeParams;
-  String? method;
   Map<String, String>? headers;
-  APIRoute(this.apiType,
-      {this.baseUrl, this.routeParams, this.method, this.headers}) {
-    routeParams ??= "";
-  }
+  String? subPath;
 
-  final String _totp = 'totp';
-  final String _register = 'register';
-  final String _verify = 'verify';
+  APIRoute(
+    this.apiType, {
+    String? baseUrl,
+    String method = APIMethod.get,
+    String path = "",
+    bool authorize = true,
+    this.headers,
+    this.subPath,
+  }) : super(
+          baseUrl: baseUrl,
+          method: method,
+          path: path,
+          authorize: authorize,
+        );
+
+  // final String _totp = 'totp';
+  // final String _register = 'register';
+  // final String _verify = 'verify';
+
   @override
   RequestOptions? getConfig(BaseOptions baseOption) {
-    bool authorize = true;
-    String method = APIMethod.get, path = "";
+    method = apiType.method;
+
     ResponseType responseType = ResponseType.json;
+    path = apiType.path;
+    if (subPath != null) path += subPath!;
+    authorize = apiType.authorize ?? authorize;
 
-    switch (apiType) {
-
-      case APIType.register2FA:
-        method = APIMethod.post;
-        path = '/$_totp/$_register';
-        break;
-      case APIType.verify2FA:
-        method = APIMethod.post;
-        path = '/$_totp/$_verify';
-        break;
-      // case APIType.faucetSUI:
-      //   method = APIMethod.post;
-      //   baseUrl = AptosCurrentConfig.shared.faucetUrl;
-      //   break;
-    }
     final options = Options(
             headers: headers ?? HeadersApi.headers,
             extra: {ExtraKeys.authorize: authorize},
             responseType: responseType,
-            method: this.method ?? method)
+            method: method)
         .compose(
       baseOption,
       path,

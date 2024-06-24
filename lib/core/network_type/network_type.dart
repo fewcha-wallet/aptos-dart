@@ -1,39 +1,70 @@
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
-import 'package:aptosdart/network/decodable.dart';
 
-class NetworkType extends Decoder<NetworkType> {
+abstract class BaseNetworkType {
   String networkURL,
       networkName,
-      faucetURL,
       coinCurrency,
-      transactionHistoryGraphQL,
       explorerBaseURL,
       explorerParam,
       twoFactorAuthenticatorURL;
+  String? faucetURL;
   int platformCode;
   CoinType coinType;
   bool isSelected;
 
-  NetworkType({
+  BaseNetworkType({
     required this.networkURL,
     required this.networkName,
-    required this.faucetURL,
     required this.coinCurrency,
     required this.coinType,
-    required this.transactionHistoryGraphQL,
     required this.explorerBaseURL,
     required this.explorerParam,
     required this.twoFactorAuthenticatorURL,
     required this.platformCode,
     this.isSelected = false,
+    this.faucetURL,
+  });
+
+  bool isMainNet();
+}
+
+class NetworkType extends BaseNetworkType {
+  NetworkType({
+    required super.networkURL,
+    required super.networkName,
+    required super.coinCurrency,
+    required super.coinType,
+    required super.explorerBaseURL,
+    required super.explorerParam,
+    required super.twoFactorAuthenticatorURL,
+    required super.platformCode,
+    required super.faucetURL,
+    super.isSelected = false,
   });
 
   @override
-  NetworkType decode(Map<String, dynamic> json) {
-    throw UnimplementedError();
+  bool isMainNet() {
+    return networkName.contains(HostUrl.mainNet);
   }
-  bool isMainNet(){
+}
+class MetisNetworkType extends BaseNetworkType {
+  String metisRestAPI;
+  MetisNetworkType({
+  required  this.metisRestAPI,
+    required super.networkURL,
+    required super.networkName,
+    required super.coinCurrency,
+    required super.coinType,
+    required super.explorerBaseURL,
+    required super.explorerParam,
+    required super.twoFactorAuthenticatorURL,
+    required super.platformCode,
+    super.isSelected = false,
+  });
+
+  @override
+  bool isMainNet() {
     return networkName.contains(HostUrl.mainNet);
   }
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/ethereum_argument/ethereum_argument.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
+import 'package:aptosdart/core/ethereum/base_ethereum_token/metis_token_value.dart';
 import 'package:aptosdart/core/ethereum/ethereum_transaction_simulate_result.dart';
 import 'package:aptosdart/sdk/src/ethereum_account/ethereum_account.dart';
 import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_repository.dart';
@@ -31,8 +32,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<int> getAccountBalance(String address) async {
     final result = await _ethereumRepository
-        .getListToken(EthereumAddress.fromHex(address));
-    return result.getInWei.toInt();
+        .getListToken(address);
+    return /*result.getInWei.toInt()*/0;
   }
 
   Future<EthereumAccount> _computeEthereumAccount(AccountArg arg) async {
@@ -51,12 +52,12 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   }
 
   @override
-  Future<List<EtherAmount>> getAccountTokens<EtherAmount>(
+  Future<List<MetisTokenValue>> getAccountTokens<MetisTokenValue>(
       String address) async {
     try {
       final result = await _ethereumRepository
-          .getListToken(EthereumAddress.fromHex(address));
-      return [result as EtherAmount];
+          .getListToken(address);
+      return result as List<MetisTokenValue>;
     } catch (e) {
       return [];
     }

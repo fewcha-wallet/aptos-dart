@@ -1,79 +1,21 @@
-import 'dart:convert';
-
-import 'package:aptosdart/constant/api_method.dart';
-import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
+import 'package:aptosdart/network/api_client.dart';
 import 'package:aptosdart/network/api_response.dart';
 import 'package:aptosdart/network/api_route.dart';
-import 'package:aptosdart/network/interceptors/error_interceptor.dart';
-import 'package:aptosdart/network/interceptors/logs_interceptor.dart';
 import 'package:dio/dio.dart';
 
-typedef GenericObject<T> = T Function(dynamic data);
-
-abstract class BaseAPIClient {
-  late BaseOptions options;
-  late Dio instance;
-
-  Future<T> request<T>(
-      {required APIRouteConfigurable route,
-      required GenericObject<T> create,
-      Map<String, dynamic>? params,
-      String? extraPath,
-      bool noEncode = false,
-      Map<String, dynamic> header,
-      Map<String, dynamic>? body});
-}
-
-abstract class BaseRPCClient {
-  late BaseOptions options;
-  late Dio instance;
-
-  Future<T> request<T>(
-      {required APIRouteConfigurable route,
-      required GenericObject<T> create,
-      required String function,
-      dynamic arg,
-      Map<String, dynamic>? params,
-      String? extraPath,
-      bool noEncode = false,
-      bool isBatch = false,
-      Map<String, dynamic> header,
-      Map<String, dynamic>? body});
-}
-
-class APIClient extends BaseAPIClient {
-  APIClient({LogStatus? logStatus = LogStatus.show, required String baseUrl}) {
-    options = BaseOptions(
-      baseUrl: baseUrl,
-      headers: {"Content-Type": "application/json"},
-      responseType: ResponseType.json,
-      validateStatus: (code) {
-        if (code! <= 201) return true;
-        return false;
-      },
-    );
-    instance = Dio(options);
-    if (logStatus == LogStatus.hide) {
-      instance.interceptors.remove(LogsInterceptor());
-    } else {
-      instance.interceptors.addAll([
-        LogsInterceptor(),
-        ErrorInterceptor(),
-      ]);
-    }
-  }
-
+class MetisAPIClient extends APIClient{
+  MetisAPIClient({required super.baseUrl});
   @override
   Future<T> request<T>(
       {required APIRouteConfigurable route,
-      required GenericObject<T> create,
-      Map<String, dynamic>? params,
-      bool noEncode = false,
-      Map<String, dynamic>? header,
-      String? extraPath,
-      /*Map<String, dynamic>?*/ dynamic body,
-      FormData? formData}) async {
+        required GenericObject<T> create,
+        Map<String, dynamic>? params,
+        bool noEncode = false,
+        Map<String, dynamic>? header,
+        String? extraPath,
+        /*Map<String, dynamic>?*/ dynamic body,
+        FormData? formData}) async {
     final RequestOptions? requestOptions = route.getConfig(options);
 
     if (requestOptions != null) {
@@ -93,7 +35,7 @@ class APIClient extends BaseAPIClient {
       }
       try {
         late Response response;
-          response = await instance.fetch(requestOptions);
+        response = await instance.fetch(requestOptions);
 
         T apiWrapper = create(response);
         if (response.statusCode == 200 ||
