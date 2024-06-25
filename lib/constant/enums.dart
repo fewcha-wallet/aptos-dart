@@ -5,7 +5,8 @@ enum APIType {
   register2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
   verify2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
   metisListTokens(APIMethod.get, "/api/v2/addresses", authorize: false),
-  metisListNFTs(APIMethod.get, "/api/v2/addresses", authorize: false);
+  metisListNFTs(APIMethod.get, "/api/v2/addresses", authorize: false),
+  metisListTransactionByTokenAddress(APIMethod.get, "/api", authorize: false);
 
   const APIType(this.method, this.path, {this.authorize = false, this.baseUrl});
 

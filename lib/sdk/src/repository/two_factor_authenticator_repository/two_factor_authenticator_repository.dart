@@ -4,7 +4,6 @@ import 'package:aptosdart/aptosdart.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
-import 'package:aptosdart/core/aptos_sign_message_payload/aptos_sign_message_payload.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/raw_signer/raw_signer.dart';
 import 'package:aptosdart/core/sui/sui_intent/sui_intent.dart';
@@ -15,10 +14,8 @@ import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:aptosdart/utils/utilities.dart';
 
 class TwoFactorAuthenticatorRepository with AptosSDKMixin {
-  // late AptosClient _aptosClient;
 
   TwoFactorAuthenticatorRepository() {
-    // _aptosClient = AptosClient();
   }
 
   // Future<TwoFactorAuthenticatorResponse> registerAptos2FA(

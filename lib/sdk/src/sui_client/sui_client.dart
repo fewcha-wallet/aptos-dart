@@ -2,6 +2,7 @@ import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/argument/sui_argument/sui_argument.dart';
 import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
+import 'package:aptosdart/core/base_transaction/base_transaction.dart';
 import 'package:aptosdart/core/sui/bcs/b64.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_metadata.dart';
 import 'package:aptosdart/core/sui/coin/sui_coin_type.dart';
@@ -141,13 +142,13 @@ class SUIClient extends BaseWalletClient {
       return [];
     }
   }
-  @override
 
+  @override
   Future<T> submitTransaction<T>({
     required dynamic arg,
   }) async {
     try {
-      SUIArgument suiArgument=     arg as SUIArgument;
+      SUIArgument suiArgument = arg as SUIArgument;
 
       Uint8List tx = fromB64(suiArgument.txBytes!);
       final result = await _suiRepository.signAndExecuteTransactionBlock(
@@ -157,13 +158,14 @@ class SUIClient extends BaseWalletClient {
       rethrow;
     }
   }
+
   @override
-  Future<T> simulateTransaction<T>({
-    // required SUIArgument suiArgument,
-required dynamic arg
-  }) async {
+  Future<T> simulateTransaction<T>(
+      {
+      // required SUIArgument suiArgument,
+      required dynamic arg}) async {
     try {
-      SUIArgument suiArgument=     arg as SUIArgument;
+      SUIArgument suiArgument = arg as SUIArgument;
       TransactionBlock tx;
       if (suiArgument.isSendNFT) {
         tx = await CreateNFTTransferTransaction.createNFTTransferTransaction(
@@ -195,8 +197,8 @@ required dynamic arg
       final txBytes = toB64(result['txBytes']);
       final gas = result['gas'];
 
-      return SUITransactionSimulateResult(
-          gas: int.parse(gas), txBytes: txBytes) as T;
+      return SUITransactionSimulateResult(gas: int.parse(gas), txBytes: txBytes)
+          as T;
     } catch (e) {
       rethrow;
     }
@@ -288,4 +290,10 @@ required dynamic arg
     throw UnimplementedError();
   }
 
+  @override
+  Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
+      {required String tokenAddress, required String walletAddress}) {
+    // TODO: implement listTransactionHistoryByTokenAddress
+    throw UnimplementedError();
+  }
 }

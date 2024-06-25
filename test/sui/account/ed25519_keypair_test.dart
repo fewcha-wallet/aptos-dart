@@ -1,5 +1,4 @@
 import 'package:aptosdart/core/sui/cryptography/ed25519_keypair.dart';
-import 'package:aptosdart/sdk/src/sui_account/sui_account.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter_test/flutter_test.dart';

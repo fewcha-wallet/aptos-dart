@@ -41,7 +41,6 @@ class DynamicFields extends Decoder<DynamicFields> {
 
   @override
   DynamicFields decode(Map<String, dynamic> json) {
-    print('DynamicFields decode(Map<String, dynamic> json)');
     return DynamicFields.fromJson(json);
   }
 }

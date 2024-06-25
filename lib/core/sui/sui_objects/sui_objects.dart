@@ -573,16 +573,6 @@ class SUITransactionHistory extends BaseTransaction {
     return null;
   }
 
-  @override
-  String getSender() {
-    return senderAddress!;
-  }
-
-  @override
-  int getDecimal() {
-    if (_isNFTTransaction) return 0;
-    return decimal ?? AppConstants.suiDecimal;
-  }
 
   @override
   String getGasUsed() {
@@ -593,32 +583,6 @@ class SUITransactionHistory extends BaseTransaction {
   String getTimestamp() {
     if (timestampMs != null) return (timestampMs! * 1000).toString();
     return DateTime.now().microsecondsSinceEpoch.toString();
-  }
-
-  @override
-  String getTokenCurrency() {
-    if (_isNFTTransaction) return 'NFT';
-    List<String> currency =
-        (balanceChanges?.coinType ?? '').split('::');
-    if (currency.isNotEmpty) {
-      return currency.last;
-    }
-    return SUIConstants.suiCurrency;
-  }
-
-  @override
-  String? getTokenType() {
-    return balanceChanges?.coinType;
-  }
-
-  @override
-  String? getTransactionType() {
-    return null;
-  }
-
-  @override
-  bool isReceive({String? currentAccountAddress}) {
-    return senderAddress != currentAccountAddress;
   }
 
   @override
@@ -641,10 +605,6 @@ class SUITransactionHistory extends BaseTransaction {
     return amount.toString();
   }
 
-  @override
-  bool isNFT() {
-    return false;
-  }
 }
 
 class BalanceChanges extends Decoder<BalanceChanges> {
