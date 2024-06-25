@@ -131,14 +131,19 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   }
 
   @override
-  Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress (
-      {required String tokenAddress, required String walletAddress}) async {
+  Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
+      {required String tokenAddress,
+      required String walletAddress,
+      int page = 1,
+      limit = 10}) async {
     try {
       final result = await _ethereumRepository.getListTransactionByTokenAddress(
         tokenAddress: tokenAddress,
         walletAddress: walletAddress,
+        page: page,
+        limit: limit,
       );
-      return result  ;
+      return result;
     } catch (e) {
       return [];
     }

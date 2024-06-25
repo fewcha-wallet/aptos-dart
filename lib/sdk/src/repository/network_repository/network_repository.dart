@@ -69,7 +69,7 @@ class NetWorkRepository {
       coinCurrency: EthereumConstant.metisTestNetDefaultCurrency,
       coinType: CoinType.metis,
       explorerParam: '',
-      explorerBaseURL: '',
+      explorerBaseURL: 'https://sepolia-explorer.metisdevops.link/tx',
       twoFactorAuthenticatorURL: '',
       metisRestAPI: 'https://sepolia-explorer-api.metisdevops.link',
     );
@@ -83,7 +83,7 @@ class NetWorkRepository {
       coinCurrency: EthereumConstant.metisDefaultCurrency,
       coinType: CoinType.metis,
       explorerParam: '',
-      explorerBaseURL: '',
+      explorerBaseURL: 'https://andromeda-explorer.metis.io/tx',
       twoFactorAuthenticatorURL: '',
       metisRestAPI: 'https://andromeda-explorer.metis.io',
     );

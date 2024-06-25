@@ -547,8 +547,8 @@ class SUITransactionHistory extends BaseTransaction {
   }
 
   @override
-  String? getHash() {
-    return digest;
+  String getHash() {
+    return digest??"";
   }
 
   num getTotalGasUsed() {

@@ -116,7 +116,7 @@ class MetisTransactionData extends BaseTransaction {
   }
 
   @override
-  String? getHash() {
+  String getHash() {
     return hash ?? '';
   }
 

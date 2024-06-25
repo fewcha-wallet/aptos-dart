@@ -30,7 +30,7 @@ abstract class BaseWalletClient {
 
   Future<List<BaseTransaction>>
       listTransactionHistoryByTokenAddress(
-          {required String tokenAddress, required String walletAddress});
+          {required String tokenAddress, required String walletAddress,int page=1,limit=10});
 
   Future<List<T>> getAccountTokens<T>(String address);
 
