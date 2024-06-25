@@ -29,6 +29,7 @@ abstract class BaseWalletClient {
   Future<T> transactionHistoryByHash<T>(String hash);
 
   Future<List<T>> getAccountTokens<T>(String address);
+  Future<List<T>> getAccountNFTs<T>(String address);
 
   Future<T> simulateTransaction<T>({
     required dynamic arg,

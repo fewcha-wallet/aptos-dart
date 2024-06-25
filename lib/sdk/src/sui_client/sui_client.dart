@@ -282,4 +282,10 @@ required dynamic arg
     throw UnimplementedError();
   }
 
+  @override
+  Future<List<T>> getAccountNFTs<T>(String address) {
+    // TODO: implement getAccountNFTs
+    throw UnimplementedError();
+  }
+
 }

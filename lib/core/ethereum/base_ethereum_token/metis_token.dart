@@ -30,7 +30,7 @@ class MetisToken extends BaseEthereumToken {
     "symbol": symbol,
     "total_supply": totalSupply,
   };
-  String get getAddress=>address??'';
+  String get getAddress=>(address??'').toLowerCase();
   String get getName=>name??'';
   String get getSymbol=>symbol??'';
   int get getDecimals=>int.tryParse(decimals??'')??0;

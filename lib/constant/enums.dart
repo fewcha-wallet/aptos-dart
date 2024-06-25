@@ -4,7 +4,8 @@ import 'package:aptosdart/constant/constant_value.dart';
 enum APIType {
   register2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
   verify2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
-  metisListTokens(APIMethod.get, "/api/v2/addresses", authorize: false);
+  metisListTokens(APIMethod.get, "/api/v2/addresses", authorize: false),
+  metisListNFTs(APIMethod.get, "/api/v2/addresses", authorize: false);
 
   const APIType(this.method, this.path, {this.authorize = false, this.baseUrl});
 

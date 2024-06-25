@@ -24,7 +24,7 @@ class MetisTokenValue extends Decoder<MetisTokenValue> {
   String get getPath=>token?.iconUrl??'';
   String get getSymbol=>token?.symbol??'';
   int get getDecimals=>token?.getDecimals??0;
-  int get getValue=>int.tryParse(value??'0') ??0;
+  BigInt get getValue=>BigInt.tryParse(value??'0')??BigInt.zero;
   @override
   MetisTokenValue decode(Map<String, dynamic> json) {
     return MetisTokenValue.fromJson(json);
