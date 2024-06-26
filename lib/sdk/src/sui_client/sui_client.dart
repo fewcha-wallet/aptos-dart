@@ -292,8 +292,17 @@ class SUIClient extends BaseWalletClient {
 
   @override
   Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
-      {required String tokenAddress, required String walletAddress, int page = 1, limit = 10})  {
+      {required String tokenAddress,
+      required String walletAddress,
+      int page = 1,
+      limit = 10}) {
     // TODO: implement listTransactionHistoryByTokenAddress
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<T> simulateNFTTransaction<T>({required arg}) {
+    // TODO: implement simulateNFTTransaction
     throw UnimplementedError();
   }
 }

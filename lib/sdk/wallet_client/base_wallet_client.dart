@@ -40,6 +40,10 @@ abstract class BaseWalletClient {
     required dynamic arg,
   });
 
+ Future<T> simulateNFTTransaction<T>({
+    required dynamic arg,
+  });
+
   Future<T> submitTransaction<T>({
     required dynamic arg,
   });

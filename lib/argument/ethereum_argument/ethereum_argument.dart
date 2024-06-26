@@ -22,6 +22,19 @@ class EthereumArgument extends BaseEthereumArgument {
     // super.transaction,
     required this.amount,
   });
+}class NFTEthereumArgument extends BaseEthereumArgument {
+
+  String address, recipient;
+  String nftID;
+  String nftTokenContract;
+  NFTEthereumArgument({
+    required this.recipient,
+    required this.address,
+    required super.ethereumAccount,
+    required this.nftID,
+    required this.nftTokenContract,
+    // super.transaction,
+  });
 }
 
 class SubmitTxnEthereumArgument extends BaseEthereumArgument {

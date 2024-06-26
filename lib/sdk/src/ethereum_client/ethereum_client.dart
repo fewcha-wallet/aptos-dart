@@ -9,6 +9,7 @@ import 'package:aptosdart/sdk/src/ethereum_account/ethereum_account.dart';
 import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_repository.dart';
 import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
+import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -83,7 +84,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       );
 
       final simulate =
-          await web3Client.signTransaction(credentials, transaction);
+      await web3Client.signTransaction(credentials, transaction);
       final signedTransaction = transaction.copyWith(data: simulate);
 
       return EthereumTransactionSimulateResult(
@@ -133,9 +134,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
       {required String tokenAddress,
-      required String walletAddress,
-      int page = 1,
-      limit = 10}) async {
+        required String walletAddress,
+        int page = 1,
+        limit = 10}) async {
     try {
       final result = await _ethereumRepository.getListTransactionByTokenAddress(
         tokenAddress: tokenAddress,
@@ -146,6 +147,63 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       return result;
     } catch (e) {
       return [];
+    }
+  }
+
+  @override
+  Future<T> simulateNFTTransaction<T>({required arg}) async {
+    try {
+      NFTEthereumArgument argument = arg as NFTEthereumArgument;
+
+      final senderAddress = EthereumAddress.fromHex(argument.address);
+      // Replace with the receiver's Ethereum address
+      final receiverAddress = EthereumAddress.fromHex(argument.recipient);
+
+      // Replace with the ERC721 contract address and the token ID to transfer
+      final contractAddress =
+      EthereumAddress.fromHex(argument.nftTokenContract);
+      final tokenId = BigInt.parse(argument.nftID);
+
+      // ERC721 contract ABI (Application Binary Interface)
+      final abi = [
+        const ContractFunction(
+          'transferFrom',
+          [
+            FunctionParameter('from', AddressType()),
+            FunctionParameter('to', AddressType()),
+            FunctionParameter('tokenId', UintType())
+          ],
+          outputs: [],
+        )
+      ];
+
+      final contract =
+      DeployedContract(ContractAbi('transferFrom', abi, []), contractAddress);
+
+      final transferFrom = contract.function('transferFrom');
+
+      // Create the transaction
+      final transaction = Transaction.callContract(
+        contract: contract,
+        function: transferFrom,
+        maxGas: 100000,
+        parameters: [senderAddress, receiverAddress, tokenId],
+        from: senderAddress,
+      );
+      // Estimate gas
+      final gasEstimate = await web3Client.estimateGas(
+        sender: senderAddress,
+        to: contractAddress,
+        data: transaction.data,
+      );
+
+      final transactionWithGas = transaction.copyWith(
+          gasPrice: EtherAmount.fromBigInt(EtherUnit.mwei, gasEstimate));
+
+      return EthereumTransactionSimulateResult(
+          transaction: transactionWithGas, gas: gasEstimate.toInt()) as T;
+    } catch (e) {
+      rethrow;
     }
   }
 }
