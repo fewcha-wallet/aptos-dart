@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:aptosdart/core/base_transaction/base_transaction.dart';
 import 'package:aptosdart/utils/extensions/string_extension.dart';
 
@@ -112,7 +114,7 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String getGasUsed() {
-    return gasUsed ?? '';
+    return (BigInt.parse(gasUsed??'0') *BigInt.parse(gasPrice??'0')).toString();
   }
 
   @override
