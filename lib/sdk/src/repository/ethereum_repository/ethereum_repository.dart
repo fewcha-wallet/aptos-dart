@@ -12,6 +12,7 @@ class EthereumRepository with AptosSDKMixin {
       {BlockNum? atBlock}) async {
     try {
       final response = await metisAPIClient.request(
+        params: {"type":"ERC-20"},
           extraPath: '/$address/tokens',
           route: APIRoute(
             APIType.metisListTokens,
