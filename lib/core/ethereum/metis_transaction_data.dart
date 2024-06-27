@@ -135,14 +135,12 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String recipientAddress() {
-    // TODO: implement recipientAddress
-    throw UnimplementedError();
+  return to??'';
   }
 
   @override
   String tokenAmount() {
-    // TODO: implement tokenAmount
-    throw UnimplementedError();
+   return value??'0';
   }
 
   @override

@@ -88,7 +88,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       final signedTransaction = transaction.copyWith(data: simulate);
 
       return EthereumTransactionSimulateResult(
-          transaction: signedTransaction, gas: estGas.toInt()) as T;
+          transaction: signedTransaction, gas: estGas *BigInt.parse('1000000000')) as T;
     } catch (e) {
       rethrow;
     }
@@ -201,7 +201,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
           gasPrice: EtherAmount.fromBigInt(EtherUnit.mwei, gasEstimate));
 
       return EthereumTransactionSimulateResult(
-          transaction: transactionWithGas, gas: gasEstimate.toInt()) as T;
+          transaction: transactionWithGas, gas: gasEstimate*BigInt.parse('1000000000')) as T;
     } catch (e) {
       rethrow;
     }
