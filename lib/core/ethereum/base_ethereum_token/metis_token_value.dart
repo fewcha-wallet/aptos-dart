@@ -1,3 +1,4 @@
+import 'package:aptosdart/constant/constant_value.dart';
 import 'package:aptosdart/core/ethereum/base_ethereum_token/metis_token.dart';
 import 'package:aptosdart/network/decodable.dart';
 
@@ -19,12 +20,29 @@ class MetisTokenValue extends Decoder<MetisTokenValue> {
         "token": token?.toJson(),
         "value": value,
       };
-  String get getTokenAddress=>token?.getAddress??'';
-  String get getName=>token?.name??'';
-  String get getPath=>token?.iconUrl??'';
-  String get getSymbol=>token?.symbol??'';
-  int get getDecimals=>token?.getDecimals??0;
-  BigInt get getValue=>BigInt.tryParse(value??'0')??BigInt.zero;
+
+  factory MetisTokenValue.defaultInit() {
+    return MetisTokenValue(
+        value: '0',
+        token: MetisToken(
+          address: EthereumConstant.metisTokenAddress.toLowerCase(),
+          name: EthereumConstant.metisDefaultCurrency,
+          symbol: EthereumConstant.metisDefaultCurrency,
+        ));
+  }
+
+  String get getTokenAddress => token?.getAddress ?? '';
+
+  String get getName => token?.name ?? '';
+
+  String get getPath => token?.iconUrl ?? '';
+
+  String get getSymbol => token?.symbol ?? '';
+
+  int get getDecimals => token?.getDecimals ?? 0;
+
+  BigInt get getValue => BigInt.tryParse(value ?? '0') ?? BigInt.zero;
+
   @override
   MetisTokenValue decode(Map<String, dynamic> json) {
     return MetisTokenValue.fromJson(json);
