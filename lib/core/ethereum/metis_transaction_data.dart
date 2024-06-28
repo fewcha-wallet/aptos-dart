@@ -1,111 +1,43 @@
 import 'dart:math';
 
 import 'package:aptosdart/core/base_transaction/base_transaction.dart';
-import 'package:aptosdart/utils/extensions/string_extension.dart';
+import 'package:aptosdart/core/ethereum/base_ethereum_token/metis_token.dart';
+import 'package:aptosdart/network/decodable.dart';
 
 class MetisTransactionData extends BaseTransaction {
   String? blockHash;
-  String? blockNumber;
-  String? confirmations;
-  String? contractAddress;
-  String? cumulativeGasUsed;
-  String? from;
-  String? gas;
-  String? gasPrice;
-  String? gasUsed;
-  String? hash;
-  String? input;
-  String? isError;
-  String? nonce;
-  String? timeStamp;
-  String? to;
-  String? transactionIndex;
-  String? txreceiptStatus;
-  String? value;
+  String? logIndex;
+  String? method;
+  DateTime? timestamp;
+  ToData? to;
+  MetisToken? token;
+  Total? total;
+  String? txHash;
+  String? type;
 
   MetisTransactionData({
     this.blockHash,
-    this.blockNumber,
-    this.confirmations,
-    this.contractAddress,
-    this.cumulativeGasUsed,
-    this.from,
-    this.gas,
-    this.gasPrice,
-    this.gasUsed,
-    this.hash,
-    this.input,
-    this.isError,
-    this.nonce,
-    this.timeStamp,
+    this.logIndex,
+    this.method,
+    this.timestamp,
     this.to,
-    this.transactionIndex,
-    this.txreceiptStatus,
-    this.value,
+    this.token,
+    this.total,
+    this.txHash,
+    this.type,
   });
 
-  MetisTransactionData copyWith({
-    String? blockHash,
-    String? blockNumber,
-    String? confirmations,
-    String? contractAddress,
-    String? cumulativeGasUsed,
-    String? from,
-    String? gas,
-    String? gasPrice,
-    String? gasUsed,
-    String? hash,
-    String? input,
-    String? isError,
-    String? nonce,
-    String? timeStamp,
-    String? to,
-    String? transactionIndex,
-    String? txreceiptStatus,
-    String? value,
-  }) =>
-      MetisTransactionData(
-        blockHash: blockHash ?? this.blockHash,
-        blockNumber: blockNumber ?? this.blockNumber,
-        confirmations: confirmations ?? this.confirmations,
-        contractAddress: contractAddress ?? this.contractAddress,
-        cumulativeGasUsed: cumulativeGasUsed ?? this.cumulativeGasUsed,
-        from: from ?? this.from,
-        gas: gas ?? this.gas,
-        gasPrice: gasPrice ?? this.gasPrice,
-        gasUsed: gasUsed ?? this.gasUsed,
-        hash: hash ?? this.hash,
-        input: input ?? this.input,
-        isError: isError ?? this.isError,
-        nonce: nonce ?? this.nonce,
-        timeStamp: timeStamp ?? this.timeStamp,
-        to: to ?? this.to,
-        transactionIndex: transactionIndex ?? this.transactionIndex,
-        txreceiptStatus: txreceiptStatus ?? this.txreceiptStatus,
-        value: value ?? this.value,
-      );
-
-  factory MetisTransactionData.fromJson(Map<String, dynamic> json) =>
-      MetisTransactionData(
-        blockHash: json["blockHash"],
-        blockNumber: json["blockNumber"],
-        confirmations: json["confirmations"],
-        contractAddress: json["contractAddress"],
-        cumulativeGasUsed: json["cumulativeGasUsed"],
-        from: json["from"],
-        gas: json["gas"],
-        gasPrice: json["gasPrice"],
-        gasUsed: json["gasUsed"],
-        hash: json["hash"],
-        input: json["input"],
-        isError: json["isError"],
-        nonce: json["nonce"],
-        timeStamp: json["timeStamp"],
-        to: json["to"],
-        transactionIndex: json["transactionIndex"],
-        txreceiptStatus: json["txreceipt_status"],
-        value: json["value"],
-      );
+  factory MetisTransactionData.fromJson(Map<String, dynamic> json) => MetisTransactionData(
+    blockHash: json["block_hash"],
+    logIndex: json["log_index"],
+    method: json["method"],
+    timestamp: json["timestamp"] == null ? null : DateTime.parse(json["timestamp"]),
+    to: json["to"] == null ? null : ToData.fromJson(json["to"]),
+    token: json["token"] == null ? null : MetisToken.fromJson(json["token"]),
+    total: json["total"] == null ? null : Total.fromJson(json["total"]),
+    txHash: json["tx_hash"],
+    type: json["type"],
+  );
 
   @override
   BaseTransaction decode(Map<String, dynamic> json) {
@@ -114,12 +46,12 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String getGasUsed() {
-    return (BigInt.parse(gasUsed??'0') *BigInt.parse(gasPrice??'0')).toString();
+    return '0';
   }
 
   @override
   String getHash() {
-    return hash ?? '';
+    return txHash ?? '';
   }
 
   @override
@@ -130,21 +62,83 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String getTimestamp() {
-    return (int.parse(timeStamp ?? '0') * 1000000).toString();
+    return timestamp!.microsecondsSinceEpoch.toString();
   }
 
   @override
   String recipientAddress() {
-  return to??'';
+  return to?.hash??'';
   }
 
   @override
   String tokenAmount() {
-   return value??'0';
+   return total?.value??'0';
   }
 
   @override
   bool isSucceed() {
-    return (isError ?? '').stringToBool();
+    return true;
+  }
+
+  @override
+  String getTransactionName() {
+   return method??'';
+  }
+}
+class ToData  extends Decoder<ToData>{
+  String? hash;
+  dynamic metadata;
+  dynamic name;
+
+  ToData({
+    this.hash,
+    this.metadata,
+    this.name,
+  });
+
+
+
+  factory ToData.fromJson(Map<String, dynamic> json) => ToData(
+    hash: json["hash"],
+    metadata: json["metadata"],
+    name: json["name"],
+  );
+
+
+  @override
+  ToData decode(Map<String, dynamic> json) {
+    return ToData.fromJson(json);
+  }
+}class Total extends Decoder<Total>{
+  String? decimals;
+  String? value;
+
+  Total({
+    this.decimals,
+    this.value,
+  });
+
+  Total copyWith({
+    String? decimals,
+    String? value,
+  }) =>
+      Total(
+        decimals: decimals ?? this.decimals,
+        value: value ?? this.value,
+      );
+
+  factory Total.fromJson(Map<String, dynamic> json) => Total(
+    decimals: json["decimals"],
+    value: json["value"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "decimals": decimals,
+    "value": value,
+  };
+
+  @override
+  Total decode(Map<String, dynamic> json) {
+   return Total.fromJson(json);
   }
 }

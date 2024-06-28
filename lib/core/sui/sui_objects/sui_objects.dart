@@ -605,6 +605,11 @@ class SUITransactionHistory extends BaseTransaction {
     return amount.toString();
   }
 
+  @override
+  String getTransactionName() {
+   return '';
+  }
+
 }
 
 class BalanceChanges extends Decoder<BalanceChanges> {

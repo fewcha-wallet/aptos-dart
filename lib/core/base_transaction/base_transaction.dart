@@ -7,5 +7,6 @@ abstract class BaseTransaction extends Decoder<BaseTransaction> {
   String recipientAddress();
   String tokenAmount();
   String getGasUsed();
+  String getTransactionName();
   bool isSucceed();
 }

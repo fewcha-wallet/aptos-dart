@@ -48,13 +48,11 @@ class EthereumRepository with AptosSDKMixin {
   ) async {
     try {
       final response = await metisAPIClient.request(
+        extraPath: '/$walletAddress/token-transfers',
           params: {
-            "module": "account",
-            "action": "txlist",
-            "address": walletAddress,
-            "contractAddress": tokenAddress,
-            "page": page,
-            "offset": limit,
+            "type": "ERC-20",
+            "filter": "to%20%7C%20from",
+            "token": tokenAddress,
           },
           route: APIRoute(
             APIType.metisListTransactionByTokenAddress,

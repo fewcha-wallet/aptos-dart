@@ -27,7 +27,7 @@ class MetisNftData extends Decoder<MetisNftData> {
   });
   String get getImageURL=> imageUrl??"";
   String get getAnimationUrl=> animationUrl??"";
-  String get getName=> metadata?.name??"";
+  String get getName=> token?.name??"";
   String get getTokenAddress=> token?.getAddress??"";
   String get getID=> id??"";
   String get getAddress=> token?.getAddress??"";
