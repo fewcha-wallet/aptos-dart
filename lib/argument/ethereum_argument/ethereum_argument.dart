@@ -12,8 +12,9 @@ class BaseEthereumArgument {
 }
 
 class EthereumArgument extends BaseEthereumArgument {
-  int amount;
+  BigInt amount;
   String address, recipient;
+  String tokenAddress;
 
   EthereumArgument({
     required this.recipient,
@@ -21,6 +22,7 @@ class EthereumArgument extends BaseEthereumArgument {
     required super.ethereumAccount,
     // super.transaction,
     required this.amount,
+    required this.tokenAddress,
   });
 }class NFTEthereumArgument extends BaseEthereumArgument {
 

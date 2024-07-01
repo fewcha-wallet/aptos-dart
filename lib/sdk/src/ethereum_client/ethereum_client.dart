@@ -11,6 +11,7 @@ import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
+import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
 class EthereumClient extends BaseWalletClient with AptosSDKMixin {
@@ -67,28 +68,48 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
     try {
       EthereumArgument argument = arg as EthereumArgument;
 
-      var credentials = argument.ethereumAccount.ethPrivateKey;
+      // var credentials = argument.ethereumAccount.ethPrivateKey;
 
       final estGas = await web3Client.estimateGas(
         sender: EthereumAddress.fromHex(argument.address),
         to: EthereumAddress.fromHex(argument.recipient),
-        value: EtherAmount.fromInt(EtherUnit.wei, argument.amount),
+        value: EtherAmount.fromBigInt(EtherUnit.wei, argument.amount),
       );
 
-      final transaction = Transaction(
-        // gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, estGas),
+      final contractAddress = EthereumAddress.fromHex(argument.tokenAddress);
+      final abi = [
+        const ContractFunction(
+          'transfer',
+          [
+            FunctionParameter('recipient', AddressType()),
+            FunctionParameter('amount', UintType())
+          ],
+          outputs: [],
+        )
+      ];
+
+      final contract =
+      DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
+
+      final transferFrom = contract.function('transfer');
+      // Create the transaction
+      final transaction = Transaction.callContract(
+        contract: contract,
+        function: transferFrom,
         maxGas: 100000,
+        parameters: [
+          EthereumAddress.fromHex(argument.recipient),
+          argument.amount
+        ],
         from: EthereumAddress.fromHex(argument.address),
-        to: EthereumAddress.fromHex(argument.recipient),
-        value: EtherAmount.fromInt(EtherUnit.wei, argument.amount),
       );
 
-      final simulate =
-      await web3Client.signTransaction(credentials, transaction);
-      final signedTransaction = transaction.copyWith(data: simulate);
+      final transactionWithGas = transaction.copyWith(
+          gasPrice: EtherAmount.fromBigInt(EtherUnit.mwei, estGas));
 
       return EthereumTransactionSimulateResult(
-          transaction: signedTransaction, gas: estGas *BigInt.parse('1000000000')) as T;
+          transaction: transactionWithGas,
+          gas: estGas * BigInt.parse('1000000000')) as T;
     } catch (e) {
       rethrow;
     }
@@ -177,8 +198,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         )
       ];
 
-      final contract =
-      DeployedContract(ContractAbi('transferFrom', abi, []), contractAddress);
+      final contract = DeployedContract(
+          ContractAbi('transferFrom', abi, []), contractAddress);
 
       final transferFrom = contract.function('transferFrom');
 
@@ -201,7 +222,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
           gasPrice: EtherAmount.fromBigInt(EtherUnit.mwei, gasEstimate));
 
       return EthereumTransactionSimulateResult(
-          transaction: transactionWithGas, gas: gasEstimate*BigInt.parse('1000000000')) as T;
+          transaction: transactionWithGas,
+          gas: gasEstimate * BigInt.parse('1000000000')) as T;
     } catch (e) {
       rethrow;
     }
