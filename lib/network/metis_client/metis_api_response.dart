@@ -46,6 +46,27 @@ class MetisAPIListResponse<T>
     }
   }
 }
+
+class MetisAPIRPCResponse<T> extends BaseAPIResponseWrapper<Response, T> {
+  MetisAPIRPCResponse({T? createObject, Response? response})
+      : super(originalResponse: response) {
+    decode(extractJson(), createObject: createObject);
+  }
+
+  @override
+  void decode(Map<String, dynamic> formatResponse, {createObject}) {
+    super.decode(formatResponse, createObject: createObject);
+    if (createObject is Decoder && !hasError) {
+      decodedData = createObject.decode(formatResponse["data"]['result'] ?? {});
+    } else if (T == dynamic) {
+      decodedData = formatResponse["data"]['result'];
+    } else {
+      final data = formatResponse["data"]['result'];
+      if (data is T) decodedData = data;
+    }
+  }
+}
+
 class MetisAPIListRPCResponse<T>
     extends BaseAPIResponseWrapper<Response, List<T>> {
   MetisAPIListRPCResponse({T? createObject, Response? response})

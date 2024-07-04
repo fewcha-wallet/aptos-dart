@@ -89,7 +89,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       ];
 
       final contract =
-      DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
+          DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
 
       final transferFrom = contract.function('transfer');
       // Create the transaction
@@ -155,9 +155,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
       {required String tokenAddress,
-        required String walletAddress,
-        int page = 1,
-        limit = 10}) async {
+      required String walletAddress,
+      int page = 1,
+      limit = 10}) async {
     try {
       final result = await _ethereumRepository.getListTransactionByTokenAddress(
         tokenAddress: tokenAddress,
@@ -165,6 +165,12 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         page: page,
         limit: limit,
       );
+      if (result.isEmpty) return [];
+      for (var element in result) {
+        final detail = await _ethereumRepository.getDetailTransaction(
+            hash: element.getHash());
+        element.success = detail.success;
+      }
       return result;
     } catch (e) {
       return [];
@@ -182,7 +188,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
 
       // Replace with the ERC721 contract address and the token ID to transfer
       final contractAddress =
-      EthereumAddress.fromHex(argument.nftTokenContract);
+          EthereumAddress.fromHex(argument.nftTokenContract);
       final tokenId = BigInt.parse(argument.nftID);
 
       // ERC721 contract ABI (Application Binary Interface)

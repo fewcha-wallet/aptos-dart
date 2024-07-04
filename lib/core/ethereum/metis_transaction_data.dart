@@ -14,6 +14,8 @@ class MetisTransactionData extends BaseTransaction {
   Total? total;
   String? txHash;
   String? type;
+  bool? success;
+
 
   MetisTransactionData({
     this.blockHash,
@@ -25,6 +27,7 @@ class MetisTransactionData extends BaseTransaction {
     this.total,
     this.txHash,
     this.type,
+    this.success,
   });
 
   factory MetisTransactionData.fromJson(Map<String, dynamic> json) => MetisTransactionData(
@@ -77,7 +80,7 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   bool isSucceed() {
-    return true;
+    return success??false;
   }
 
   @override
