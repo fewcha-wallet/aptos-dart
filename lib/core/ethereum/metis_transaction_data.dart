@@ -82,7 +82,7 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String getTransactionName() {
-   return method??'';
+   return type??'';
   }
 }
 class ToData  extends Decoder<ToData>{
