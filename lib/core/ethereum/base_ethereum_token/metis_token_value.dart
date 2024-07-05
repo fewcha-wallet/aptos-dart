@@ -25,6 +25,7 @@ class MetisTokenValue extends Decoder<MetisTokenValue> {
     return MetisTokenValue(
         value: '0',
         token: MetisToken(
+          decimals: EthereumConstant.metisDecimal.toString(),
           address: EthereumConstant.metisTokenAddress.toLowerCase(),
           name: EthereumConstant.metisDefaultCurrency,
           symbol: EthereumConstant.metisDefaultCurrency,
