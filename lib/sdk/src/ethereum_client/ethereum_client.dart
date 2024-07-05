@@ -126,7 +126,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
           chainId: chain.toInt());
 
       return hashResult as T;
-    } catch (e) {
+    }  on RPCError catch (e) {
+      throw Exception(e.message);
+    }catch (e) {
       rethrow;
     }
   }
@@ -164,12 +166,6 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         page: page,
         limit: limit,
       );
-      // if (result.isEmpty) return [];
-      // for (var element in result) {
-      //   final detail = await _ethereumRepository.getDetailTransaction(
-      //       hash: element.getHash());
-      //   element.success = detail.success;
-      // }
       return result;
     } catch (e) {
       return [];
