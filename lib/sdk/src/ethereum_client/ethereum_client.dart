@@ -10,6 +10,7 @@ import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_reposi
 import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:flutter/foundation.dart';
+import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart';
 
 class EthereumClient extends BaseWalletClient with AptosSDKMixin {
@@ -32,7 +33,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<int> getAccountBalance(String address) async {
     // final result = await _ethereumRepository.getListToken(address);
-    return  0;
+    return 0;
   }
 
   Future<EthereumAccount> _computeEthereumAccount(AccountArg arg) async {
@@ -106,6 +107,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas,
           gas: estGas * BigInt.parse('1000000000')) as T;
+    } on RPCError catch (e) {
+      throw Exception(e.message);
     } catch (e) {
       rethrow;
     }
@@ -155,7 +158,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       int page = 1,
       limit = 10}) async {
     try {
-      final result = await _ethereumRepository.getListTransactionByWalletAddress(
+      final result =
+          await _ethereumRepository.getListTransactionByWalletAddress(
         walletAddress: walletAddress,
         page: page,
         limit: limit,
@@ -225,6 +229,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas,
           gas: gasEstimate * BigInt.parse('1000000000')) as T;
+    } on RPCError catch (e) {
+      throw Exception(e.message);
     } catch (e) {
       rethrow;
     }
