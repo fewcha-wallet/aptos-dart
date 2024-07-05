@@ -7,7 +7,8 @@ enum APIType {
   metisListTokens(APIMethod.get, "/api/v2/addresses", authorize: false),
   metisListNFTs(APIMethod.get, "/api/v2/addresses", authorize: false),
   metisListTransactionByTokenAddress(APIMethod.get, "/api/v2/addresses", authorize: false),
-  metisDetailTransaction(APIMethod.get, "/api", authorize: false);
+  metisDetailTransaction(APIMethod.get, "/api", authorize: false),
+  metisListTransactionByWalletAddress(APIMethod.get, "/api/v2/addresses", authorize: false);
 
   const APIType(this.method, this.path, {this.authorize = false, this.baseUrl});
 

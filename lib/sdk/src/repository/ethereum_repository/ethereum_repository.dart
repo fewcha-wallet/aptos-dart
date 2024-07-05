@@ -43,23 +43,47 @@ class EthereumRepository with AptosSDKMixin {
     }
   }
 
-  Future<List<MetisTransactionData>> getListTransactionByTokenAddress(
-      {required String tokenAddress,
-      required String walletAddress,
-      int page = 1,
-      int limit = 10}) async {
+  // Future<List<MetisTransactionData>> getListTransactionByTokenAddress(
+  //     {required String tokenAddress,
+  //     required String walletAddress,
+  //     int page = 1,
+  //     int limit = 10}) async {
+  //   try {
+  //     final response = await metisAPIClient.request(
+  //         extraPath: '/$walletAddress/token-transfers',
+  //         params: {
+  //           "type": "ERC-20",
+  //           "filter": "to%20%7C%20from",
+  //           "token": tokenAddress,
+  //         },
+  //         route: APIRoute(
+  //           APIType.metisListTransactionByTokenAddress,
+  //         ),
+  //         create: (response) => MetisAPIListResponse<MetisTransactionData>(
+  //             createObject: MetisTransactionData(), response: response));
+  //     return response.decodedData!;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+
+  Future<List<MetisTransactionData>> getListTransactionByWalletAddress(
+      {required String walletAddress, int page = 1, int limit = 10}) async {
     try {
+
       final response = await metisAPIClient.request(
-          extraPath: '/$walletAddress/token-transfers',
-          params: {
-            "type": "ERC-20",
-            "filter": "to%20%7C%20from",
-            "token": tokenAddress,
-          },
+        extraPath: '/$walletAddress/transactions',
+          // params: {
+          //   "module": "account",
+          //   "action": "txlist",
+          //   "address": walletAddress,
+          //   "page": page,
+          //   "offset": limit,
+          // },
           route: APIRoute(
-            APIType.metisListTransactionByTokenAddress,
+            APIType.metisListTransactionByWalletAddress,
           ),
-          create: (response) => MetisAPIListRPCResponse<MetisTransactionData>(
+          create: (response) => MetisAPIListResponse<MetisTransactionData>(
               createObject: MetisTransactionData(), response: response));
       return response.decodedData!;
     } catch (e) {
@@ -80,10 +104,8 @@ class EthereumRepository with AptosSDKMixin {
           route: APIRoute(
             APIType.metisDetailTransaction,
           ),
-          create: (response) =>
-              MetisAPIRPCResponse<DetailMetisTransactionData>(
-                  createObject: DetailMetisTransactionData(),
-                  response: response));
+          create: (response) => MetisAPIRPCResponse<DetailMetisTransactionData>(
+              createObject: DetailMetisTransactionData(), response: response));
       return response.decodedData!;
     } catch (e) {
       rethrow;

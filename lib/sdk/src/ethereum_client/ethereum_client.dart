@@ -9,9 +9,7 @@ import 'package:aptosdart/sdk/src/ethereum_account/ethereum_account.dart';
 import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_repository.dart';
 import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
-import 'package:aptosdart/utils/utilities.dart';
 import 'package:flutter/foundation.dart';
-import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 
 class EthereumClient extends BaseWalletClient with AptosSDKMixin {
@@ -33,8 +31,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
 
   @override
   Future<int> getAccountBalance(String address) async {
-    final result = await _ethereumRepository.getListToken(address);
-    return /*result.getInWei.toInt()*/ 0;
+    // final result = await _ethereumRepository.getListToken(address);
+    return  0;
   }
 
   Future<EthereumAccount> _computeEthereumAccount(AccountArg arg) async {
@@ -67,8 +65,6 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   Future<T> simulateTransaction<T>({required arg}) async {
     try {
       EthereumArgument argument = arg as EthereumArgument;
-
-      // var credentials = argument.ethereumAccount.ethPrivateKey;
 
       final estGas = await web3Client.estimateGas(
         sender: EthereumAddress.fromHex(argument.address),
@@ -159,18 +155,17 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       int page = 1,
       limit = 10}) async {
     try {
-      final result = await _ethereumRepository.getListTransactionByTokenAddress(
-        tokenAddress: tokenAddress,
+      final result = await _ethereumRepository.getListTransactionByWalletAddress(
         walletAddress: walletAddress,
         page: page,
         limit: limit,
       );
-      if (result.isEmpty) return [];
-      for (var element in result) {
-        final detail = await _ethereumRepository.getDetailTransaction(
-            hash: element.getHash());
-        element.success = detail.success;
-      }
+      // if (result.isEmpty) return [];
+      // for (var element in result) {
+      //   final detail = await _ethereumRepository.getDetailTransaction(
+      //       hash: element.getHash());
+      //   element.success = detail.success;
+      // }
       return result;
     } catch (e) {
       return [];

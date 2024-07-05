@@ -15,8 +15,6 @@ import 'package:aptosdart/utils/utilities.dart';
 
 class TwoFactorAuthenticatorRepository with AptosSDKMixin {
 
-  TwoFactorAuthenticatorRepository() {
-  }
 
   // Future<TwoFactorAuthenticatorResponse> registerAptos2FA(
   //     AptosAccount account) async {

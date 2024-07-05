@@ -80,7 +80,7 @@ class MetisAPIListRPCResponse<T>
   void decode(Map<String, dynamic> formatResponse, {dynamic createObject}) {
     super.decode(formatResponse, createObject: createObject);
     if (createObject is Decoder && !hasError) {
-      final data = formatResponse["data"]['items'];
+      final data = formatResponse["data"]['result'];
       if (data is List && data.isNotEmpty) {
         decodedData ??= <T>[];
         for (final e in data) {

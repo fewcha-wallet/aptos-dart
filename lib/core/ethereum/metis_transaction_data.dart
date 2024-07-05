@@ -1,46 +1,45 @@
-import 'dart:math';
 
 import 'package:aptosdart/core/base_transaction/base_transaction.dart';
-import 'package:aptosdart/core/ethereum/base_ethereum_token/metis_token.dart';
 import 'package:aptosdart/network/decodable.dart';
 
 class MetisTransactionData extends BaseTransaction {
-  String? blockHash;
-  String? logIndex;
-  String? method;
   DateTime? timestamp;
+  String? status;
+  String? method;
   ToData? to;
-  MetisToken? token;
-  Total? total;
-  String? txHash;
-  String? type;
-  bool? success;
-
+  String? result;
+  String? hash;
+  List<String> txTypes;
+  ToData? from;
+  dynamic tokenTransfers;
+  String? value;
 
   MetisTransactionData({
-    this.blockHash,
-    this.logIndex,
-    this.method,
     this.timestamp,
+    this.status,
+    this.method,
     this.to,
-    this.token,
-    this.total,
-    this.txHash,
-    this.type,
-    this.success,
+    this.result,
+    this.hash,
+    this.txTypes=const [],
+    this.from,
+    this.tokenTransfers,
+    this.value,
   });
 
   factory MetisTransactionData.fromJson(Map<String, dynamic> json) => MetisTransactionData(
-    blockHash: json["block_hash"],
-    logIndex: json["log_index"],
-    method: json["method"],
     timestamp: json["timestamp"] == null ? null : DateTime.parse(json["timestamp"]),
+    status: json["status"],
+    method: json["method"],
     to: json["to"] == null ? null : ToData.fromJson(json["to"]),
-    token: json["token"] == null ? null : MetisToken.fromJson(json["token"]),
-    total: json["total"] == null ? null : Total.fromJson(json["total"]),
-    txHash: json["tx_hash"],
-    type: json["type"],
+    result: json["result"],
+    hash: json["hash"],
+    txTypes: json["tx_types"] == null ? [] : List<String>.from(json["tx_types"]!.map((x) => x)),
+    from: json["from"] == null ? null : ToData.fromJson(json["from"]),
+    tokenTransfers: json["token_transfers"],
+    value: json["value"],
   );
+
 
   @override
   BaseTransaction decode(Map<String, dynamic> json) {
@@ -54,7 +53,7 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String getHash() {
-    return txHash ?? '';
+    return hash ?? '';
   }
 
   @override
@@ -75,17 +74,21 @@ class MetisTransactionData extends BaseTransaction {
 
   @override
   String tokenAmount() {
-   return total?.value??'0';
+   return value??'0';
   }
 
   @override
   bool isSucceed() {
-    return success??false;
+    return status=='ok';
   }
 
   @override
   String getTransactionName() {
-   return type??'';
+    if(txTypes.isEmpty) return 'Transaction';
+    if(txTypes.length==1) {
+      return txTypes.first;
+    }
+   return txTypes.last;
   }
 }
 class ToData  extends Decoder<ToData>{
