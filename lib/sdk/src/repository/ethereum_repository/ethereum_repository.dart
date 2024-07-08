@@ -73,13 +73,6 @@ class EthereumRepository with AptosSDKMixin {
 
       final response = await metisAPIClient.request(
         extraPath: '/$walletAddress/transactions',
-          // params: {
-          //   "module": "account",
-          //   "action": "txlist",
-          //   "address": walletAddress,
-          //   "page": page,
-          //   "offset": limit,
-          // },
           route: APIRoute(
             APIType.metisListTransactionByWalletAddress,
           ),
