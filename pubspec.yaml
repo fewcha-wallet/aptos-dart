@@ -23,21 +23,24 @@ dependencies:
     git:
       url: https://github.com/beobanhbo/jsonrpc2-folk.git
       ref: main
-  http: 1.1.0
+  http: ^1.2.0
   intl: 0.19.0
   path_provider: ^2.1.1
   blake2b: ^0.2.2
   fast_base58: ^0.2.1
   collection: ^1.17.1
-  sui: ^0.2.0
-  web3dart: 2.7.2
+  sui:
+    git:
+      url: https://github.com/quoctran1/sui.git
+      ref: main
+  web3dart: ^2.7.3
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
-  test: 1.24.7
+#  flutter_lints: ^1.0.0
+#  test: 1.24.7
 dependency_overrides:
   test_api: ^0.6.1
 
