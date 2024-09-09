@@ -21,9 +21,9 @@ class MetisTokenValue extends Decoder<MetisTokenValue> {
         "value": value,
       };
 
-  factory MetisTokenValue.defaultInit() {
+  factory MetisTokenValue.defaultInit({BigInt? amount}) {
     return MetisTokenValue(
-        value: '0',
+        value:amount!=null?amount.toString(): '0',
         token: MetisToken(
           decimals: EthereumConstant.metisDecimal.toString(),
           address: EthereumConstant.metisTokenAddress.toLowerCase(),

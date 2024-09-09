@@ -63,7 +63,7 @@ class NetWorkRepository {
 
   BaseNetworkType testnetMetisNetwork() {
     return MetisNetworkType(
-      platformCode: 5,
+      platformCode:PlatformCodeConstant.metisTestnet,
       networkURL: HostUrl.metisTestnetUrl,
       networkName: HostUrl.metisTestnet,
       coinCurrency: EthereumConstant.metisTestNetDefaultCurrency,
@@ -77,7 +77,7 @@ class NetWorkRepository {
 
   BaseNetworkType mainNetMetisNetwork() {
     return MetisNetworkType(
-      platformCode: 4,
+      platformCode:PlatformCodeConstant.metisMainNet,
       networkURL: HostUrl.metisMainNetUrl,
       networkName: HostUrl.metisMainNet,
       coinCurrency: EthereumConstant.metisDefaultCurrency,

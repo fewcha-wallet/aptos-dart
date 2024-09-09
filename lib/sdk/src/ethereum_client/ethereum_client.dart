@@ -31,9 +31,10 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   }
 
   @override
-  Future<int> getAccountBalance(String address) async {
-    // final result = await _ethereumRepository.getListToken(address);
-    return 0;
+  Future<BigInt> getAccountBalance(String address) async {
+    EtherAmount balance = await web3Client.getBalance(
+        EthereumAddress.fromHex(address));
+    return balance.getInWei;
   }
 
   Future<EthereumAccount> _computeEthereumAccount(AccountArg arg) async {
@@ -66,8 +67,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   Future<T> simulateTransaction<T>({required arg}) async {
     try {
       EthereumArgument argument = arg as EthereumArgument;
-      EtherAmount gasPrice = await web3Client.getGasPrice( );
-      int nonce= await web3Client.getTransactionCount(EthereumAddress.fromHex(argument.address));
+      EtherAmount gasPrice = await web3Client.getGasPrice();
+      int nonce = await web3Client.getTransactionCount(
+          EthereumAddress.fromHex(argument.address));
       final estGas = await web3Client.estimateGas(
         sender: EthereumAddress.fromHex(argument.address),
         to: EthereumAddress.fromHex(argument.recipient),
@@ -90,7 +92,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       ];
 
       final contract =
-          DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
+      DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
 
       final transferFrom = contract.function('transfer');
       // Create the transaction
@@ -131,9 +133,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
           chainId: chain.toInt());
 
       return hashResult as T;
-    }  on RPCError catch (e) {
+    } on RPCError catch (e) {
       throw Exception(e.message);
-    }catch (e) {
+    } catch (e) {
       rethrow;
     }
   }
@@ -161,12 +163,12 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
       {required String tokenAddress,
-      required String walletAddress,
-      int page = 1,
-      limit = 10}) async {
+        required String walletAddress,
+        int page = 1,
+        limit = 10}) async {
     try {
       final result =
-          await _ethereumRepository.getListTransactionByWalletAddress(
+      await _ethereumRepository.getListTransactionByWalletAddress(
         walletAddress: walletAddress,
         page: page,
         limit: limit,
@@ -181,7 +183,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   Future<T> simulateNFTTransaction<T>({required arg}) async {
     try {
       NFTEthereumArgument argument = arg as NFTEthereumArgument;
-      EtherAmount gasPrice = await web3Client.getGasPrice( );
+      EtherAmount gasPrice = await web3Client.getGasPrice();
 
       final senderAddress = EthereumAddress.fromHex(argument.address);
       // Replace with the receiver's Ethereum address
@@ -189,7 +191,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
 
       // Replace with the ERC721 contract address and the token ID to transfer
       final contractAddress =
-          EthereumAddress.fromHex(argument.nftTokenContract);
+      EthereumAddress.fromHex(argument.nftTokenContract);
       final tokenId = BigInt.parse(argument.nftID);
 
       // ERC721 contract ABI (Application Binary Interface)

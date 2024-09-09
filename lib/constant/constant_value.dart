@@ -230,6 +230,11 @@ class EthereumConstant{
   static const int metisDecimal = 18;
 
 }
+class PlatformCodeConstant{
+  static const int metisTestnet = 5;
+  static const int metisMainNet = 4;
+
+}
 class Abis {
   static const tokenAbis = [
     // aptos-token/build/AptosToken/abis/token/create_collection_script.abi

@@ -110,20 +110,21 @@ class SUIClient extends BaseWalletClient {
   }
 
   @override
-  Future<int> getAccountBalance(String address) async {
-    try {
-      final listCoins = await _suiRepository.getSUITokens(address);
-      if (listCoins.isEmpty) return 0;
-
-      final suiCoin =
-          listCoins.firstWhereOrNull((element) => element.isSuiCoin);
-      if (suiCoin != null) {
-        return suiCoin.getAmount;
-      }
-      return 0;
-    } catch (e) {
-      return 0;
-    }
+  Future<BigInt> getAccountBalance(String address) async {
+    // try {
+    //   final listCoins = await _suiRepository.getSUITokens(address);
+    //   if (listCoins.isEmpty) return 0;
+    //
+    //   final suiCoin =
+    //       listCoins.firstWhereOrNull((element) => element.isSuiCoin);
+    //   if (suiCoin != null) {
+    //     return suiCoin.getAmount;
+    //   }
+    //   return 0;
+    // } catch (e) {
+    //   return 0;
+    // }\
+    throw UnimplementedError();
   }
 
   Future<List<SUIObjects>> getAccountNFT(String address) async {

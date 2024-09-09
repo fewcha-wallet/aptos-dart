@@ -25,14 +25,25 @@ class MetisNftData extends Decoder<MetisNftData> {
     this.tokenType,
     this.value,
   });
-  String get getImageURL=> imageUrl??"";
-  String get getAnimationUrl=> animationUrl??"";
-  String get getName=> token?.name??"";
-  String get getTokenAddress=> token?.getAddress??"";
-  String get getID=> id??"";
-  String get getAddress=> token?.getAddress??"";
-  String get getTokenType=> tokenType??"";
-  factory MetisNftData.fromJson(Map<String, dynamic> json) => MetisNftData(
+
+  String get getImageURL => imageUrl ?? "";
+
+  String get getAnimationUrl => animationUrl ?? "";
+
+  String get getName => token?.name ?? "";
+
+  String get getTokenAddress => token?.getAddress ?? "";
+
+  String get getID => id ?? "";
+
+  String get getAddress => token?.getAddress ?? "";
+
+  String get getTokenType => tokenType ?? "";
+
+  String get getDescription => metadata?.description ?? "";
+
+  factory MetisNftData.fromJson(Map<String, dynamic> json) =>
+      MetisNftData(
         animationUrl: json["animation_url"],
         externalAppUrl: json["external_app_url"],
         id: json["id"],
@@ -43,12 +54,13 @@ class MetisNftData extends Decoder<MetisNftData> {
             : Metadata.fromJson(json["metadata"]),
         owner: json["owner"],
         token:
-            json["token"] == null ? null : MetisToken.fromJson(json["token"]),
+        json["token"] == null ? null : MetisToken.fromJson(json["token"]),
         tokenType: json["token_type"],
         value: json["value"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "animation_url": animationUrl,
         "external_app_url": externalAppUrl,
         "id": id,
@@ -72,12 +84,14 @@ class Metadata extends Decoder<Metadata> {
   String? externalUrl;
   String? image;
   String? name;
+  String? description;
 
   Metadata({
     this.animationUrl,
     this.externalUrl,
     this.image,
     this.name,
+    this.description,
   });
 
   Metadata copyWith({
@@ -93,14 +107,17 @@ class Metadata extends Decoder<Metadata> {
         name: name ?? this.name,
       );
 
-  factory Metadata.fromJson(Map<String, dynamic> json) => Metadata(
+  factory Metadata.fromJson(Map<String, dynamic> json) =>
+      Metadata(
         animationUrl: json["animation_url"],
         externalUrl: json["external_url"],
         image: json["image"],
         name: json["name"],
+        description: json["description"],
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() =>
+      {
         "animation_url": animationUrl,
         "external_url": externalUrl,
         "image": image,

@@ -22,7 +22,7 @@ class BaseWalletClientConfig {
 abstract class BaseWalletClient {
   Future<AbstractAccount> createAccount({required AccountArg arg});
 
-  Future<int> getAccountBalance(String address);
+  Future<BigInt> getAccountBalance(String address);
 
   Future<T> faucet<T>(String address);
 
