@@ -74,7 +74,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         sender: EthereumAddress.fromHex(argument.address),
         to: EthereumAddress.fromHex(argument.recipient),
         value: EtherAmount.fromBigInt(EtherUnit.wei, argument.amount),
-        gasPrice: gasPrice,
+        // gasPrice: gasPrice,
         data: Uint8List.fromList([0x0]),
       );
       BigInt totalGasFee = estGas * gasPrice.getInWei;
