@@ -6,9 +6,11 @@ enum APIType {
   verify2FA(APIMethod.get, "/v1/notifications/stats", authorize: true),
   metisListTokens(APIMethod.get, "/api/v2/addresses", authorize: false),
   metisListNFTs(APIMethod.get, "/api/v2/addresses", authorize: false),
-  metisListTransactionByTokenAddress(APIMethod.get, "/api/v2/addresses", authorize: false),
+  metisListTransactionByTokenAddress(APIMethod.get, "/api/v2/addresses",
+      authorize: false),
   metisDetailTransaction(APIMethod.get, "/api", authorize: false),
-  metisListTransactionByWalletAddress(APIMethod.get, "/api/v2/addresses", authorize: false);
+  metisListTransactionByWalletAddress(APIMethod.get, "/api/v2/addresses",
+      authorize: false);
 
   const APIType(this.method, this.path, {this.authorize = false, this.baseUrl});
 
@@ -32,6 +34,7 @@ enum LogStatus { hide, show }
 
 enum CoinType {
   metis,
+  coti,
   // metisTestNet,
   sui;
 
@@ -42,6 +45,8 @@ enum CoinType {
 
       case SUIConstants.sui:
         return CoinType.sui;
+      case CoTiConstant.coti:
+        return CoinType.coti;
       default:
         throw UnimplementedError(
             'Unimplemented function: stringToEnum() in CoinType enum');
@@ -69,6 +74,13 @@ enum CoinType {
           coinAddress: EthereumConstant.metisTokenAddress,
           coinCurrency: EthereumConstant.metisDefaultCurrency,
           blockChainName: EthereumConstant.metis
+        );
+      case CoinType.coti:
+        return (
+          decimal: CoTiConstant.cotiDecimal,
+          coinAddress: CoTiConstant.coTiTokenAddress,
+          coinCurrency: CoTiConstant.coTiDefaultCurrency,
+          blockChainName: CoTiConstant.coti
         );
       default:
         throw UnimplementedError();

@@ -25,6 +25,7 @@ class NetWorkRepository {
         // suiTestNet,
         mainNetMetisNetwork(),
         testnetMetisNetwork(),
+        devNetCoTiNetwork(),
       ];
     } catch (e) {
       rethrow;
@@ -86,6 +87,20 @@ class NetWorkRepository {
       explorerBaseURL: 'https://andromeda-explorer.metis.io/tx',
       twoFactorAuthenticatorURL: '',
       metisRestAPI: 'https://andromeda-explorer.metis.io',
+    );
+  }
+
+  BaseNetworkType devNetCoTiNetwork() {
+    return MetisNetworkType(
+      platformCode:PlatformCodeConstant.metisTestnet,
+      networkURL: 'https://devnet.coti.io/rpc',
+      networkName: 'COTI Devnet',
+      coinCurrency: CoTiConstant.coTiDefaultCurrency,
+      coinType: CoinType.coti,
+      explorerParam: '',
+      explorerBaseURL: 'https://devnet.cotiscan.io',
+      twoFactorAuthenticatorURL: '',
+      metisRestAPI: 'https://devnet.coti.io/rpc',
     );
   }
 }

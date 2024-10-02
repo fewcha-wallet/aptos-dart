@@ -2,6 +2,7 @@ import 'package:aptosdart/argument/account_arg.dart';
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/core/base_transaction/base_transaction.dart';
+import 'package:aptosdart/sdk/src/coti_client/coti_client.dart';
 import 'package:aptosdart/sdk/src/ethereum_client/ethereum_client.dart';
 import 'package:aptosdart/sdk/src/sui_client/sui_client.dart';
 
@@ -12,6 +13,8 @@ class BaseWalletClientConfig {
         return SUIClient();
       case CoinType.metis:
         return EthereumClient();
+      case CoinType.coti:
+        return CoTiClient();
       default:
         throw UnimplementedError(
             'Unimplemented: BaseWalletClient from CoinType: $coinType is not implemented');
@@ -28,9 +31,11 @@ abstract class BaseWalletClient {
 
   Future<T> transactionHistoryByHash<T>(String hash);
 
-  Future<List<BaseTransaction>>
-      listTransactionHistoryByTokenAddress(
-          {required String tokenAddress, required String walletAddress,int page=1,limit=10});
+  Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
+      {required String tokenAddress,
+      required String walletAddress,
+      int page = 1,
+      limit = 10});
 
   Future<List<T>> getAccountTokens<T>(String address);
 
@@ -40,7 +45,7 @@ abstract class BaseWalletClient {
     required dynamic arg,
   });
 
- Future<T> simulateNFTTransaction<T>({
+  Future<T> simulateNFTTransaction<T>({
     required dynamic arg,
   });
 

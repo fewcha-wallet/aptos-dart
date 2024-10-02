@@ -230,6 +230,15 @@ class EthereumConstant{
   static const int metisDecimal = 18;
 
 }
+class CoTiConstant{
+  static const String coti = "coti";
+  static const String cotiName = "COTI";
+   static const String coTiDefaultCurrency = "COTI2";
+  static const String coTiTokenAddress = "0xE0E42c70880D57230FB843DB5eba6800533E91Ae";
+  static const int cotiDecimal = 18;
+
+}
+
 class PlatformCodeConstant{
   static const int metisTestnet = 5;
   static const int metisMainNet = 4;

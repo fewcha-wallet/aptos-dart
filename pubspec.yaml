@@ -28,13 +28,16 @@ dependencies:
   path_provider: ^2.1.1
   blake2b: ^0.2.2
   fast_base58: ^0.2.1
-  collection: ^1.17.1
+  collection: ^1.19.0
   sui:
     git:
       url: https://github.com/quoctran1/sui.git
       ref: main
   web3dart: ^2.7.3
-
+  encrypt: ^5.0.3
+  asn1lib: ^1.5.6
+#  pointycastle: ^3.9.1
+#  flutter_js: ^0.8.1
 
 dev_dependencies:
   flutter_test:
@@ -43,7 +46,7 @@ dev_dependencies:
 #  test: 1.24.7
 dependency_overrides:
   test_api: ^0.6.1
-
+  collection: ^1.19.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
