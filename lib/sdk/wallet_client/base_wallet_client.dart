@@ -4,6 +4,7 @@ import 'package:aptosdart/core/account/abstract_account.dart';
 import 'package:aptosdart/core/base_transaction/base_transaction.dart';
 import 'package:aptosdart/sdk/src/ethereum_client/ethereum_client.dart';
 import 'package:aptosdart/sdk/src/sui_client/sui_client.dart';
+import 'package:web3dart/web3dart.dart';
 
 class BaseWalletClientConfig {
   static BaseWalletClient init(CoinType coinType) {
@@ -47,4 +48,13 @@ abstract class BaseWalletClient {
   Future<T> submitTransaction<T>({
     required dynamic arg,
   });
+
+  Future<List<dynamic>> callDeployedContractFunction(
+      {required DeployedContract deployedContract,
+        required ContractFunction function,
+        required String address});
+
+  Future<T> callTransaction<T>(
+      {required Transaction transaction,
+        required String address});
 }

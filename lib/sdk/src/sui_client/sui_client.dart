@@ -19,6 +19,9 @@ import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:web3dart/src/contracts/abi/abi.dart';
+import 'package:web3dart/src/contracts/deployed_contract.dart';
+import 'package:web3dart/web3dart.dart';
 
 class SUIClient extends BaseWalletClient {
   late SUIRepository _suiRepository;
@@ -304,6 +307,18 @@ class SUIClient extends BaseWalletClient {
   @override
   Future<T> simulateNFTTransaction<T>({required arg}) {
     // TODO: implement simulateNFTTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List> callDeployedContractFunction({required DeployedContract deployedContract, required ContractFunction function, required String address}) {
+    // TODO: implement callDeployedContractFunction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<T> callTransaction<T>({required Transaction transaction, required String address}) {
+    // TODO: implement callTransaction
     throw UnimplementedError();
   }
 }

@@ -32,8 +32,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
 
   @override
   Future<BigInt> getAccountBalance(String address) async {
-    EtherAmount balance = await web3Client.getBalance(
-        EthereumAddress.fromHex(address));
+    EtherAmount balance =
+    await web3Client.getBalance(EthereumAddress.fromHex(address));
     return balance.getInWei;
   }
 
@@ -68,8 +68,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
     try {
       EthereumArgument argument = arg as EthereumArgument;
       EtherAmount gasPrice = await web3Client.getGasPrice();
-      int nonce = await web3Client.getTransactionCount(
-          EthereumAddress.fromHex(argument.address));
+      int nonce = await web3Client
+          .getTransactionCount(EthereumAddress.fromHex(argument.address));
       final estGas = await web3Client.estimateGas(
         sender: EthereumAddress.fromHex(argument.address),
         to: EthereumAddress.fromHex(argument.recipient),
@@ -228,13 +228,54 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         gasPrice: gasPrice,
       );
 
-      final transactionWithGas = transaction.copyWith(
-          gasPrice: gasPrice);
+      final transactionWithGas = transaction.copyWith(gasPrice: gasPrice);
       BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
 
       return EthereumTransactionSimulateResult(
-          transaction: transactionWithGas,
-          gas: totalGasFee) as T;
+          transaction: transactionWithGas, gas: totalGasFee) as T;
+    } on RPCError catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<dynamic>> callDeployedContractFunction(
+      {required DeployedContract deployedContract,
+        required ContractFunction function,
+        required String address,}) async {
+    try {
+      var result = await web3Client.call(
+          sender: EthereumAddress.fromHex(address),
+          contract: deployedContract,
+          function: function,
+          params: []);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<T> callTransaction<T>(
+      {required Transaction transaction, required String address}) async {
+    try {
+      EtherAmount gasPrice = await web3Client.getGasPrice();
+
+      // Estimate gas
+      final gasEstimate = await web3Client.estimateGas(
+        sender: EthereumAddress.fromHex(address),
+        // to: transaction.to,
+        // data: transaction.data,
+        gasPrice: gasPrice,
+      );
+
+      final transactionWithGas = transaction.copyWith(gasPrice: gasPrice);
+      BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
+
+      return EthereumTransactionSimulateResult(
+          transaction: transactionWithGas, gas: totalGasFee) as T;
     } on RPCError catch (e) {
       throw Exception(e.message);
     } catch (e) {
