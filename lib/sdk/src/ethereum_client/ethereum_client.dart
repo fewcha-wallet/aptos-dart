@@ -244,13 +244,14 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   Future<List<dynamic>> callDeployedContractFunction(
       {required DeployedContract deployedContract,
         required ContractFunction function,
-        required String address,}) async {
+        required String address,
+        List<dynamic> parameter = const []}) async {
     try {
       var result = await web3Client.call(
           sender: EthereumAddress.fromHex(address),
           contract: deployedContract,
           function: function,
-          params: []);
+          params: parameter);
       return result;
     } catch (e) {
       rethrow;
@@ -266,13 +267,15 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       // Estimate gas
       final gasEstimate = await web3Client.estimateGas(
         sender: EthereumAddress.fromHex(address),
-        // to: transaction.to,
-        // data: transaction.data,
-        gasPrice: gasPrice,
+        to: transaction.to,
+        data: transaction.data,
+        value: transaction.value,
+        // gasPrice: gasPrice,
       );
-
-      final transactionWithGas = transaction.copyWith(gasPrice: gasPrice);
       BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
+
+      final transactionWithGas = transaction.copyWith(
+          maxGas: gasEstimate.toInt());
 
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas, gas: totalGasFee) as T;

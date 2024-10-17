@@ -311,7 +311,10 @@ class SUIClient extends BaseWalletClient {
   }
 
   @override
-  Future<List> callDeployedContractFunction({required DeployedContract deployedContract, required ContractFunction function, required String address}) {
+  Future<List> callDeployedContractFunction( {required DeployedContract deployedContract,
+    required ContractFunction function,
+    required String address,
+    List<dynamic> parameter = const []}) {
     // TODO: implement callDeployedContractFunction
     throw UnimplementedError();
   }

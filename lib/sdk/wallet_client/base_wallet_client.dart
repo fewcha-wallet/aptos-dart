@@ -29,9 +29,11 @@ abstract class BaseWalletClient {
 
   Future<T> transactionHistoryByHash<T>(String hash);
 
-  Future<List<BaseTransaction>>
-      listTransactionHistoryByTokenAddress(
-          {required String tokenAddress, required String walletAddress,int page=1,limit=10});
+  Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
+      {required String tokenAddress,
+      required String walletAddress,
+      int page = 1,
+      limit = 10});
 
   Future<List<T>> getAccountTokens<T>(String address);
 
@@ -41,7 +43,7 @@ abstract class BaseWalletClient {
     required dynamic arg,
   });
 
- Future<T> simulateNFTTransaction<T>({
+  Future<T> simulateNFTTransaction<T>({
     required dynamic arg,
   });
 
@@ -51,10 +53,10 @@ abstract class BaseWalletClient {
 
   Future<List<dynamic>> callDeployedContractFunction(
       {required DeployedContract deployedContract,
-        required ContractFunction function,
-        required String address});
+      required ContractFunction function,
+      required String address,
+      List<dynamic> parameter = const []});
 
   Future<T> callTransaction<T>(
-      {required Transaction transaction,
-        required String address});
+      {required Transaction transaction, required String address});
 }
