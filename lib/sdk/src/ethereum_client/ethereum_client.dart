@@ -33,7 +33,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<BigInt> getAccountBalance(String address) async {
     EtherAmount balance =
-    await web3Client.getBalance(EthereumAddress.fromHex(address));
+        await web3Client.getBalance(EthereumAddress.fromHex(address));
     return balance.getInWei;
   }
 
@@ -70,14 +70,6 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       EtherAmount gasPrice = await web3Client.getGasPrice();
       int nonce = await web3Client
           .getTransactionCount(EthereumAddress.fromHex(argument.address));
-      final estGas = await web3Client.estimateGas(
-        sender: EthereumAddress.fromHex(argument.address),
-        to: EthereumAddress.fromHex(argument.recipient),
-        value: EtherAmount.fromBigInt(EtherUnit.wei, argument.amount),
-        // gasPrice: gasPrice,
-        data: Uint8List.fromList([0x0]),
-      );
-      BigInt totalGasFee = estGas * gasPrice.getInWei;
 
       final contractAddress = EthereumAddress.fromHex(argument.tokenAddress);
       final abi = [
@@ -92,7 +84,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       ];
 
       final contract =
-      DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
+          DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
 
       final transferFrom = contract.function('transfer');
       // Create the transaction
@@ -100,8 +92,6 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         nonce: nonce,
         contract: contract,
         function: transferFrom,
-        maxGas: 250000,
-        gasPrice: gasPrice,
         parameters: [
           EthereumAddress.fromHex(argument.recipient),
           argument.amount
@@ -109,11 +99,18 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
         from: EthereumAddress.fromHex(argument.address),
       );
 
-      // final transactionWithGas = transaction.copyWith(
-      //     gasPrice: EtherAmount.fromBigInt(EtherUnit.wei, estGas));
+      final estGas = await web3Client.estimateGas(
+        sender: EthereumAddress.fromHex(argument.address),
+        to: transaction.to,
+        value: transaction.value,
+        data: transaction.data,
+      );
+      BigInt totalGasFee = estGas * gasPrice.getInWei;
+
+      final transactionWithGas = transaction.copyWith(maxGas: estGas.toInt());
 
       return EthereumTransactionSimulateResult(
-          transaction: transaction, gas: totalGasFee) as T;
+          transaction: transactionWithGas, gas: totalGasFee) as T;
     } on RPCError catch (e) {
       throw Exception(e.message);
     } catch (e) {
@@ -163,12 +160,12 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
       {required String tokenAddress,
-        required String walletAddress,
-        int page = 1,
-        limit = 10}) async {
+      required String walletAddress,
+      int page = 1,
+      limit = 10}) async {
     try {
       final result =
-      await _ethereumRepository.getListTransactionByWalletAddress(
+          await _ethereumRepository.getListTransactionByWalletAddress(
         walletAddress: walletAddress,
         page: page,
         limit: limit,
@@ -191,7 +188,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
 
       // Replace with the ERC721 contract address and the token ID to transfer
       final contractAddress =
-      EthereumAddress.fromHex(argument.nftTokenContract);
+          EthereumAddress.fromHex(argument.nftTokenContract);
       final tokenId = BigInt.parse(argument.nftID);
 
       // ERC721 contract ABI (Application Binary Interface)
@@ -216,20 +213,20 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       final transaction = Transaction.callContract(
         contract: contract,
         function: transferFrom,
-        maxGas: 250000,
         parameters: [senderAddress, receiverAddress, tokenId],
         from: senderAddress,
       );
       // Estimate gas
       final gasEstimate = await web3Client.estimateGas(
         sender: senderAddress,
-        to: contractAddress,
+        to: transaction.to,
+        value: transaction.value,
         data: transaction.data,
-        gasPrice: gasPrice,
       );
-
-      final transactionWithGas = transaction.copyWith(gasPrice: gasPrice);
       BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
+
+      final transactionWithGas =
+          transaction.copyWith(maxGas: gasEstimate.toInt());
 
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas, gas: totalGasFee) as T;
@@ -243,9 +240,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<dynamic>> callDeployedContractFunction(
       {required DeployedContract deployedContract,
-        required ContractFunction function,
-        required String address,
-        List<dynamic> parameter = const []}) async {
+      required ContractFunction function,
+      required String address,
+      List<dynamic> parameter = const []}) async {
     try {
       var result = await web3Client.call(
           sender: EthereumAddress.fromHex(address),
@@ -274,8 +271,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       );
       BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
 
-      final transactionWithGas = transaction.copyWith(
-          maxGas: gasEstimate.toInt());
+      final transactionWithGas =
+          transaction.copyWith(maxGas: gasEstimate.toInt());
 
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas, gas: totalGasFee) as T;
