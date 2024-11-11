@@ -12,6 +12,7 @@ abstract class BaseNetworkType {
   int platformCode;
   CoinType coinType;
   bool isSelected;
+  String chainID;
 
   BaseNetworkType({
     required this.networkURL,
@@ -22,11 +23,20 @@ abstract class BaseNetworkType {
     required this.explorerParam,
     required this.twoFactorAuthenticatorURL,
     required this.platformCode,
+    required this.chainID,
     this.isSelected = false,
     this.faucetURL,
   });
 
   bool isMainNet();
+
+  String chainIDNumber() {
+    return chainID.split(":").last;
+  }
+
+  String chainIDName() {
+    return chainID.split(":").first;
+  }
 }
 
 class NetworkType extends BaseNetworkType {
@@ -40,6 +50,7 @@ class NetworkType extends BaseNetworkType {
     required super.twoFactorAuthenticatorURL,
     required super.platformCode,
     required super.faucetURL,
+    required super.chainID,
     super.isSelected = false,
   });
 
@@ -48,10 +59,12 @@ class NetworkType extends BaseNetworkType {
     return networkName.contains(HostUrl.mainNet);
   }
 }
+
 class MetisNetworkType extends BaseNetworkType {
   String metisRestAPI;
+
   MetisNetworkType({
-  required  this.metisRestAPI,
+    required this.metisRestAPI,
     required super.networkURL,
     required super.networkName,
     required super.coinCurrency,
@@ -60,6 +73,7 @@ class MetisNetworkType extends BaseNetworkType {
     required super.explorerParam,
     required super.twoFactorAuthenticatorURL,
     required super.platformCode,
+    required super.chainID,
     super.isSelected = false,
   });
 

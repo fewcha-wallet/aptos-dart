@@ -63,7 +63,7 @@ class NetWorkRepository {
 
   BaseNetworkType testnetMetisNetwork() {
     return MetisNetworkType(
-      platformCode:PlatformCodeConstant.metisTestnet,
+      platformCode: PlatformCodeConstant.metisTestnet,
       networkURL: HostUrl.metisTestnetUrl,
       networkName: HostUrl.metisTestnet,
       coinCurrency: EthereumConstant.metisTestNetDefaultCurrency,
@@ -72,12 +72,13 @@ class NetWorkRepository {
       explorerBaseURL: 'https://sepolia-explorer.metisdevops.link/tx',
       twoFactorAuthenticatorURL: '',
       metisRestAPI: 'https://sepolia-explorer-api.metisdevops.link',
+      chainID: 'eip155:59902',
     );
   }
 
   BaseNetworkType mainNetMetisNetwork() {
     return MetisNetworkType(
-      platformCode:PlatformCodeConstant.metisMainNet,
+      platformCode: PlatformCodeConstant.metisMainNet,
       networkURL: HostUrl.metisMainNetUrl,
       networkName: HostUrl.metisMainNet,
       coinCurrency: EthereumConstant.metisDefaultCurrency,
@@ -86,6 +87,7 @@ class NetWorkRepository {
       explorerBaseURL: 'https://andromeda-explorer.metis.io/tx',
       twoFactorAuthenticatorURL: '',
       metisRestAPI: 'https://andromeda-explorer.metis.io',
+      chainID: 'eip155:1088',
     );
   }
 }
