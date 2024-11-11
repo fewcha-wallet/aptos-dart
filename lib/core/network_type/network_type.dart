@@ -30,8 +30,8 @@ abstract class BaseNetworkType {
 
   bool isMainNet();
 
-  String chainIDNumber() {
-    return chainID.split(":").last;
+  int chainIDNumber() {
+    return int.tryParse(chainID.split(":").last)??-1;
   }
 
   String chainIDName() {
