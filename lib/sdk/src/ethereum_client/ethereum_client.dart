@@ -10,6 +10,7 @@ import 'package:aptosdart/sdk/src/repository/ethereum_repository/ethereum_reposi
 import 'package:aptosdart/sdk/wallet_client/base_wallet_client.dart';
 import 'package:aptosdart/utils/mixin/aptos_sdk_mixin.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 import 'package:web3dart/json_rpc.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -282,4 +283,5 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       rethrow;
     }
   }
+
 }

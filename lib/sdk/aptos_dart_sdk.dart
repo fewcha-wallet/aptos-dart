@@ -1,6 +1,8 @@
 import 'package:aptosdart/constant/enums.dart';
 import 'package:aptosdart/core/network_type/network_type.dart';
 import 'package:aptosdart/sdk/internal/aptos_dart_sdk_internal.dart';
+import 'package:http/http.dart';
+import 'package:web3dart/web3dart.dart';
 
 class AptosDartSDK {
   late AptosDartSDKInternal _internal;
@@ -32,6 +34,9 @@ class AptosDartSDK {
     return _internal.getListNetwork();
   }
 
+  Web3Client createNewWeb3Client(String url) {
+    return Web3Client(url, Client());
+  }
 
   // BaseNetworkType getDefaultSUINetwork() {
   //   return _internal.getDefaultSUINetwork();

@@ -323,4 +323,77 @@ class Utilities {
     serializer.serializeStr(value);
     return serializer.getBytes();
   }
+
+  static Uint8List uuidTo32ByteArray(String uuid) {
+    String hexStr = uuid.replaceAll('-', '');
+
+    Uint8List byteArray = Uint8List(16);
+    for (int i = 0; i < 16; i++) {
+      byteArray[i] = int.parse(hexStr.substring(i * 2, i * 2 + 2), radix: 16);
+    }
+
+    Uint8List byte32Array = Uint8List(32);
+    byte32Array.setRange(0, 16, byteArray);
+
+    return byte32Array;
+  }
+
+  String toBeHex(BigInt value, [int? width]) {
+    // Convert the value to a hexadecimal string
+    String result = value.toRadixString(16);
+
+    if (width == null) {
+      // Ensure the result is of even length
+      if (result.length % 2 != 0) {
+        result = "0" + result;
+      }
+    } else {
+      // Calculate required hex length based on width
+      int hexLength = width * 2;
+
+      if (hexLength < result.length) {
+        throw ArgumentError("value exceeds width (${width} bytes)");
+      }
+
+      // Pad with leading zeros to reach the desired width
+      result = result.padLeft(hexLength, '0');
+    }
+
+    return "0x" + result;
+  }
+
+  BigInt parseUnits(String value, {dynamic unit = 18}) {
+    // Ensure the input value is a string
+    int decimals;
+    List<String> names = ["wei", "kwei", "mwei", "gwei", "szabo", "finney", "ether"];
+
+    if (unit is String) {
+      int index = names.indexOf(unit.toLowerCase());
+      if (index == -1) {
+        throw ArgumentError("invalid unit: $unit");
+      }
+      decimals = 3 * index;
+    } else if (unit is int) {
+      decimals = unit;
+    } else {
+      throw ArgumentError("unit must be a string or integer");
+    }
+
+    // Split the value into whole and fractional parts
+    List<String> parts = value.split(".");
+    String wholePart = parts[0];
+    String fractionPart = parts.length > 1 ? parts[1] : "";
+
+    // Ensure the fraction has the correct length
+    if (fractionPart.length > decimals) {
+      throw ArgumentError("value exceeds decimal precision of $decimals");
+    }
+
+    // Pad fraction with zeros up to the decimals length
+    fractionPart = fractionPart.padRight(decimals, '0');
+    String combined = wholePart + fractionPart;
+
+    // Convert to BigInt
+    return BigInt.parse(combined);
+  }
 }
