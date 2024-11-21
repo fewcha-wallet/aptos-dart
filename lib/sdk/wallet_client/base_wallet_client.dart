@@ -59,4 +59,10 @@ abstract class BaseWalletClient {
 
   Future<T> callTransaction<T>(
       {required Transaction transaction, required String address});
+
+    Future<T?> transactionPending<T>(
+      String txnHashOrVersion,Function(dynamic data ) succeedCondition);
+
+  Future<T?> waitForTransaction<T>(
+      String txnHashOrVersion,int maximumSecond,Function(dynamic data ) succeedCondition)  ;
 }

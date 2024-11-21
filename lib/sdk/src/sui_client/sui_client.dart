@@ -324,4 +324,16 @@ class SUIClient extends BaseWalletClient {
     // TODO: implement callTransaction
     throw UnimplementedError();
   }
+
+  @override
+  Future<T> transactionPending<T>(String txnHashOrVersion, Function(dynamic data) succeedCondition) {
+    // TODO: implement transactionPending
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<T> waitForTransaction<T>(String txnHashOrVersion,int maximumSecond, Function(dynamic data) succeedCondition) {
+    // TODO: implement waitForTransaction
+    throw UnimplementedError();
+  }
 }

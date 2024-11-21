@@ -284,4 +284,39 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
     }
   }
 
+  @override
+  Future<T?> transactionPending<T>(
+      String txnHashOrVersion, Function(dynamic data) succeedCondition) async {
+    try {
+      final result = await web3Client.getTransactionReceipt(txnHashOrVersion);
+      if (result?.status == true) {
+        return result as T;
+      }
+      return null;
+    } on RPCError catch (e) {
+      throw Exception(e.message);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<T?> waitForTransaction<T>(
+      String txnHashOrVersion,int maximumSecond, Function(dynamic data) succeedCondition) async{
+    int count = 0;
+    dynamic transaction;
+    try {
+      while (count < maximumSecond) {
+        transaction = await transactionPending(txnHashOrVersion,succeedCondition);
+        if (transaction == null) {
+          count++;
+        } else {
+          count = maximumSecond;
+        }
+      }
+      return transaction;
+    } catch (e) {
+      return null;
+    }
+  }
 }
