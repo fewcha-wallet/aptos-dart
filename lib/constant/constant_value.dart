@@ -229,6 +229,29 @@ class EthereumConstant{
   static const String metisTokenAddress = "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000";
   static const int metisDecimal = 18;
 
+  static String erc20ABI = '''
+ [
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "_owner",
+                "type": "address"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    }
+]''';
+
 }
 class PlatformCodeConstant{
   static const int metisTestnet = 5;
