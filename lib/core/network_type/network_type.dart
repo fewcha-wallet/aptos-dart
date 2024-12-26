@@ -31,12 +31,20 @@ abstract class BaseNetworkType {
   bool isMainNet();
 
   int chainIDNumber() {
-    return int.tryParse(chainID.split(":").last)??-1;
+    return int.tryParse(chainID
+        .split(":")
+        .last) ?? -1;
   }
 
   String chainIDName() {
-    return chainID.split(":").first;
+    return chainID
+        .split(":")
+        .first;
   }
+
+  String transactionHistoryUrl();
+
+  String addressHistoryUrl();
 }
 
 class NetworkType extends BaseNetworkType {
@@ -57,6 +65,16 @@ class NetworkType extends BaseNetworkType {
   @override
   bool isMainNet() {
     return networkName.contains(HostUrl.mainNet);
+  }
+
+  @override
+  String transactionHistoryUrl() {
+    return "${explorerBaseURL}";
+  }
+
+  @override
+  String addressHistoryUrl() {
+    return "${explorerBaseURL}";
   }
 }
 
@@ -80,5 +98,15 @@ class MetisNetworkType extends BaseNetworkType {
   @override
   bool isMainNet() {
     return networkName.contains(HostUrl.mainNet);
+  }
+
+  @override
+  String transactionHistoryUrl() {
+    return "${explorerBaseURL}/tx";
+  }
+
+  @override
+  String addressHistoryUrl() {
+    return "${explorerBaseURL}/address";
   }
 }
