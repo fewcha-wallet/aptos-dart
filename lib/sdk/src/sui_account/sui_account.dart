@@ -8,34 +8,20 @@ import 'package:aptosdart/core/sui/publickey/public_key.dart' as sui_pk;
 import 'package:aptosdart/utils/extensions/hex_string.dart';
 import 'package:aptosdart/utils/utilities.dart';
 import 'package:ed25519_edwards/ed25519_edwards.dart';
-import 'package:sui/sui.dart' as sui_sdk;
+// import 'package:sui/sui.dart' as sui_sdk;
 
 class SUIAccount implements AbstractAccount {
 
-  SUIAccount._(this._suiAccount);
+  SUIAccount._();
 
-  late sui_sdk.SuiAccount _suiAccount;
 
   factory SUIAccount({required String mnemonics}) {
-
-    final ed25519 = sui_sdk.SuiAccount.fromMnemonics(
-        mnemonics, sui_sdk.SignatureScheme.Ed25519);
-    return SUIAccount._(ed25519);
+    return SUIAccount._();
   }
 
   factory SUIAccount.fromPrivateKey(String privateKeyHex) {
-
     try {
-      sui_sdk.SuiAccount suiAccount;
-
-      if (privateKeyHex.isSuiPrivKey()) {
-        suiAccount = sui_sdk.SuiAccount.fromPrivKey(privateKeyHex);
-      } else {
-        suiAccount = sui_sdk.SuiAccount.fromPrivateKey(
-            privateKeyHex, sui_sdk.SignatureScheme.Ed25519);
-      }
-
-      return SUIAccount._(suiAccount);
+      return SUIAccount._();
     } catch (e) {
       rethrow;
     }
@@ -43,41 +29,39 @@ class SUIAccount implements AbstractAccount {
 
   @override
   String address() {
-    return _suiAccount.getAddress();
+    throw UnimplementedError();
   }
 
   @override
   List<int> getPrivateKey() {
-    return _suiAccount.getSecretKey();
+    throw UnimplementedError();
+
   }
 
   /// Get public key in Hex
   @override
   String publicKeyInHex() {
+    throw UnimplementedError();
 
-    final key = Utilities.bytesToHex(_suiAccount.getPublicKey()).toHexString();
-    return key;
   }
 
   sui_pk.PublicKey publicKeyByte() {
+    throw UnimplementedError();
 
-    return Ed25519PublicKey(_suiAccount.getPublicKey());
   }
-
 
 
   /// Get private key in Hex
   @override
   String privateKeyInHex() {
+    throw UnimplementedError();
 
-    return _suiAccount.privateKey();
   }
 
   @override
   String signBuffer(Uint8List buffer) {
-   final result= _suiAccount.signData(buffer);
+    throw UnimplementedError();
 
-    return Utilities.bytesToHex(result.signature);
   }
 
   String signatureBase64(String hexString) {
@@ -85,12 +69,8 @@ class SUIAccount implements AbstractAccount {
   }
 
   Uint8List detached(Uint8List buffer) {
-    final signedMsg = sign(PrivateKey(_suiAccount.getSecretKey()), buffer);
-    var sig = Uint8List(64);
-    for (var i = 0; i < sig.length; i++) {
-      sig[i] = signedMsg[i];
-    }
-    return signedMsg;
+    throw UnimplementedError();
+
   }
 
   @override
@@ -106,6 +86,6 @@ class SUIAccount implements AbstractAccount {
 
   @override
   String typeName() {
-   return SUIConstants.sui;
+    return SUIConstants.sui;
   }
 }

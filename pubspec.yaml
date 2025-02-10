@@ -29,10 +29,10 @@ dependencies:
   blake2b: ^0.2.2
   fast_base58: ^0.2.1
   collection: ^1.17.1
-  sui:
-    git:
-      url: https://github.com/quoctran1/sui.git
-      ref: main
+#  sui:
+#    git:
+#      url: https://github.com/quoctran1/sui.git
+#      ref: main
   web3dart: ^2.7.3
 
 

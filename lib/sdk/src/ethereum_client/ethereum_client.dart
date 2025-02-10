@@ -61,7 +61,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       List<Future> listFuture = [];
       final result = await _ethereumRepository.getListToken(address);
       result.forEach((item) async {
-        listFuture.add(_getMapAddressBalance(
+        listFuture.add(getMapAddressBalance(
             address: address, tokenAddress: item.getTokenAddress));
       });
 
@@ -367,7 +367,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
     }
   }
 
-  Future<Map<String, BigInt>> _getMapAddressBalance(
+  Future<Map<String, BigInt>> getMapAddressBalance(
       {required String address, required String tokenAddress}) async {
     try {
       final balance =
