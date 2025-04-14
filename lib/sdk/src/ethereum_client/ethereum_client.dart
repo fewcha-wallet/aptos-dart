@@ -34,7 +34,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<BigInt> getAccountBalance(String address) async {
     EtherAmount balance =
-    await web3Client.getBalance(EthereumAddress.fromHex(address));
+        await web3Client.getBalance(EthereumAddress.fromHex(address));
     return balance.getInWei;
   }
 
@@ -103,7 +103,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       ];
 
       final contract =
-      DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
+          DeployedContract(ContractAbi('transfer', abi, []), contractAddress);
 
       final transferFrom = contract.function('transfer');
       // Create the transaction
@@ -179,12 +179,12 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<BaseTransaction>> listTransactionHistoryByTokenAddress(
       {required String tokenAddress,
-        required String walletAddress,
-        int page = 1,
-        limit = 10}) async {
+      required String walletAddress,
+      int page = 1,
+      limit = 10}) async {
     try {
       final result =
-      await _ethereumRepository.getListTransactionByWalletAddress(
+          await _ethereumRepository.getListTransactionByWalletAddress(
         walletAddress: walletAddress,
         page: page,
         limit: limit,
@@ -207,7 +207,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
 
       // Replace with the ERC721 contract address and the token ID to transfer
       final contractAddress =
-      EthereumAddress.fromHex(argument.nftTokenContract);
+          EthereumAddress.fromHex(argument.nftTokenContract);
       final tokenId = BigInt.parse(argument.nftID);
 
       // ERC721 contract ABI (Application Binary Interface)
@@ -245,7 +245,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
 
       final transactionWithGas =
-      transaction.copyWith(maxGas: gasEstimate.toInt());
+          transaction.copyWith(maxGas: gasEstimate.toInt());
 
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas, gas: totalGasFee) as T;
@@ -259,9 +259,9 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   @override
   Future<List<dynamic>> callDeployedContractFunction(
       {required DeployedContract deployedContract,
-        required ContractFunction function,
-        required String address,
-        List<dynamic> parameter = const []}) async {
+      required ContractFunction function,
+      required String address,
+      List<dynamic> parameter = const []}) async {
     try {
       var result = await web3Client.call(
           sender: EthereumAddress.fromHex(address),
@@ -291,7 +291,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       BigInt totalGasFee = gasEstimate * gasPrice.getInWei;
 
       final transactionWithGas =
-      transaction.copyWith(maxGas: gasEstimate.toInt());
+          transaction.copyWith(maxGas: gasEstimate.toInt());
 
       return EthereumTransactionSimulateResult(
           transaction: transactionWithGas, gas: totalGasFee) as T;
@@ -303,8 +303,8 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
   }
 
   @override
-  Future<T?> transactionPending<T>(String txnHashOrVersion,
-      Function(dynamic data) succeedCondition) async {
+  Future<T?> transactionPending<T>(
+      String txnHashOrVersion, Function(dynamic data) succeedCondition) async {
     try {
       final result = await web3Client.getTransactionReceipt(txnHashOrVersion);
       if (result?.status == true) {
@@ -326,8 +326,10 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
     try {
       while (count < maximumSecond) {
         transaction =
-        await transactionPending(txnHashOrVersion, succeedCondition);
+            await transactionPending(txnHashOrVersion, succeedCondition);
         if (transaction == null) {
+          await Future.delayed(Duration(seconds: 1));
+
           count++;
         } else {
           count = maximumSecond;
@@ -371,7 +373,7 @@ class EthereumClient extends BaseWalletClient with AptosSDKMixin {
       {required String address, required String tokenAddress}) async {
     try {
       final balance =
-      await getBalance(address: address, tokenAddress: tokenAddress);
+          await getBalance(address: address, tokenAddress: tokenAddress);
       if (balance != null) return {tokenAddress: balance};
       return {};
     } catch (e) {
