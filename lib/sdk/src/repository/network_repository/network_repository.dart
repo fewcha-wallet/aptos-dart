@@ -25,6 +25,7 @@ class NetWorkRepository {
         // suiTestNet,
         mainNetMetisNetwork(),
         testnetMetisNetwork(),
+        testnetHyperionMetisNetwork()
       ];
     } catch (e) {
       rethrow;
@@ -88,6 +89,21 @@ class NetWorkRepository {
       twoFactorAuthenticatorURL: '',
       metisRestAPI: 'https://andromeda-explorer.metis.io',
       chainID: 'eip155:1088',
+    );
+  }
+
+  BaseNetworkType testnetHyperionMetisNetwork() {
+    return MetisNetworkType(
+      platformCode: PlatformCodeConstant.metisTestnet,
+      networkURL: 'https://hyperion-testnet.metisdevops.link',
+      networkName: 'Hyperion Testnet',
+      coinCurrency: 'hMETIS',
+      coinType: CoinType.metis,
+      explorerParam: '',
+      explorerBaseURL: 'https://hyperion-testnet-explorer.metisdevops.link',
+      twoFactorAuthenticatorURL: '',
+      metisRestAPI: 'https://hyperion-testnet-explorer-api.metisdevops.link',
+      chainID: 'eip155:133717',
     );
   }
 }
